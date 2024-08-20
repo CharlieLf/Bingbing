@@ -11,7 +11,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 src={product?.image} alt={product?.name} />
             <div className="w-full p-[5%]">
                 <p className="font-bold">{product?.name}</p>
-                <p className="text-sm">IDR {product?.price}</p>
+                <p className="text-sm">{product?.formatPrice()}</p>
             </div>
         </div>
     );

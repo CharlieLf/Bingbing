@@ -9,16 +9,17 @@ const sortOptions = [
     'From Highest Price'
 ];
 
-const dummy: Product = {
+const dummy = new Product({
     id: 1,
-    name: "Product Name",
-    price: 1000,
+    name: "Pants",
+    price: 1000000,
     image: "https://assets.vogue.com/photos/641b4f46036bf43d1c7c315a/3:4/w_748%2Cc_limit/slide_14.jpg"
-}
+})
 
 const Home: React.FC = () => {
     const [category, setCategory] = useState<string>('');
     const [sort, setSort] = useState<string>(sortOptions[0]);
+    const [products, setProducts] = useState<Product[]>(Array.from({ length: 10 }).map(() => dummy));
 
     return (
         <NavbarLayout>
@@ -36,9 +37,9 @@ const Home: React.FC = () => {
                 </select>
             </div>
             <div className="flex justify-center px-[2.5%] flex-wrap gap-x-[3.5%] gap-y-8">
-                {Array.from({ length: 10 }).map((_, index) => {
-                    return <ProductCard product={dummy} key={index} />;
-                })}
+                {products.map((product, index) => (
+                    <ProductCard key={index} product={product} />
+                ))}
             </div>
         </NavbarLayout>
     );

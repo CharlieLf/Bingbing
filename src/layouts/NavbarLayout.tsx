@@ -6,7 +6,7 @@ interface Props {
 
 const NavbarLayout: React.FC<Props> = ({ children }) => {
     return (
-        <div className="flex w-screen flex-col">
+        <div className="flex w-screen flex-col mb-10">
             <Navbar />
             {children}
         </div>
