@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import environment from 'vite-plugin-environment';
 import dotenv from 'dotenv';
+import path from "path";
 
 dotenv.config();
 
@@ -41,4 +42,14 @@ export default defineConfig({
     setupFiles: 'setupTests.ts',
     cache: { dir: '../node_modules/.vitest' },
   },
+  resolve: {
+    alias: {
+      "@assets": path.resolve(__dirname, "src/assets"),
+      "@components": path.resolve(__dirname, "src/components"),
+      "@fonts": path.resolve(__dirname, "src/fonts"),
+      "@layouts": path.resolve(__dirname, "src/layouts"),
+      "@pages": path.resolve(__dirname, "src/pages"),
+      "@": path.resolve(__dirname, "src"),
+    }
+  }
 });
