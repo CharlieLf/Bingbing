@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+
+    }
+    @font-face {
+        font-family: 'Marcellus SC';
+        src: url(./fonts/MarcellusSC-Regular.ttf) format('truetype');
+    }
+}
