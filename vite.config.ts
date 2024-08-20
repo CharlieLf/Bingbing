@@ -49,6 +49,7 @@ export default defineConfig({
       "@fonts": path.resolve(__dirname, "src/fonts"),
       "@layouts": path.resolve(__dirname, "src/layouts"),
       "@pages": path.resolve(__dirname, "src/pages"),
+      "@models": path.resolve(__dirname, "src/models"),
       "@": path.resolve(__dirname, "src"),
     }
   }

@@ -23,6 +23,7 @@
       "@fonts/*": ["src/fonts"],
       "@assets/*": ["src/assets/*"],
       "@layouts/*": ["src/layouts/*"],
+      "@models/*": ["src/models/*"],
       "@/*": ["src/*"]
     }
   },

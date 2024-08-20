@@ -1,12 +1,12 @@
-import Navbar from "@components/Navbar";
+import Navbar from '@components/Navbar';
 
 interface Props {
-    children: React.ReactNode
+    children: React.ReactNode;
 }
 
 const NavbarLayout: React.FC<Props> = ({ children }) => {
     return (
-        <div className="flex flex-col w-screen">
+        <div className="flex w-screen flex-col">
             <Navbar />
             {children}
         </div>

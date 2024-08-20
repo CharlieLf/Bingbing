@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'marcellus': ['Marcellus SC']
+        marcellus: ['Marcellus SC', 'sans-serif'],
+        sans: ['Inter']
       },
     },
   },
