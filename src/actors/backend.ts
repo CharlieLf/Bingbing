@@ -3,7 +3,10 @@ import { createReactor } from "@ic-reactor/react"
 
 type Backend = typeof backend
 
-export const { useActorStore: useBackendStore, useQueryCall: useBackendQuery } = createReactor<Backend>({
+export const {
+  useQueryCall: useBackendQuery,
+  useUpdateCall: useBackendUpdate,
+} = createReactor<Backend>({
   canisterId,
   idlFactory,
   host: "http://localhost:4943",
