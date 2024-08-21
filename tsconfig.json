@@ -18,12 +18,15 @@
     "types": ["vite/client", "@testing-library/jest-dom"],
     "baseUrl": "./",
     "paths": {
-      "@pages/*": ["src/pages/*"],
-      "@components/*": ["src/components/*"],
-      "@fonts/*": ["src/fonts"],
+      "@actors/*": ["src/actors/*"],
       "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@declarations/*": ["src/declarations/*"],
+      "@fonts/*": ["src/fonts"],
+      "@hooks/*": ["src/hooks/*"],
       "@layouts/*": ["src/layouts/*"],
       "@models/*": ["src/models/*"],
+      "@pages/*": ["src/pages/*"],
       "@/*": ["src/*"]
     }
   },

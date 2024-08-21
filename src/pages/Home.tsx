@@ -2,53 +2,19 @@ import React, { useEffect, useState } from 'react';
 import NavbarLayout from '@layouts/NavbarLayout';
 import CategoryBar from '@components/CategoryBar';
 import ProductCard from '@components/ProductCard';
-import Product from '@models/product';
 import { CategoryType } from '@models/category';
-import { useProductQuery } from '@/actors/product';
-import { useBackendQuery, useBackendUpdate } from '@/actors/backend';
+import useProduct from '@hooks/useProduct';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
 const Home: React.FC = () => {
     const [category, setCategory] = useState<CategoryType>(CategoryType.All);
     const [sort, setSort] = useState<string>(sortOptions[0]);
-    const [products, setProducts] = useState<Product[]>([]);
-
-    const { call: getProducts } = useProductQuery({
-        functionName: "getProducts",
-        onSuccess: (products) => {
-            const productInstances = products?.map(p => {
-                return new Product({
-                    id: p.id,
-                    image: p.image,
-                    name: p.name,
-                    price: Number(p.price)
-                });
-            });
-            setProducts(productInstances ?? [])
-        }
-    });
-
-    const { data: count, call: getCount } = useBackendQuery({
-        functionName: "getCount",
-    })
-
-    const { call: add } = useBackendUpdate({
-        functionName: "add",
-        args: [BigInt(10)],
-        onSuccess: getCount
-    })
+    const { products, getProducts } = useProduct();
 
     useEffect(() => {
         getProducts();
-        getCount()
     }, [])
-
-    useEffect(() => {
-        if (count) {
-            console.log(count);
-        }
-    }, [count])
 
     return (
         <NavbarLayout>
@@ -68,13 +34,9 @@ const Home: React.FC = () => {
                 </select>
             </div>
             <div className="grid grid-cols-5 gap-x-[3.5%] gap-y-8 px-[2.5%] w-full">
-                {/* {products.map((product, index) => (
+                {products.map((product, index) => (
                     <ProductCard key={index} product={product} />
-                ))} */}
-                {products && Array.from({ length: 7 }).map((_, index) => {
-                    return <ProductCard key={index} product={products[index % products.length]} />
-                })
-                }
+                ))}
             </div>
         </NavbarLayout>
     );
