@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --tw-font-sans: 'Inter', sans-serif;
+    }
+    body {
+        @apply font-sans;
+        overflow-x: hidden;
+    }
+    @font-face {
+        font-family: 'Marcellus SC';
+        src: url(./assets/fonts/MarcellusSC-Regular.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Inter';
+        src: url(./assets//fonts/Inter-VariableFont_opsz\,wght.ttf) format('truetype');
+    }
+}
