@@ -7,30 +7,34 @@ import Iter "mo:base/Iter";
 import Types "Types";
 
 actor Product {
-    type ProductType = Types.Product;
-    private let products: TrieMap.TrieMap<Text, ProductType> = TrieMap.TrieMap<Text, ProductType>(Text.equal, Text.hash);
-    private stable var idList: List.List<Text> = List.nil<Text>();
+  type ProductType = Types.Product;
+  private let products : TrieMap.TrieMap<Text, ProductType> = TrieMap.TrieMap<Text, ProductType>(Text.equal, Text.hash);
+  private stable var idList : List.List<Text> = List.nil<Text>();
 
-    private func createProduct(newName: Text, newPrice: Nat64, newImage: Blob): ProductType {
-        let newId = Time.now();
-        return {
-            id = Int.toText(newId);
-            name = newName;
-            price = newPrice;
-            image = newImage;
-        };
+  private func createProduct(newName : Text, newPrice : Nat64, newImage : Blob) : ProductType {
+    let newId = Time.now();
+    return {
+      id = Int.toText(newId);
+      name = newName;
+      price = newPrice;
+      image = newImage;
     };
+  };
 
-    public shared(msg) func addProduct(
-        // newName: Text, newPrice: Nat64, newImage: Blob
-    ) {
-        let product = createProduct("a", 10, "a");
-        products.put(product.id, product);
-        idList := List.push(product.id, idList);
-    };
-    
-    public shared query(msg) func getProducts(): async [ProductType] {
-        Iter.toArray(products.vals());
-    };
+  public shared (msg) func addDummy() {
+    let product = createProduct("a", 10, "a");
+    products.put(product.id, product);
+    idList := List.push(product.id, idList);
+  };
 
-}
+  public shared (msg) func addProduct(newName: Text, newPrice: Nat64, newImage: Blob) {
+    let product = createProduct(newName, newPrice, newImage);
+    products.put(product.id, product);
+    idList := List.push(product.id, idList);
+  };
+
+  public shared query (msg) func getProducts() : async [ProductType] {
+    Iter.toArray(products.vals());
+  };
+
+};

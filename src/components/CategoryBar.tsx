@@ -1,5 +1,5 @@
-import categories, { CategoryType } from '@models/category';
 import CategoryChoice from './CategoryChoice';
+import categories, { CategoryType } from '@models/category';
 
 interface Props {
   category: CategoryType;

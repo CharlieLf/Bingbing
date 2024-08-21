@@ -44,12 +44,15 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "@actors": path.resolve(__dirname, "src/actors"),
       "@assets": path.resolve(__dirname, "src/assets"),
       "@components": path.resolve(__dirname, "src/components"),
+      "@declarations": path.resolve(__dirname, "src/declarations"),
       "@fonts": path.resolve(__dirname, "src/fonts"),
+      "@hooks": path.resolve(__dirname, "src/hooks"),
       "@layouts": path.resolve(__dirname, "src/layouts"),
-      "@pages": path.resolve(__dirname, "src/pages"),
       "@models": path.resolve(__dirname, "src/models"),
+      "@pages": path.resolve(__dirname, "src/pages"),
       "@": path.resolve(__dirname, "src"),
     }
   }

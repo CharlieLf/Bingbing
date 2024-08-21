@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Marcellus+SC&display=swap');
+
 /*
 ! tailwindcss v3.4.10 | MIT License | https://tailwindcss.com
 */
@@ -450,24 +454,12 @@ video {
   --tw-font-sans: 'Inter', sans-serif;
 }
 
-body {
+body{
   font-family: Inter;
   overflow-x: hidden;
 }
 
-@font-face {
-  font-family: 'Marcellus SC';
-
-  src: url(./assets/fonts/MarcellusSC-Regular.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: 'Inter';
-
-  src: url(./assets//fonts/Inter-VariableFont_opsz\,wght.ttf) format('truetype');
-}
-
-*, ::before, ::after {
+*, ::before, ::after{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
   --tw-translate-x: 0;
@@ -521,7 +513,7 @@ body {
   --tw-contain-style:  ;
 }
 
-::backdrop {
+::backdrop{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
   --tw-translate-x: 0;
@@ -575,277 +567,209 @@ body {
   --tw-contain-style:  ;
 }
 
-.sticky {
+.sticky{
   position: sticky;
 }
 
-.top-0 {
+.top-0{
   top: 0px;
 }
 
-.top-12 {
+.top-12{
   top: 3rem;
 }
 
-.top-\[125px\] {
-  top: 125px;
-}
-
-.top-20 {
-  top: 5rem;
-}
-
-.top-24 {
+.top-24{
   top: 6rem;
 }
 
-.z-10 {
-  z-index: 10;
-}
-
-.z-20 {
-  z-index: 20;
-}
-
-.z-30 {
-  z-index: 30;
-}
-
-.-z-10 {
-  z-index: -10;
-}
-
-.mb-10 {
+.mb-10{
   margin-bottom: 2.5rem;
 }
 
-.mb-8 {
+.mb-8{
   margin-bottom: 2rem;
 }
 
-.mt-3 {
+.mt-3{
   margin-top: 0.75rem;
 }
 
-.flex {
+.flex{
   display: flex;
 }
 
-.size-6 {
+.grid{
+  display: grid;
+}
+
+.size-6{
   width: 1.5rem;
   height: 1.5rem;
 }
 
-.h-\[45vh\] {
-  height: 45vh;
-}
-
-.h-\[80\%\] {
-  height: 80%;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.h-\[125px\] {
+.h-\[125px\]{
   height: 125px;
 }
 
-.h-\[12px\] {
-  height: 12px;
+.h-\[45vh\]{
+  height: 45vh;
 }
 
-.w-\[15\%\] {
+.h-\[80\%\]{
+  height: 80%;
+}
+
+.h-full{
+  height: 100%;
+}
+
+.w-\[15\%\]{
   width: 15%;
 }
 
-.w-\[15vw\] {
+.w-\[15vw\]{
   width: 15vw;
 }
 
-.w-full {
-  width: 100%;
-}
-
-.w-screen {
-  width: 100vw;
-}
-
-.w-fit {
-  width: -moz-fit-content;
-  width: fit-content;
-}
-
-.w-\[\] {
-  width: ;
-}
-
-.w-\[80\%\] {
-  width: 80%;
-}
-
-.w-\[70\%\] {
-  width: 70%;
-}
-
-.w-\[50\%\] {
+.w-\[50\%\]{
   width: 50%;
 }
 
-.cursor-pointer {
+.w-full{
+  width: 100%;
+}
+
+.w-screen{
+  width: 100vw;
+}
+
+.cursor-pointer{
   cursor: pointer;
 }
 
-.flex-row {
+.grid-cols-5{
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.flex-row{
   flex-direction: row;
 }
 
-.flex-col {
+.flex-col{
   flex-direction: column;
 }
 
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
-.items-center {
+.items-center{
   align-items: center;
 }
 
-.justify-end {
+.justify-end{
   justify-content: flex-end;
 }
 
-.justify-center {
+.justify-center{
   justify-content: center;
 }
 
-.justify-between {
+.justify-between{
   justify-content: space-between;
 }
 
-.justify-evenly {
+.justify-evenly{
   justify-content: space-evenly;
 }
 
-.gap-4 {
+.gap-4{
   gap: 1rem;
 }
 
-.gap-x-\[3\.5\%\] {
+.gap-x-\[3\.5\%\]{
   -moz-column-gap: 3.5%;
        column-gap: 3.5%;
 }
 
-.gap-y-8 {
+.gap-y-8{
   row-gap: 2rem;
 }
 
-.overflow-hidden {
+.overflow-hidden{
   overflow: hidden;
 }
 
-.rounded-2xl {
+.rounded-2xl{
   border-radius: 1rem;
 }
 
-.border {
+.border{
   border-width: 1px;
 }
 
-.border-black {
+.border-black{
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
-.bg-red-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
-}
-
-.bg-white {
+.bg-white{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.object-cover {
+.object-cover{
   -o-object-fit: cover;
      object-fit: cover;
 }
 
-.p-10 {
+.p-10{
   padding: 2.5rem;
 }
 
-.p-2 {
+.p-2{
   padding: 0.5rem;
 }
 
-.p-\[10px_15\%\] {
-  padding: 10px 15%;
-}
-
-.p-\[5\%\] {
+.p-\[5\%\]{
   padding: 5%;
 }
 
-.p-\[10px_25\%\] {
-  padding: 10px 25%;
-}
-
-.px-\[2\.5\%\] {
+.px-\[2\.5\%\]{
   padding-left: 2.5%;
   padding-right: 2.5%;
 }
 
-.py-10 {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
-}
-
-.py-\[10px\] {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.px-5 {
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-}
-
-.py-2 {
+.py-2{
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
 
-.align-middle {
-  vertical-align: middle;
+.py-\[10px\]{
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
-.font-marcellus {
+.font-marcellus{
   font-family: Marcellus SC, sans-serif;
 }
 
-.text-\[36px\] {
+.text-\[36px\]{
   font-size: 36px;
 }
 
-.text-sm {
+.text-sm{
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
 
-.text-xs {
+.text-xs{
   font-size: 0.75rem;
   line-height: 1rem;
 }
 
-.font-bold {
+.font-bold{
   font-weight: 700;
 }
 
-.shadow-\[0_4px_6px_rgba\(0\2c 0\2c 0\2c 0\.1\)\] {
+.shadow-\[0_4px_6px_rgba\(0\2c 0\2c 0\2c 0\.1\)\]{
   --tw-shadow: 0 4px 6px rgba(0,0,0,0.1);
   --tw-shadow-colored: 0 4px 6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
