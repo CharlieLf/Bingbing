@@ -13,16 +13,6 @@
       "declarations": {
         "node_compatibility": true
       }
-    },
-    "frontend": {
-      "dependencies": [
-        "product",
-        "backend"
-      ],
-      "type": "assets",
-      "source": [
-        "dist/"
-      ]
     }
   },
   "defaults": {
