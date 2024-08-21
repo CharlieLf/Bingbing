@@ -1,6 +1,8 @@
+import { CategoryType } from "@models/category";
+
 interface CategoryChoiceProps {
-  category: string;
-  setCategory: (category: string) => void;
+  category: CategoryType;
+  setCategory: (category: CategoryType) => void;
 }
 
 const CategoryChoice: React.FC<CategoryChoiceProps> = ({

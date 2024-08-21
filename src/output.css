@@ -587,20 +587,44 @@ body {
   top: 3rem;
 }
 
+.top-\[125px\] {
+  top: 125px;
+}
+
+.top-20 {
+  top: 5rem;
+}
+
+.top-24 {
+  top: 6rem;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.z-20 {
+  z-index: 20;
+}
+
+.z-30 {
+  z-index: 30;
+}
+
+.-z-10 {
+  z-index: -10;
+}
+
+.mb-10 {
+  margin-bottom: 2.5rem;
+}
+
 .mb-8 {
   margin-bottom: 2rem;
 }
 
 .mt-3 {
   margin-top: 0.75rem;
-}
-
-.mb-5 {
-  margin-bottom: 1.25rem;
-}
-
-.mb-10 {
-  margin-bottom: 2.5rem;
 }
 
 .flex {
@@ -620,6 +644,18 @@ body {
   height: 80%;
 }
 
+.h-full {
+  height: 100%;
+}
+
+.h-\[125px\] {
+  height: 125px;
+}
+
+.h-\[12px\] {
+  height: 12px;
+}
+
 .w-\[15\%\] {
   width: 15%;
 }
@@ -634,6 +670,27 @@ body {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.w-\[\] {
+  width: ;
+}
+
+.w-\[80\%\] {
+  width: 80%;
+}
+
+.w-\[70\%\] {
+  width: 70%;
+}
+
+.w-\[50\%\] {
+  width: 50%;
 }
 
 .cursor-pointer {
@@ -685,12 +742,8 @@ body {
   row-gap: 2rem;
 }
 
-.rounded-md {
-  border-radius: 0.375rem;
-}
-
-.rounded-lg {
-  border-radius: 0.5rem;
+.overflow-hidden {
+  overflow: hidden;
 }
 
 .rounded-2xl {
@@ -704,6 +757,11 @@ body {
 .border-black {
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
+.bg-red-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
 .bg-white {
@@ -732,9 +790,33 @@ body {
   padding: 5%;
 }
 
+.p-\[10px_25\%\] {
+  padding: 10px 25%;
+}
+
 .px-\[2\.5\%\] {
   padding-left: 2.5%;
   padding-right: 2.5%;
+}
+
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.py-\[10px\] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.px-5 {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .align-middle {
@@ -749,14 +831,14 @@ body {
   font-size: 36px;
 }
 
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
-
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .font-bold {

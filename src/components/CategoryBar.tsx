@@ -1,23 +1,14 @@
+import categories, { CategoryType } from '@models/category';
 import CategoryChoice from './CategoryChoice';
 
-const categories = [
-  'All',
-  'Tops',
-  'Bottoms',
-  'Outerwear',
-  'Men',
-  'Women',
-  'Accessories',
-];
-
 interface Props {
-  category: string;
-  setCategory: (category: string) => void;
+  category: CategoryType;
+  setCategory: (category: CategoryType) => void;
 }
 
 const CategoryBar: React.FC<Props> = ({ category, setCategory }) => {
   return (
-    <div className="sticky top-12 flex w-screen justify-evenly p-[10px_15%] align-middle">
+    <div className="sticky top-12 flex w-[50%] justify-evenly py-[10px] items-center">
       {categories.map((category, idx) => {
         return (
           <CategoryChoice
