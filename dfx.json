@@ -14,15 +14,17 @@
         "node_compatibility": true
       }
     },
+    "token": {
+      "type": "motoko",
+      "main": "backend/token/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
     "frontend": {
-      "dependencies": [
-        "product",
-        "backend"
-      ],
+      "dependencies": ["backend"],
       "type": "assets",
-      "source": [
-        "dist/"
-      ]
+      "source": ["dist/"]
     }
   },
   "defaults": {

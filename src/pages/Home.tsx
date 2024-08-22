@@ -4,6 +4,7 @@ import CategoryBar from '@components/CategoryBar';
 import ProductCard from '@components/ProductCard';
 import { CategoryType } from '@models/category';
 import useProduct from '@hooks/useProduct';
+import { useTokenQuery } from '@actors/tokenActor';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
@@ -12,7 +13,12 @@ const Home: React.FC = () => {
     const [sort, setSort] = useState<string>(sortOptions[0]);
     const { products, getProducts } = useProduct();
 
+    const { data: count, call: getBalance } = useTokenQuery({
+        functionName: 'balance',
+      });
+
     useEffect(() => {
+        getBalance();
         getProducts();
     }, [])
 
