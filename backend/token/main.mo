@@ -2,6 +2,9 @@ import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Error "mo:base/Error";
+import TrieMap "mo:base/TrieMap";
+import Nat64 "mo:base/Nat64";
+import Nat "mo:base/Nat";
 
 actor {
 
@@ -11,7 +14,7 @@ actor {
     public query ({ caller }) func balance() : async Result<Nat, Text> {
         switch(ledger.get(caller)){
             case (?balance){
-                #ok(balance);
+                #err("Balance of " # Principal.toText(caller) # " is 0");
             };
             case (null){
                 #err("Unknown owner : " # Principal.toText(caller));

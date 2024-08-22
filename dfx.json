@@ -22,11 +22,12 @@
       }
     },
     "frontend": {
-      "dependencies": ["backend"],
+      "dependencies": ["backend", "token"],
       "type": "assets",
       "source": ["dist/"]
     }
   },
+  
   "defaults": {
     "build": {
       "packtool": "npm run --silent sources"
