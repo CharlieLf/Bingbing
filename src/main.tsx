@@ -7,10 +7,10 @@ import { idlFactory, canisterId } from './declarations/product';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    {/* <AgentProvider withProcessEnv> */}
-      {/* <ActorProvider idlFactory={idlFactory} canisterId={canisterId}> */}
+    <AgentProvider withProcessEnv>
+      <ActorProvider idlFactory={idlFactory} canisterId={canisterId}>
         <App />
-      {/* </ActorProvider> */}
-    {/* </AgentProvider> */}
+      </ActorProvider>
+    </AgentProvider>
   </React.StrictMode>,
 );

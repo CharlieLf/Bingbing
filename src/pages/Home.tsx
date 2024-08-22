@@ -5,6 +5,7 @@ import ProductCard from '@components/ProductCard';
 import { CategoryType } from '@models/category';
 import useProduct from '@hooks/useProduct';
 import { useTokenQuery } from '@actors/tokenActor';
+import { useAuth } from '@ic-reactor/react';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
@@ -27,6 +28,7 @@ const Home: React.FC = () => {
             <CategoryBar category={category} setCategory={setCategory} />
             <div className="sticky top-24 w-screen mb-8 mt-3 flex items-center justify-end gap-4 px-[2.5%] py-2 bg-white">
                 <p>Sort: </p>
+                
                 <select
                     className="border border-black p-2 text-xs cursor-pointer"
                     value={sort}

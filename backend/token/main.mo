@@ -2,8 +2,6 @@ import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Error "mo:base/Error";
-import TrieMap "mo:base/TrieMap";
-import Nat64 "mo:base/Nat64";
 import Nat "mo:base/Nat";
 
 actor {
