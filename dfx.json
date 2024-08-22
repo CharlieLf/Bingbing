@@ -1,33 +1,12 @@
 {
   "canisters": {
-    "product": {
-      "type": "motoko",
-      "main": "backend/Product.mo",
-      "declarations": {
-        "node_compatibility": true
-      }
-    },
-    "backend": {
-      "type": "motoko",
-      "main": "backend/Backend.mo",
-      "declarations": {
-        "node_compatibility": true
-      }
-    },
     "token": {
       "type": "motoko",
       "main": "backend/token/main.mo",
       "declarations": {
         "node_compatibility": true
       }
-    },
-    "whoami": {
-      "type": "motoko",
-      "main": "backend/whoami/main.mo",
-      "declarations": {
-        "node_compatibility": true
-      }
-    },
+    }
     "internet-identity": {
       "type": "pull",
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
@@ -38,7 +17,6 @@
       "source": ["dist/"]
     }
   },
-  
   "defaults": {
     "build": {
       "packtool": "npm run --silent sources"
