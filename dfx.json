@@ -1,19 +1,5 @@
 {
   "canisters": {
-    "product": {
-      "type": "motoko",
-      "main": "backend/Product.mo",
-      "declarations": {
-        "node_compatibility": true
-      }
-    },
-    "backend": {
-      "type": "motoko",
-      "main": "backend/Backend.mo",
-      "declarations": {
-        "node_compatibility": true
-      }
-    },
     "token": {
       "type": "motoko",
       "main": "backend/token/main.mo",
@@ -21,9 +7,9 @@
         "node_compatibility": true
       }
     },
-    "whoami": {
+    "user": {
       "type": "motoko",
-      "main": "backend/whoami/main.mo",
+      "main": "backend/user/main.mo",
       "declarations": {
         "node_compatibility": true
       }
@@ -33,7 +19,7 @@
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
     "frontend": {
-      "dependencies": ["backend", "token"],
+      "dependencies": ["token"],
       "type": "assets",
       "source": ["dist/"]
     }
