@@ -4,6 +4,8 @@ import CategoryBar from '@components/CategoryBar';
 import ProductCard from '@components/ProductCard';
 import { CategoryType } from '@models/category';
 import useProduct from '@hooks/useProduct';
+import { useTokenQuery } from '@actors/tokenActor'; 
+import { useAuth } from '@ic-reactor/react';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
@@ -12,7 +14,14 @@ const Home: React.FC = () => {
     const [sort, setSort] = useState<string>(sortOptions[0]);
     const { products, getProducts } = useProduct();
 
+    const { data: count, call: getBalance } = useTokenQuery({
+        functionName: 'balance',
+      });
+
+    const { login, authenticated, identity } = useAuth();
+
     useEffect(() => {
+        getBalance();
         getProducts();
     }, [])
 
