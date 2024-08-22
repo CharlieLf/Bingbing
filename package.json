@@ -3,6 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "overrides": {
+    "esbuild": {
+      "win32-x64": "@esbuild/win32-x64",
+      "linux-x64": "@esbuild/linux-x64",
+      "darwin-x64": "@esbuild/darwin-x64"
+    }
+  },
   "scripts": {
     "create": "dfx canister create --all",
     "generate": "dfx generate",
