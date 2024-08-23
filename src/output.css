@@ -587,6 +587,21 @@ body{
   top: 6rem;
 }
 
+.mx-10{
+  margin-left: 2.5rem;
+  margin-right: 2.5rem;
+}
+
+.mx-20{
+  margin-left: 5rem;
+  margin-right: 5rem;
+}
+
+.my-10{
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
 .mb-10{
   margin-bottom: 2.5rem;
 }
@@ -595,16 +610,32 @@ body{
   margin-bottom: 2rem;
 }
 
+.mr-1{
+  margin-right: 0.25rem;
+}
+
 .mt-3{
   margin-top: 0.75rem;
 }
 
-.mt-4{
-  margin-top: 1rem;
-}
-
 .mt-5{
   margin-top: 1.25rem;
+}
+
+.mb-32{
+  margin-bottom: 8rem;
+}
+
+.mb-5{
+  margin-bottom: 1.25rem;
+}
+
+.mr-10{
+  margin-right: 2.5rem;
+}
+
+.mr-5{
+  margin-right: 1.25rem;
 }
 
 .flex{
@@ -615,19 +646,14 @@ body{
   display: grid;
 }
 
-.size-36{
-  width: 9rem;
-  height: 9rem;
+.size-32{
+  width: 8rem;
+  height: 8rem;
 }
 
 .size-6{
   width: 1.5rem;
   height: 1.5rem;
-}
-
-.size-32{
-  width: 8rem;
-  height: 8rem;
 }
 
 .h-8{
@@ -650,6 +676,22 @@ body{
   height: 100%;
 }
 
+.h-screen{
+  height: 100vh;
+}
+
+.h-1\/4{
+  height: 25%;
+}
+
+.h-10{
+  height: 2.5rem;
+}
+
+.w-1\/2{
+  width: 50%;
+}
+
 .w-32{
   width: 8rem;
 }
@@ -666,12 +708,28 @@ body{
   width: 50%;
 }
 
+.w-\[756\]{
+  width: 756;
+}
+
 .w-full{
   width: 100%;
 }
 
 .w-screen{
   width: 100vw;
+}
+
+.w-10{
+  width: 2.5rem;
+}
+
+.w-\[25\%\]{
+  width: 25%;
+}
+
+.w-\[40\%\]{
+  width: 40%;
 }
 
 .transform{
@@ -735,6 +793,40 @@ body{
   row-gap: 2rem;
 }
 
+.space-y-3 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+}
+
+.space-y-8 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(2rem * var(--tw-space-y-reverse));
+}
+
+.space-x-10 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-x-reverse: 0;
+  margin-right: calc(2.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(2.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-y-4 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.space-y-5 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1.25rem * var(--tw-space-y-reverse));
+}
+
+.self-end{
+  align-self: flex-end;
+}
+
 .overflow-hidden{
   overflow: hidden;
 }
@@ -755,6 +847,10 @@ body{
   border-width: 1px;
 }
 
+.border-2{
+  border-width: 2px;
+}
+
 .border-b{
   border-bottom-width: 1px;
 }
@@ -767,11 +863,6 @@ body{
 .border-gray-400{
   --tw-border-opacity: 1;
   border-color: rgb(156 163 175 / var(--tw-border-opacity));
-}
-
-.border-gray-500{
-  --tw-border-opacity: 1;
-  border-color: rgb(107 114 128 / var(--tw-border-opacity));
 }
 
 .bg-black{
@@ -797,8 +888,16 @@ body{
   padding: 0.5rem;
 }
 
+.p-3{
+  padding: 0.75rem;
+}
+
 .p-\[5\%\]{
   padding: 5%;
+}
+
+.p-5{
+  padding: 1.25rem;
 }
 
 .px-4{
@@ -826,8 +925,28 @@ body{
   padding-bottom: 10px;
 }
 
+.px-10{
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.px-20{
+  padding-left: 5rem;
+  padding-right: 5rem;
+}
+
+.py-10{
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
 .font-marcellus{
   font-family: Marcellus SC, sans-serif;
+}
+
+.text-3xl{
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 }
 
 .text-\[24px\]{
@@ -842,6 +961,11 @@ body{
   font-size: 36px;
 }
 
+.text-lg{
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 .text-sm{
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -852,17 +976,40 @@ body{
   line-height: 1rem;
 }
 
+.text-2xl{
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-4xl{
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
 .font-bold{
   font-weight: 700;
+}
+
+.font-medium{
+  font-weight: 500;
 }
 
 .font-semibold{
   font-weight: 600;
 }
 
+.italic{
+  font-style: italic;
+}
+
 .text-black{
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.text-red-500{
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
 .text-white{

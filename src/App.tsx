@@ -5,6 +5,8 @@ import Login from '@pages/Login';
 import Profile from '@pages/Profile';
 import Register from '@pages/Register';
 import ProtectedRoute from './routes/ProtectedRoute';
+import AddProduct from '@pages/AddProduct';
+import ProductDetail from '@pages/ProductDetail';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -12,6 +14,8 @@ const router = createBrowserRouter(
     <Route key="register" path="/register" element={<Register />} />,
     <Route key="home" path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />,
     <Route key="profile" path="/profile/:principal" element={<ProtectedRoute><Profile /></ProtectedRoute>} />,
+    <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct/></ProtectedRoute>} />,
+    <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
   ]),
 );
 
