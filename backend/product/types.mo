@@ -8,6 +8,6 @@ module {
         price : Nat64;
         description : Text;
         image : Blob;
-        owner : Principal;
+        owner : Text;
     };
 }

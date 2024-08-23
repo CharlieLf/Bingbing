@@ -1,4 +1,4 @@
-export default function IconSearch(props: React.SVGProps<SVGSVGElement>) {
+function IconSearch(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg
             fill="currentColor"
@@ -11,3 +11,5 @@ export default function IconSearch(props: React.SVGProps<SVGSVGElement>) {
         </svg>
     );
 }
+
+export default IconSearch;
