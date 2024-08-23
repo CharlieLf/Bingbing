@@ -1,16 +1,15 @@
-import { idlFactory } from "@/declarations/backend";
 
 interface ProductProps {
-    id: number;
+    id: bigint;
     name: string;
-    price: number;
+    price: bigint;
     image: string;
 }
 
 export default class Product {
-    id: number;
+    id: bigint;
     name: string;
-    price: number;
+    price: bigint;
     image: string;
 
     constructor({ id, name, price, image }: ProductProps) {

@@ -1,5 +1,5 @@
-import IconSearch from '@assets/icons/IconSearch';
 import NavbarIcon from './NavbarIcon';
+import IconSearch from '@assets/icons/IconSearch';
 import IconCart from '@assets/icons/IconCart';
 import IconHeart from '@assets/icons/IconHeart';
 import IconPerson from '@assets/icons/IconPerson';
