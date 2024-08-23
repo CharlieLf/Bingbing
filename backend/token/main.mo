@@ -12,7 +12,7 @@ actor {
     public query ({ caller }) func balance() : async Result<Nat, Text> {
         switch(ledger.get(caller)){
             case (?balance){
-                #err("Balance of " # Principal.toText(caller) # " is 0");
+                #err("Balance of " # Principal.toText(caller) # " is " # Nat.toText(balance));
             };
             case (null){
                 #err("Unknown owner : " # Principal.toText(caller));
@@ -20,7 +20,7 @@ actor {
         }
     };
 
-    private func mint(owner : Principal, amount: Nat) : async Result<(), Text>{
+    public func mint(owner : Principal, amount: Nat) : async Result<(), Text>{
 
         switch(ledger.get(owner)){
             case (?balance){
@@ -35,7 +35,7 @@ actor {
 
     };
 
-    private func burn(owner : Principal, amount: Nat) : async Result<(), Text>{
+    public func burn(owner : Principal, amount: Nat) : async Result<(), Text>{
         switch(ledger.get(owner)){
             case (?balance){
                 if(balance >= amount){
