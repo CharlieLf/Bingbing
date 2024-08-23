@@ -1,9 +1,9 @@
 import Input from "@components/Input";
 import image from "../assets/product/register.jpg";
-import IconBackArrow from "@assets/icons/IconBackArrow";
 import { useState } from "react";
 import CategoryField from "@components/CategoryField";
-import ButtonSmall from "@components/ButtonSmall";
+import IconArrowBack from "@assets/icons/IconArrowBack";
+import NavbarIcon from "@components/NavbarIcon";
 
 const AddProduct: React.FC = () => {
     const [productName, setProductName] = useState<string>('');
@@ -13,33 +13,33 @@ const AddProduct: React.FC = () => {
     return(
         <div className="my-10 mx-20">
             <div className="flex flex-row items-center mb-10">
-                <div className="w-10 h-10 mr-5">
-                    <IconBackArrow/>
+                <div className="mr-5">
+                    <NavbarIcon to="/" icon={<IconArrowBack/>}/>
                 </div>
                 <p className="text-2xl">Add Product</p>
             </div>
 
             <div className="flex">
-                <div className="w-[25%] mr-10">
+                <div className="w-[40%] mr-10">
                     <div className="mb-5">
                         <img src={image}/>
                     </div>
                     <button className="w-full border-black border p-5">Add Image</button>
                 </div>
 
-                <div className="w-full space-y-4">
-                    <Input label="Product Name" data={productName} inputOnChange={(e) => {setProductName(e.target.value)}}/>
-                    <Input label="Price" data={price} inputOnChange={(e) => {setPrice(e.target.value)}}/>
-                    <Input label="Stock" data={stock} inputOnChange={(e) => {setStock(e.target.value)}}/>
-                    <div>
-                        <label>Category</label>
-                        <ButtonSmall text="Male"/>
-                        {/* <CategoryField/> */}
+                <div className="w-full">
+                    <div className="space-y-4">
+                        <Input label="Product Name" data={productName} inputOnChange={(e) => {setProductName(e.target.value)}}/>
+                        <Input label="Price" data={price} inputOnChange={(e) => {setPrice(e.target.value)}}/>
+                        <Input label="Stock" data={stock} inputOnChange={(e) => {setStock(e.target.value)}}/>
+                        <div>
+                            <label>Category</label>
+
+                            <CategoryField/>
+                        </div>
                     </div>
 
-                    <div>
-                        <button>Add Product</button>
-                    </div>
+                    <button className="w-full mt-5 p-4 bg-black border-black border text-white">Add Product</button>
                 </div>
             </div>
         </div>
