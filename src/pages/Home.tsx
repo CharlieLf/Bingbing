@@ -12,17 +12,15 @@ const sortOptions = ['From Lowest Price', 'From Highest Price'];
 const Home: React.FC = () => {
     const [category, setCategory] = useState<CategoryType>(CategoryType.All);
     const [sort, setSort] = useState<string>(sortOptions[0]);
-    const { products, getProducts } = useProduct();
+    const { products } = useProduct();
 
     const { data: count, call: getBalance } = useTokenQuery({
         functionName: 'balance',
       });
 
-    const { login, authenticated, identity } = useAuth();
 
     useEffect(() => {
         getBalance();
-        getProducts();
     }, [])
 
     return (

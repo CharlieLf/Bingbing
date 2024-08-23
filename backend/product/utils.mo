@@ -7,7 +7,7 @@ module {
     _price : Nat64,
     _description : Text,
     _image : Blob,
-    _owner : Principal,
+    _owner : Text,
   ) : Product {
     return {
       id = _id;

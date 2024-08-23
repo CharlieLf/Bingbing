@@ -1,15 +1,15 @@
 
 interface ProductProps {
-    id: string;
+    id: bigint;
     name: string;
-    price: number;
+    price: bigint;
     image: string;
 }
 
 export default class Product {
-    id: string;
+    id: bigint;
     name: string;
-    price: number;
+    price: bigint;
     image: string;
 
     constructor({ id, name, price, image }: ProductProps) {
