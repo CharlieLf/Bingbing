@@ -2,9 +2,7 @@ import HashMap "mo:base/HashMap";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
-import Iter "mo:base/Iter";
 import Nat64 "mo:base/Nat64";
-import List "mo:base/List";
 import Products "../product/types";
 import Types "./types";
 
