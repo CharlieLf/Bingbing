@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="sticky top-0 flex w-screen items-center justify-between p-10 bg-white h-[125px]">
+    <nav className="sticky top-0 flex w-screen items-center justify-between p-10 mb-5 bg-white h-[125px] shadow-md">
       <p className="text-[36px] font-marcellus cursor-pointer">
         <Link to="/">
           BINGBING

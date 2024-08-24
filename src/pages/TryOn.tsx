@@ -58,7 +58,7 @@ const TryOn: React.FC = () => {
                 <div className="flex flex-col justify-between w-[50%] p-3">
                     <div>
                         <p className="text-2xl font-bold">Textured Straight Pants</p>
-                        <p>IDR. 399.000</p>
+                        <p>IDR. 399,000</p>
                     </div>
 
                     <div className="flex flex-col space-y-3">

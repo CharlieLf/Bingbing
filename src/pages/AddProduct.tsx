@@ -16,7 +16,7 @@ const AddProduct: React.FC = () => {
                 <div className="mr-5">
                     <NavbarIcon to="/profile/:principal" icon={<IconArrowBack/>}/>
                 </div>
-                <p className="text-2xl">Add Product</p>
+                <p className="text-3xl">Add Product</p>
             </div>
 
             <div className="flex">
