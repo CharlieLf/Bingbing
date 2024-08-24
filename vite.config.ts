@@ -53,6 +53,7 @@ export default defineConfig({
       "@layouts": path.resolve(__dirname, "src/layouts"),
       "@models": path.resolve(__dirname, "src/models"),
       "@pages": path.resolve(__dirname, "src/pages"),
+      "@utils": path.resolve(__dirname, "src/utils"),
       "@": path.resolve(__dirname, "src"),
     }
   }

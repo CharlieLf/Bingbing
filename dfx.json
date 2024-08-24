@@ -32,13 +32,19 @@
       "type": "pull",
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
+    "product": {
+      "type": "motoko",
+      "main": "backend/product/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
     "frontend": {
-      "dependencies": ["token"],
+      "dependencies": ["user", "token", "product"],
       "type": "assets",
       "source": ["dist/"]
     }
   },
-  
   "defaults": {
     "build": {
       "packtool": "npm run --silent sources"

@@ -27,6 +27,7 @@
       "@layouts/*": ["src/layouts/*"],
       "@models/*": ["src/models/*"],
       "@pages/*": ["src/pages/*"],
+      "@utils/*": ["src/utils/*"],
       "@/*": ["src/*"]
     }
   },

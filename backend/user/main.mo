@@ -6,6 +6,7 @@ import TokenActorModules "../token/interface"
 
 actor {
 
+
     type Result<Ok, Error> = Types.Result<Ok, Error>;
     type HashMap<K, V> = Types.HashMap<K, V>;
     type User = Types.User; 
@@ -25,19 +26,23 @@ actor {
                 return #err("User already exists");
             }
         }
-
     };
 
-    public shared ({caller}) func getUser() : async Result<User, Text> {
-        switch(users.get(caller)){
-            case(? user){
-                return #ok(user);
-            };
-            case(null){
-                return #err("User not found");
-            }
-        }
-    }
+  };
 
+  public shared query ({ caller }) func getUser() : async Result<User, Text> {
+    switch (users.get(caller)) {
+      case (?user) {
+        return #ok(user);
+      };
+      case (null) {
+        return #err("User not found");
+      };
+    };
+  };
 
-}
+  public shared func clear() {
+    users := HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
+  }
+
+};

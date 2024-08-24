@@ -1,29 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import NavbarLayout from '@layouts/NavbarLayout';
 import CategoryBar from '@components/CategoryBar';
-import ProductCard from '@components/ProductCard';
 import { CategoryType } from '@models/category';
-import useProduct from '@hooks/useProduct';
-import { useTokenQuery } from '@actors/tokenActor'; 
-import { useAuth } from '@ic-reactor/react';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
 const Home: React.FC = () => {
-    const [category, setCategory] = useState<CategoryType>(CategoryType.All);
     const [sort, setSort] = useState<string>(sortOptions[0]);
-    const { products, getProducts } = useProduct();
-
-    const { data: count, call: getBalance } = useTokenQuery({
-        functionName: 'balance',
-      });
-
-    const { login, authenticated, identity } = useAuth();
-
-    useEffect(() => {
-        getBalance();
-        getProducts();
-    }, [])
+    const [category, setCategory] = useState<CategoryType>(CategoryType.All);
 
     return (
         <NavbarLayout>
@@ -43,9 +27,6 @@ const Home: React.FC = () => {
                 </select>
             </div>
             <div className="grid grid-cols-5 gap-x-[3.5%] gap-y-8 px-[2.5%] w-full">
-                {products.map((product, index) => (
-                    <ProductCard key={index} product={product} />
-                ))}
             </div>
         </NavbarLayout>
     );
