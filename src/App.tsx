@@ -10,6 +10,7 @@ import ProductDetail from '@pages/ProductDetail';
 import UpdateProduct from '@pages/UpdateProduct';
 import TryOn from '@pages/TryOn';
 import Carts from '@pages/Cart';
+import Favorite from '@pages/Favorite';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -20,8 +21,9 @@ const router = createBrowserRouter(
     <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct/></ProtectedRoute>} />,
     <Route key="updateProduct" path="/updateProduct/:id" element={<ProtectedRoute><UpdateProduct /></ProtectedRoute>} />,
     <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
-    <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
     <Route key="tryon" path="/tryon/:id" element={<ProtectedRoute><TryOn /></ProtectedRoute>} />,
+    <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
+    <Route key="favorite" path="/favorite" element={<ProtectedRoute><Favorite /></ProtectedRoute>} />,
   ]),
 );
 

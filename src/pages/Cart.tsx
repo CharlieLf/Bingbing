@@ -1,3 +1,4 @@
+import InputNumber from "@components/InputNumber";
 import ShopCard from "@components/ShopCard";
 import NavbarLayout from "@layouts/NavbarLayout";
 
@@ -9,7 +10,9 @@ const Carts: React.FC = () => {
             <div className="flex w-full justify-between py-5 px-20">
                 <div className="w-[60%] mr-10">
                     {/* Fetch Per Shop */}
-                    <ShopCard/>
+                    <ShopCard>
+                        <InputNumber/>
+                    </ShopCard>
                 </div>
 
                 <div className="w-[50%] h-fit p-5 border-gray-200 border">

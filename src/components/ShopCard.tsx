@@ -1,7 +1,11 @@
 import InputNumber from "./InputNumber";
 import image from "../assets/product/register.jpg";
 
-const ShopCard: React.FC = () => {
+interface Props {
+    children: React.ReactNode;
+}
+
+const ShopCard: React.FC<Props> = ({children}) => {
 
     return(
         <div className="">
@@ -22,7 +26,8 @@ const ShopCard: React.FC = () => {
 
                         <div className="flex flex-row justify-between">
                             <p className="font-bold">IDR. 200,000</p>
-                            <InputNumber/>
+
+                            {children}
                         </div>  
                     </div>
                 </div>
