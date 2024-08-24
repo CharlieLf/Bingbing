@@ -33,18 +33,7 @@ actor {
                 ledger.put(owner, amount);
                 #ok(());
             };
-        }
-
-    switch (ledger.get(owner)) {
-      case (?balance) {
-        ledger.put(owner, balance + amount);
-        #ok(());
-      };
-      case (null) {
-        ledger.put(owner, amount);
-        #ok(());
-      };
-    };
+        };
 
   };
 
