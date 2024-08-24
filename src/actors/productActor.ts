@@ -1,4 +1,4 @@
-import { canisterId, idlFactory, product } from "@/declarations/product";
+import { canisterId, idlFactory, product } from "@declarations/product";
 import { createReactor } from "@ic-reactor/react"
 
 type ProductActor = typeof product
