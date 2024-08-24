@@ -9,14 +9,6 @@ import image from '../assets/product/register.jpg';
 
 const ProductDetail: React.FC = () => {
     let { productId } = useParams();
-
-    const [product, setProduct] = useState<Product>(new Product({
-        id: 0n,
-        name: "",
-        image: "",
-        price: 0n
-    }));
-
     return(
         <div>
             <Navbar/>
@@ -46,7 +38,7 @@ const ProductDetail: React.FC = () => {
                 </div> */}
 
                 <div className="w-[40%] h-full">
-                    <img src={product?.image}/>
+                    {/* <img src={product?.image}/> */}
                 </div>
 
                 <div className="flex flex-col justify-between w-full mx-10">
@@ -56,7 +48,7 @@ const ProductDetail: React.FC = () => {
                         </div>
         
                         <div className="mb-32">
-                            <p className="text-4xl font-bold">{product?.name}</p>
+                            {/* <p className="text-4xl font-bold">{product?.name}</p> */}
                             {/* <p className="text-2xl">Rp. {product?.price}</p> */}
                         </div>
                     </div>

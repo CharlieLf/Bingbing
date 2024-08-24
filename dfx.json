@@ -26,12 +26,11 @@
       }
     },
     "frontend": {
-      "dependencies": ["token", "product"],
+      "dependencies": ["user", "token", "product"],
       "type": "assets",
       "source": ["dist/"]
     }
   },
-  
   "defaults": {
     "build": {
       "packtool": "npm run --silent sources"

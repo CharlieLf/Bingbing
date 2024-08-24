@@ -1,4 +1,4 @@
-import { canisterId, idlFactory, token } from "@/declarations/token";
+import { canisterId, idlFactory, token } from "@declarations/token";
 import { createReactor } from "@ic-reactor/react"
 
 type TokenActor = typeof token
