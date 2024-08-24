@@ -28,8 +28,6 @@ actor {
         }
     };
 
-  };
-
   public shared query ({ caller }) func getUser() : async Result<User, Text> {
     switch (users.get(caller)) {
       case (?user) {
@@ -40,9 +38,5 @@ actor {
       };
     };
   };
-
-  public shared func clear() {
-    users := HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
-  }
 
 };
