@@ -8,6 +8,8 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import AddProduct from '@pages/AddProduct';
 import ProductDetail from '@pages/ProductDetail';
 import UpdateProduct from '@pages/UpdateProduct';
+import TryOn from '@pages/TryOn';
+import Cart from '@pages/Cart';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -18,6 +20,8 @@ const router = createBrowserRouter(
     <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct/></ProtectedRoute>} />,
     <Route key="updateProduct" path="/updateProduct/:id" element={<ProtectedRoute><UpdateProduct /></ProtectedRoute>} />,
     <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
+    <Route key="cart" path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />,
+    <Route key="tryon" path="/tryon/:id" element={<ProtectedRoute><TryOn /></ProtectedRoute>} />,
   ]),
 );
 

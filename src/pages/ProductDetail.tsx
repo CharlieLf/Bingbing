@@ -3,8 +3,7 @@ import Product from "@models/product";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import IconHeart from "../assets/icons/IconHeart";
-
-import image from '../assets/product/register.jpg';
+import NavbarLayout from "@layouts/NavbarLayout";
 
 
 const ProductDetail: React.FC = () => {
@@ -18,8 +17,8 @@ const ProductDetail: React.FC = () => {
     }));
 
     return(
-        <div>
-            <Navbar/>
+        <NavbarLayout>
+            {/* <Navbar/> */}
 
             <div className="flex w-full px-20 py-10">
                 {/* <div className="w-[40%] h-full">
@@ -56,7 +55,7 @@ const ProductDetail: React.FC = () => {
                         </div>
         
                         <div className="mb-32">
-                            <p className="text-4xl font-bold">{product?.name}</p>
+                            <p className="text-4xl font-bold">IDR. {product?.name}</p>
                             {/* <p className="text-2xl">Rp. {product?.price}</p> */}
                         </div>
                     </div>
@@ -69,7 +68,7 @@ const ProductDetail: React.FC = () => {
                     <p className="italic text-sm">*Colors may appear different due to variations in screen lighting.</p>
                 </div>
             </div>
-        </div>
+        </NavbarLayout>
     )
 }
 

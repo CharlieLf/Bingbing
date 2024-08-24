@@ -688,6 +688,10 @@ body{
   height: 100vh;
 }
 
+.h-\[1000\]{
+  height: 1000;
+}
+
 .w-1\/2{
   width: 50%;
 }
@@ -726,6 +730,10 @@ body{
 
 .w-screen{
   width: 100vw;
+}
+
+.w-\[1500\]{
+  width: 1500;
 }
 
 .transform{
