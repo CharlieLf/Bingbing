@@ -12,6 +12,7 @@ import TryOn from '@pages/TryOn';
 import Carts from '@pages/Cart';
 import Favorite from '@pages/Favorite';
 import Checkout from '@pages/CheckOut';
+import History from '@pages/History';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
     <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
     <Route key="favorite" path="/favorite" element={<ProtectedRoute><Favorite /></ProtectedRoute>} />,
     <Route key="checkout" path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />,
+    <Route key="history" path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />,
   ]),
 );
 

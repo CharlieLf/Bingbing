@@ -4,9 +4,10 @@ import image from "../assets/product/register.jpg";
 interface Props {
     children: React.ReactNode;
     checkbox: string;
+    totalPrice: string;
 }
 
-const ShopCard: React.FC<Props> = ({children, checkbox}) => {
+const ShopCard: React.FC<Props> = ({children, checkbox, totalPrice}) => {
 
     return(
         <div className="">
@@ -14,7 +15,12 @@ const ShopCard: React.FC<Props> = ({children, checkbox}) => {
                 {checkbox === "true" && 
                     <input type="checkbox" className="mr-3"/>
                 }
-                <p className="font-medium">Owner</p>
+                <div className="flex justify-between w-full">
+                    <p className="font-medium">Owner</p>
+                    { totalPrice.length >= 1 &&
+                        <p className="font-bold">IDR. {totalPrice}</p>
+                    }
+                </div>
             </div>
 
             {/* Notes : Fetch Product per Shop */}

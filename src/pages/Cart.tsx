@@ -10,7 +10,7 @@ const Carts: React.FC = () => {
             <div className="flex w-full justify-between py-5 px-20">
                 <div className="w-[60%] mr-10">
                     {/* Fetch Per Shop */}
-                    <ShopCard checkbox="true">
+                    <ShopCard checkbox="true" totalPrice="">
                         <InputNumber/>
                     </ShopCard>
                 </div>

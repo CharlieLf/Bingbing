@@ -24,7 +24,7 @@ const Checkout:React.FC = () => {
                         </div>
                     </div>
 
-                    <ShopCard checkbox="false">
+                    <ShopCard checkbox="false" totalPrice="">
                         <div></div> {/* Tombol kanan kosong */}
                     </ShopCard>
                 </div>

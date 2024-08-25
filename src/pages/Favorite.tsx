@@ -9,7 +9,7 @@ const Favorite: React.FC = () => {
 
             <div className="w-full py-5 px-20">
                 {/* Notes: Fetch Favorite Product */}
-                <ShopCard checkbox="false">
+                <ShopCard checkbox="false" totalPrice="">
                     <ButtonSmall text="View Detail"/>
                 </ShopCard>
 
