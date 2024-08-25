@@ -1,11 +1,11 @@
-import Input from "@components/Input";
+import IconArrowBack from "@assets/icons/IconArrowBack"
+import NavbarIcon from "@components/NavbarIcon"
 import image from "../assets/product/register.jpg";
+import Input from "@components/Input";
 import { useState } from "react";
 import CategoryField from "@components/CategoryField";
-import IconArrowBack from "@assets/icons/IconArrowBack";
-import NavbarIcon from "@components/NavbarIcon";
 
-const AddProduct: React.FC = () => {
+const UpdateProduct: React.FC = () => {
     const [productName, setProductName] = useState<string>('');
     const [price, setPrice] = useState<string>('');
     const [stock, setStock] = useState<string>('');
@@ -16,7 +16,7 @@ const AddProduct: React.FC = () => {
                 <div className="mr-5">
                     <NavbarIcon to="/profile/:principal" icon={<IconArrowBack/>}/>
                 </div>
-                <p className="text-3xl">Add Product</p>
+                <p className="text-3xl">Edit Product Detail</p>
             </div>
 
             <div className="flex">
@@ -24,7 +24,7 @@ const AddProduct: React.FC = () => {
                     <div className="mb-5">
                         <img src={image}/>
                     </div>
-                    <button className="w-full border-black border p-5">Add Image</button>
+                    <button className="w-full border-black border p-5">Edit Image</button>
                 </div>
 
                 <div className="w-full">
@@ -39,11 +39,11 @@ const AddProduct: React.FC = () => {
                         </div>
                     </div>
 
-                    <button className="w-full mt-5 p-4 bg-black border-black border text-white">Add Product</button>
+                    <button className="w-full mt-5 p-4 bg-black border-black border text-white">Update Product</button>
                 </div>
             </div>
         </div>
     )
 }
 
-export default AddProduct;
+export default UpdateProduct;
