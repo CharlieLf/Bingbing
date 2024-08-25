@@ -7,20 +7,12 @@ import NavbarLayout from "@layouts/NavbarLayout";
 
 const ProductDetail: React.FC = () => {
     let { productId } = useParams();
-
-    const [product, setProduct] = useState<Product>(new Product({
-        id: 0n,
-        name: "",
-        image: "",
-        price: 0n
-    }));
-
     return(
         <NavbarLayout>
             <div className="flex w-full px-20 py-10">
 
                 <div className="w-[40%] h-full">
-                    <img src={product?.image}/>
+                    {/* <img src={product?.image}/> */}
                 </div>
 
                 <div className="flex flex-col justify-between w-full mx-10">
@@ -30,8 +22,8 @@ const ProductDetail: React.FC = () => {
                         </div>
         
                         <div className="mb-32">
-                            <p className="text-4xl font-bold">{product?.name}</p>
-                            {/* <p className="text-2xl">IDR. {product?.price}</p> */}
+                            {/* <p className="text-4xl font-bold">{product?.name}</p> */}
+                            {/* <p className="text-2xl">Rp. {product?.price}</p> */}
                         </div>
                     </div>
 

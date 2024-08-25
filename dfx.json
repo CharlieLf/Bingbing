@@ -14,6 +14,20 @@
         "node_compatibility": true
       }
     },
+    "cart": {
+      "type": "motoko",
+      "main": "backend/cart/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
+    "transaction": {
+      "type": "motoko",
+      "main": "backend/transaction/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
     "internet-identity": {
       "type": "pull",
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
@@ -26,12 +40,11 @@
       }
     },
     "frontend": {
-      "dependencies": ["token", "product"],
+      "dependencies": ["user", "token", "product"],
       "type": "assets",
       "source": ["dist/"]
     }
   },
-  
   "defaults": {
     "build": {
       "packtool": "npm run --silent sources"

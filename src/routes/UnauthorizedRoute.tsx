@@ -5,10 +5,10 @@ interface Props {
     children: React.ReactNode;
 }
 
-const ProtectedRoute: React.FC<Props> = ({ children }) => {
+const UnauthorizedRoute: React.FC<Props> = ({ children }) => {
     const { user } = useAuthContext();
     if (user === undefined) return <div>Loading...</div>;
-    return user ? children : <Navigate to="/login" replace />;
+    return user ? <Navigate to="/" replace /> : children;
 };
 
-export default ProtectedRoute;
+export default UnauthorizedRoute;

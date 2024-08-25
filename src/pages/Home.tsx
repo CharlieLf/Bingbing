@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import NavbarLayout from '@layouts/NavbarLayout';
 import CategoryBar from '@components/CategoryBar';
-import ProductCard from '@components/ProductCard';
 import { CategoryType } from '@models/category';
-// import useProduct from '@hooks/useProduct';
-// import { useTokenQuery } from '@actors/tokenActor'; 
-import { useAuth } from '@ic-reactor/react';
+import { getAllProductsQuery } from '@/services/productService';
+import ProductCard from '@components/ProductCard';
+import useAuthContext from '@hooks/useAuthContext';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
 const Home: React.FC = () => {
-    const [category, setCategory] = useState<CategoryType>(CategoryType.All);
     const [sort, setSort] = useState<string>(sortOptions[0]);
-    // const { products } = useProduct();
-
-    // const { data: count, call: getBalance } = useTokenQuery({
-    //     functionName: 'balance',
-    //   });
-
-
-    // useEffect(() => {
-    //     getBalance();
-    // }, [])
+    const [category, setCategory] = useState<CategoryType>(CategoryType.All);
+    const { products, getAllProducts } = getAllProductsQuery();
+    const { logout } = useAuthContext();
 
     return (
         <NavbarLayout>
@@ -41,9 +32,10 @@ const Home: React.FC = () => {
                 </select>
             </div>
             <div className="grid grid-cols-5 gap-x-[3.5%] gap-y-8 px-[2.5%] w-full">
-                {/* {products.map((product, index) => (
-                    <ProductCard key={index} product={product} />
-                ))} */}
+                <button onClick={() => logout()}>logout</button>
+                {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
             </div>
         </NavbarLayout>
     );

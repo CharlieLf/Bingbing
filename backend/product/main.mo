@@ -16,23 +16,32 @@ actor {
   public shared ({ caller }) func createProduct(
     _name : Text,
     _price : Nat64,
+    _stock : Nat64,
     _description : Text,
     _image : Blob,
   ) : async Result<(), Text> {
-    let product = Utils._createProduct(size, _name, _price, _description, _image, Principal.toText(caller));
+    let product = Utils._createProduct(size, _name, _price, _stock, _description, _image, Principal.toText(caller));
     products.put(size, product);
     size += 1;
     return #ok();
   };
 
-  public shared ({ caller }) func updateProduct(p : Product) : async Result<(), Text> {
-    let oldProduct : ?Product = products.get(p.id);
+  public shared ({ caller }) func updateProduct(
+    _id : Nat64,
+    _name : Text,
+    _price : Nat64,
+    _stock : Nat64,
+    _description : Text,
+    _owner : Text,
+    _image : Blob,
+  ) : async Result<(), Text> {
+    let oldProduct : ?Product = products.get(_id);
     switch (oldProduct) {
       case (?value) {
         if (value.owner != Principal.toText(caller)) {
           return #err("Unauthorized");
         };
-        products.put(p.id, p);
+        products.put(_id, Utils._createProduct(_id, _name, _price, _stock, _description, _image, _owner));
         return #ok();
       };
       case null {
@@ -41,7 +50,9 @@ actor {
     };
   };
 
-  public shared ({ caller }) func deleteProduct(key : Nat64) : async Result<(), Text> {
+  public shared ({ caller }) func deleteProduct(
+    key : Nat64
+  ) : async Result<(), Text> {
     switch (products.get(key)) {
       case null {
         return #err("Product not found");
@@ -56,7 +67,9 @@ actor {
     };
   };
 
-  public shared query func getProduct(key : Nat64) : async ?Product {
+  public shared query func getProduct(
+    key : Nat64
+  ) : async ?Product {
     products.get(key);
   };
 
@@ -64,7 +77,9 @@ actor {
     return Iter.toArray(products.vals());
   };
 
-  public shared query func getProductsByOwner(owner : Text) : async [Product] {
+  public shared query func getProductsByOwner(
+    owner : Text
+  ) : async [Product] {
     return Iter.toArray(
       Iter.filter(
         products.vals(),

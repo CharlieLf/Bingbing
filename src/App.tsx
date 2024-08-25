@@ -1,27 +1,30 @@
 import '@/output.css';
-import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouteObject, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import Home from '@pages/Home';
 import Login from '@pages/Login';
 import Profile from '@pages/Profile';
 import Register from '@pages/Register';
-import ProtectedRoute from './routes/ProtectedRoute';
 import AddProduct from '@pages/AddProduct';
 import ProductDetail from '@pages/ProductDetail';
-import UpdateProduct from '@pages/UpdateProduct';
+import ProtectedRoute from './routes/ProtectedRoute';
+import UnauthorizedRoute from './routes/UnauthorizedRoute';
+import { AuthProvider } from './contexts/AuthContext';
+import { AgentProvider } from '@ic-reactor/react';
+import { createAgentManager } from '@ic-reactor/react/dist/core';
+import { ServiceContextProvider } from './contexts/ServiceContext';
 import TryOn from '@pages/TryOn';
 import Carts from '@pages/Cart';
 import Favorite from '@pages/Favorite';
 import Checkout from '@pages/CheckOut';
-import History from '@pages/History';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
-    <Route key="login" path="/login" element={<Login />} />,
-    <Route key="register" path="/register" element={<Register />} />,
+    <Route key="login" path="/login" element={<UnauthorizedRoute><Login /></UnauthorizedRoute>} />,
+    <Route key="register" path="/register" element={<UnauthorizedRoute><Register /></UnauthorizedRoute>} />,
+
     <Route key="home" path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />,
     <Route key="profile" path="/profile/:principal" element={<ProtectedRoute><Profile /></ProtectedRoute>} />,
-    <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct/></ProtectedRoute>} />,
-    <Route key="updateProduct" path="/updateProduct/:id" element={<ProtectedRoute><UpdateProduct /></ProtectedRoute>} />,
+    <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />,
     <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
     <Route key="tryon" path="/tryon/:id" element={<ProtectedRoute><TryOn /></ProtectedRoute>} />,
     <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
@@ -31,8 +34,22 @@ const router = createBrowserRouter(
   ]),
 );
 
+// const test = createBrowserRouter([
+//   { path: '/test', element: <Test /> }
+// ])
+
 export default function App() {
+  const agentManager = createAgentManager({
+    host: "http://localhost:4943"
+  });
+
   return (
-    <RouterProvider router={router} />
+    <AgentProvider withProcessEnv agentManager={agentManager}>
+      <ServiceContextProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </ServiceContextProvider>
+    </AgentProvider>
   );
 }
