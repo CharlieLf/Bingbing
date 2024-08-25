@@ -8,8 +8,8 @@ const Favorite: React.FC = () => {
             <p className="self-start px-20 text-3xl font-medium">Favorite</p>
 
             <div className="w-full py-5 px-20">
-                {/* Fetch Favorite Product */}
-                <ShopCard>
+                {/* Notes: Fetch Favorite Product */}
+                <ShopCard checkbox="false">
                     <ButtonSmall text="View Detail"/>
                 </ShopCard>
 

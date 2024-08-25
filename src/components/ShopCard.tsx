@@ -3,20 +3,25 @@ import image from "../assets/product/register.jpg";
 
 interface Props {
     children: React.ReactNode;
+    checkbox: string;
 }
 
-const ShopCard: React.FC<Props> = ({children}) => {
+const ShopCard: React.FC<Props> = ({children, checkbox}) => {
 
     return(
         <div className="">
-            <div className="flex border border-gray-200 px-5 py-2">
-                <input type="checkbox" className="mr-3"/>
+            <div className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2">
+                {checkbox === "true" && 
+                    <input type="checkbox" className="mr-3"/>
+                }
                 <p className="font-medium">Owner</p>
             </div>
 
-            {/* Fetch Product per Shop */}
-            <div className="flex border border-gray-200 px-5 py-2">
-                <input type="checkbox" className="mr-3"/>
+            {/* Notes : Fetch Product per Shop */}
+            <div className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2">
+                {checkbox === "true" && 
+                    <input type="checkbox" className="mr-3"/>
+                }
                 
                 <div className="flex w-full py-3">
                     <img src={image} width={200} className="mr-10"/>
