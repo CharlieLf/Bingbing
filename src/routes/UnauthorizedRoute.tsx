@@ -1,5 +1,4 @@
 import useAuthContext from "@hooks/useAuthContext";
-import { useAuth } from "@ic-reactor/react";
 import { Navigate } from "react-router-dom";
 
 interface Props {

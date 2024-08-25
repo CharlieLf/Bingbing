@@ -1,5 +1,5 @@
 import '@/output.css';
-import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouteObject, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import Home from '@pages/Home';
 import Login from '@pages/Login';
 import Profile from '@pages/Profile';
@@ -9,6 +9,9 @@ import ProductDetail from '@pages/ProductDetail';
 import ProtectedRoute from './routes/ProtectedRoute';
 import UnauthorizedRoute from './routes/UnauthorizedRoute';
 import { AuthProvider } from './contexts/AuthContext';
+import { AgentProvider } from '@ic-reactor/react';
+import { createAgentManager } from '@ic-reactor/react/dist/core';
+import { ServiceContextProvider } from './contexts/ServiceContext';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -22,10 +25,22 @@ const router = createBrowserRouter(
   ]),
 );
 
+// const test = createBrowserRouter([
+//   { path: '/test', element: <Test /> }
+// ])
+
 export default function App() {
+  const agentManager = createAgentManager({
+    host: "http://localhost:4943"
+  });
+
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <AgentProvider withProcessEnv agentManager={agentManager}>
+      <ServiceContextProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </ServiceContextProvider>
+    </AgentProvider>
   );
 }
