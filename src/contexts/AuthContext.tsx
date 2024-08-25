@@ -1,13 +1,15 @@
-import useToken from "@hooks/useToken";
-import useUser from "@hooks/useUser";
-import { useAuth } from "@ic-reactor/react";
+import { getBalanceQuery } from "@/services/tokenService";
+import { getUserQuery } from "@/services/userService";
+import useServiceContext from "@hooks/useServiceContext";
+import { useAgentManager, useAuth } from "@ic-reactor/react";
 import User from "@models/user";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect } from "react";
 
 interface AuthContextProps {
     user: User | null | undefined;
-    fetchUser: () => Promise<void>;
     balance: number;
+    login: () => Promise<void>;
+    logout: () => Promise<void>;
 }
 
 interface Props {
@@ -16,48 +18,34 @@ interface Props {
 
 const AuthContext = createContext<AuthContextProps>({
     user: undefined,
-    fetchUser: async () => { },
-    balance: 0
+    balance: 0,
+    login: async () => undefined,
+    logout: async () => undefined
 });
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
-    const { logout } = useAuth();
-    const { getUser } = useUser().getUser();
-    const [user, setUser] = useState<User | null | undefined>(undefined);
-    const [balance, setBalance] = useState(0);
-    const { getBalance } = useToken().getBalance();
+    const { authenticating } = useServiceContext();
+    const { user, getUser, getUserLoading } = getUserQuery();
+    const { balance, getBalance } = getBalanceQuery();
+    const { login, logout } = useAgentManager();
 
-    async function fetchUser() {
-        try {
-            const result = await getUser();
-            if (!result || 'err' in result) {
-                await logout();
-                setUser(null);
-                return
-            }
-            setUser(User.castToUser(result.ok));
-            // getBalance().then(res => {
-            // if (!res || 'err' in res) {
-            //     await logout();
-            //     setUser(null);
-            //     console.log('an unknown error occured');
-
-            //     return;
-            // }
-            // setBalance(Number(res.ok));
-            // })
-        } catch (error) {
-            await logout();
-            setUser(null);
-        }
+    const fetchUser = async () => {
+        await getUser();
     }
 
     useEffect(() => {
-        if (user === undefined) fetchUser();
-    }, [])
+        if (!authenticating && !getUserLoading) {
+            fetchUser();
+        }
+    }, [authenticating]);
 
     return (
-        <AuthContext.Provider value={{ user, fetchUser, balance }}>
+        <AuthContext.Provider value={{
+            user,
+            balance,
+            login,
+            logout
+        }}>
             {children}
         </AuthContext.Provider>
     );

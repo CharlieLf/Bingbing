@@ -4,9 +4,9 @@ import registerImage from '../assets/product/register.jpg';
 import Input from '@components/Input';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import useUser from '@hooks/useUser';
-import { useAuth } from '@ic-reactor/react';
+import { useAgentManager, useAuth } from '@ic-reactor/react';
 import useAuthContext from "@hooks/useAuthContext";
+import { createUserQuery, getUserQuery } from "@/services/userService";
 
 const Register: React.FC = () => {
     const [name, setName] = useState<string>('');
@@ -16,17 +16,9 @@ const Register: React.FC = () => {
     const [address, setAddress] = useState<string>('');
     const [error, setError] = useState<string>('');
 
-    const { fetchUser } = useAuthContext();
-    const { createUser } = useUser().createUser(name, email, phoneNumber, BigInt(dob?.getTime() ?? Date.now()), address);
-    const { login } = useAuth({
-        onLoginSuccess: async () => {
-            await createUser();
-            await fetchUser();
-        },
-        onLoginError: () => {
-            setError("Please choose an internet identity to sign up");
-        }
-    })
+    const { getUser } = getUserQuery();
+    const { createUser } = createUserQuery(name, email, phoneNumber, BigInt(dob?.getTime() ?? Date.now()), address);
+    const { login } = useAuthContext();
 
     async function handleRegister(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
@@ -36,6 +28,16 @@ const Register: React.FC = () => {
                 return;
             }
             await login();
+            const result = await createUser();
+            if (!result) {
+                setError('Registration failed');
+                return;
+            }
+            if ('err' in result) {
+                setError('User already exists');
+                return;
+            }
+            await getUser();
         } catch (e: any) {
             setError(e.message);
         }

@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react';
 import NavbarLayout from '@layouts/NavbarLayout';
 import CategoryBar from '@components/CategoryBar';
 import { CategoryType } from '@models/category';
+import { getAllProductsQuery } from '@/services/productService';
+import ProductCard from '@components/ProductCard';
+import useAuthContext from '@hooks/useAuthContext';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
 const Home: React.FC = () => {
     const [sort, setSort] = useState<string>(sortOptions[0]);
     const [category, setCategory] = useState<CategoryType>(CategoryType.All);
+    const { products, getAllProducts } = getAllProductsQuery();
+    const { logout } = useAuthContext();
 
     return (
         <NavbarLayout>
@@ -27,6 +32,10 @@ const Home: React.FC = () => {
                 </select>
             </div>
             <div className="grid grid-cols-5 gap-x-[3.5%] gap-y-8 px-[2.5%] w-full">
+                <button onClick={() => logout()}>logout</button>
+                {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
             </div>
         </NavbarLayout>
     );
