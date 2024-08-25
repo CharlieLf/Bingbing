@@ -16,6 +16,7 @@ import TryOn from '@pages/TryOn';
 import Carts from '@pages/Cart';
 import Favorite from '@pages/Favorite';
 import Checkout from '@pages/CheckOut';
+import History from '@pages/History';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -33,10 +34,6 @@ const router = createBrowserRouter(
     <Route key="history" path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />,
   ]),
 );
-
-// const test = createBrowserRouter([
-//   { path: '/test', element: <Test /> }
-// ])
 
 export default function App() {
   const agentManager = createAgentManager({

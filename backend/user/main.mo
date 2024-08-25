@@ -13,7 +13,7 @@ actor {
     type User = Types.User; 
 
     let tokenActor = actor "c2lt4-zmaaa-aaaaa-qaaiq-cai" : TokenActorModules.TokenActor;
-    let users = HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
+    var users = HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
 
     public shared ({caller}) func createUser(user: User) : async Result<(), Text> {
         
