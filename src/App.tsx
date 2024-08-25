@@ -30,12 +30,9 @@ const router = createBrowserRouter(
 // ])
 
 export default function App() {
-  const agentManager = createAgentManager({
-    host: "http://localhost:4943"
-  });
 
   return (
-    <AgentProvider withProcessEnv agentManager={agentManager}>
+    <AgentProvider withProcessEnv>
       <ServiceContextProvider>
         <AuthProvider>
           <RouterProvider router={router} />

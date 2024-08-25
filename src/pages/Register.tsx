@@ -16,9 +16,8 @@ const Register: React.FC = () => {
     const [address, setAddress] = useState<string>('');
     const [error, setError] = useState<string>('');
 
-    const { getUser } = getUserQuery();
     const { createUser } = createUserQuery(name, email, phoneNumber, BigInt(dob?.getTime() ?? Date.now()), address);
-    const { login } = useAuthContext();
+    const { login, fetchUser} = useAuthContext();
 
     async function handleRegister(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
@@ -37,7 +36,7 @@ const Register: React.FC = () => {
                 setError('User already exists');
                 return;
             }
-            await getUser();
+            await fetchUser();
         } catch (e: any) {
             setError(e.message);
         }
