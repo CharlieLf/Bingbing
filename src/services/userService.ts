@@ -12,7 +12,7 @@ export function getUserQuery() {
     return { getUser, getUserLoading };
 }
 
-export function createUserQuery() {
+export function createUserUpdate() {
     const { useUpdateCall: userUpdate } = useServiceContext().userService;
 
     const { call: createUser } = userUpdate({
@@ -20,4 +20,14 @@ export function createUserQuery() {
     });
 
     return { createUser };
+}
+
+export function editUserUpdate() {
+    const { useUpdateCall: userUpdate } = useServiceContext().userService;
+
+    const { call: editUser } = userUpdate({
+        functionName: "updateUser",
+    });
+
+    return { editUser };
 }

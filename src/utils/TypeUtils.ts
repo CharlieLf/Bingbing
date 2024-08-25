@@ -17,4 +17,22 @@ export default class TypeUtils {
             reader.readAsArrayBuffer(blob);
         });
     };
+
+    static async fetchUint8ArrayFromUrl(url: string) {
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            return uint8Array;
+        } catch (error) {
+            console.error('Error fetching Uint8Array:', error);
+        }
+    }
 }

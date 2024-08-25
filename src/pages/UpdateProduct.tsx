@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@ic-reactor/react";
 import defaultImage from "@assets/product/register.jpg";
 import Product from "@models/product";
+import TypeUtils from "@utils/typeUtils";
 
 const UpdateProduct: React.FC = () => {
     const { id } = useParams();
@@ -37,24 +38,6 @@ const UpdateProduct: React.FC = () => {
             imageInput.current.click();
         }
     };
-
-    async function fetchUint8ArrayFromUrl(url: string) {
-        try {
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-
-            const arrayBuffer = await response.arrayBuffer();
-
-            const uint8Array = new Uint8Array(arrayBuffer);
-
-            return uint8Array;
-        } catch (error) {
-            console.error('Error fetching Uint8Array:', error);
-        }
-    }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -113,7 +96,7 @@ const UpdateProduct: React.FC = () => {
         setSelectedSeason(product.season);
         setSelectedType(product.clothingType);
         setImageUrl(product.image);
-        setImage(await fetchUint8ArrayFromUrl(product.image) ?? new Uint8Array());
+        setImage(await TypeUtils.fetchUint8ArrayFromUrl(product.image) ?? new Uint8Array());
     }
 
     useEffect(() => {

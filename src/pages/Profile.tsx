@@ -1,4 +1,5 @@
 import { deleteProductUpdate, getProductsByOwnerQuery } from "@/services/productService";
+import IconPerson from "@assets/icons/IconPerson";
 import IconWallet from "@assets/icons/IconWallet";
 import ButtonSmall from "@components/ButtonSmall";
 import DeleteProductModal from "@components/DeleteProductModal";
@@ -25,6 +26,14 @@ const Profile: React.FC = () => {
 
     async function handleDeleteProduct() {
         const result = await deleteProduct([BigInt(selectedProduct?.id ?? 0)]);
+        if (!result) {
+            console.log("Failed to delete product");
+            return
+        }
+        if ('err' in result) {
+            console.log(result.err);
+            return
+        }
         if (result) {
             await fetchProductsByOwner();
             setSelectedProduct(undefined);
@@ -46,7 +55,9 @@ const Profile: React.FC = () => {
                 <div className="w-screen px-[2.5%] py-2">
                     <div className="flex justify-between items-center gap-5">
                         <div className="flex gap-10">
-                            {<img className="size-32 object-cover rounded-full border border-gray-400" src={""} alt="profile image" />}
+                            <div className="size-32 rounded-full border border-gray-400 overflow-hidden flex items-end justify-center">
+                                {user?.image ? <img className="w-full h-full object-cover" src={user?.image} /> : <IconPerson width="80%" height="80%" />}
+                            </div>
                             <div>
                                 <p className="text-[32px] font-semibold">{user?.name}</p>
                                 <div className="flex gap-5 items-center">
