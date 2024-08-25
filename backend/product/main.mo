@@ -17,10 +17,13 @@ actor {
     _name : Text,
     _price : Nat64,
     _stock : Nat64,
-    _description : Text,
     _image : Blob,
+    _gender : Text,
+    _season : Text,
+    _clothingType : Text,
+    _clothing : Text,
   ) : async Result<(), Text> {
-    let product = Utils._createProduct(size, _name, _price, _stock, _description, _image, Principal.toText(caller));
+    let product = Utils._createProduct(size, _name, _price, _stock, _image, Principal.toText(caller), _gender, _season, _clothingType, _clothing);
     products.put(size, product);
     size += 1;
     return #ok();
@@ -31,9 +34,11 @@ actor {
     _name : Text,
     _price : Nat64,
     _stock : Nat64,
-    _description : Text,
-    _owner : Text,
     _image : Blob,
+    _gender : Text,
+    _season : Text,
+    _clothingType : Text,
+    _clothing : Text,
   ) : async Result<(), Text> {
     let oldProduct : ?Product = products.get(_id);
     switch (oldProduct) {
@@ -41,7 +46,7 @@ actor {
         if (value.owner != Principal.toText(caller)) {
           return #err("Unauthorized");
         };
-        products.put(_id, Utils._createProduct(_id, _name, _price, _stock, _description, _image, _owner));
+        products.put(_id, Utils._createProduct(_id, _name, _price, _stock, _image, Principal.toText(caller), _gender, _season, _clothingType, _clothing));
         return #ok();
       };
       case null {

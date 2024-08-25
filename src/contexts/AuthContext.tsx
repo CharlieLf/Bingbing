@@ -12,7 +12,7 @@ interface AuthContextProps {
     balance: number;
     login: (options?: AuthClientLoginOptions) => Promise<void>;
     getIdentity: () => Promise<void>;
-    removeIdentity: () => Promise<void>;
+    logout: () => Promise<void>;
     fetchUser: () => Promise<void>;
 }
 
@@ -26,7 +26,7 @@ const AuthContext = createContext<AuthContextProps>({
     balance: 0,
     login: async () => undefined,
     getIdentity: async () => undefined,
-    removeIdentity: async () => undefined,
+    logout: async () => undefined,
     fetchUser: async () => undefined
 });
 
@@ -45,8 +45,13 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
             return;
         }
         setUser(User.castToUser(result.ok));
+        // await getBalance();
     }
-
+    
+    const handleLogout = async () => {
+        await logout();
+        setUser(null);
+    }
 
     useEffect(() => {
         if (user === undefined && !getUserLoading && !authenticating) {
@@ -61,7 +66,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
             balance,
             getIdentity: login,
             login,
-            removeIdentity: logout,
+            logout: handleLogout,
             fetchUser
         }}>
             {children}

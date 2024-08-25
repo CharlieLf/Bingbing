@@ -10,13 +10,13 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import UnauthorizedRoute from './routes/UnauthorizedRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { AgentProvider } from '@ic-reactor/react';
-import { createAgentManager } from '@ic-reactor/react/dist/core';
 import { ServiceContextProvider } from './contexts/ServiceContext';
 import TryOn from '@pages/TryOn';
 import Carts from '@pages/Cart';
 import Favorite from '@pages/Favorite';
 import Checkout from '@pages/CheckOut';
 import History from '@pages/History';
+import UpdateProduct from '@pages/UpdateProduct';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -27,6 +27,7 @@ const router = createBrowserRouter(
     <Route key="profile" path="/profile/:principal" element={<ProtectedRoute><Profile /></ProtectedRoute>} />,
     <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />,
     <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
+    <Route key="editProduct" path="/editProduct/:id" element={<ProtectedRoute><UpdateProduct /></ProtectedRoute>} />,
     <Route key="tryon" path="/tryon/:id" element={<ProtectedRoute><TryOn /></ProtectedRoute>} />,
     <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
     <Route key="favorite" path="/favorite" element={<ProtectedRoute><Favorite /></ProtectedRoute>} />,

@@ -7,7 +7,6 @@ import TokenActorModules "../token/interface"
 
 actor {
 
-
     type Result<Ok, Error> = Types.Result<Ok, Error>;
     type HashMap<K, V> = Types.HashMap<K, V>;
     type User = Types.User; 

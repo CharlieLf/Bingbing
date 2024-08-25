@@ -1,20 +1,90 @@
 import Input from "@components/Input";
-import image from "../assets/product/register.jpg";
-import { useState } from "react";
+import defaultImage from "../assets/product/register.jpg";
+import { useRef, useState } from "react";
 import CategoryField from "@components/CategoryField";
 import IconArrowBack from "@assets/icons/IconArrowBack";
 import NavbarIcon from "@components/NavbarIcon";
+import { ClothingType, Gender, genderSelection, Season, seasonSelection, typeSelection } from "@models/category";
+import { createProductUpdate } from "@/services/productService";
+import { useAuth } from "@ic-reactor/react";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct: React.FC = () => {
+    const { identity } = useAuth();
+    const navigate = useNavigate();
     const [productName, setProductName] = useState<string>('');
-    const [price, setPrice] = useState<string>('');
-    const [stock, setStock] = useState<string>('');
+    const [price, setPrice] = useState<number>(0);
+    const [stock, setStock] = useState<number>(0);
+    const [image, setImage] = useState<Uint8Array>(new Uint8Array());
 
-    return(
+    const [selectedGender, setSelectedGender] = useState<Gender>(genderSelection[0]);
+    const [selectedSeason, setSelectedSeason] = useState<Season>(seasonSelection[0]);
+    const [selectedType, setSelectedType] = useState<ClothingType>(typeSelection[0]);
+    const [selectedClothing, setSelectedClothing] = useState<string | undefined>();
+
+    const [imageUrl, setImageUrl] = useState<string>(defaultImage);
+    const imageInput = useRef<HTMLInputElement>(null);
+    const { createProduct } = createProductUpdate(productName, price, stock, image, selectedGender, selectedSeason, selectedType, selectedClothing);
+
+    const [error, setError] = useState<string>('');
+
+    const handleImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        if (imageInput.current) {
+            imageInput.current.click();
+        }
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                if (reader.result) {
+                    const arrayBuffer = reader.result as ArrayBuffer;
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    setImage(uint8Array);
+                    setImageUrl(URL.createObjectURL(file));
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!productName || !price || !stock || image === new Uint8Array() || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
+            setError('Please fill all fields');
+            return;
+        }
+        try {
+            const result = await createProduct();
+            if (result) {
+                setProductName('');
+                setPrice(0);
+                setStock(0);
+                setImage(new Uint8Array());
+                setSelectedClothing(undefined);
+                setSelectedGender(genderSelection[0]);
+                setSelectedSeason(seasonSelection[0]);
+                setSelectedType(typeSelection[0]);
+                setImageUrl(defaultImage);
+                setError('');
+            }
+        } catch (_) {
+            setError('Failed to add product');
+        }
+    }
+
+    return (
         <div className="my-10 mx-20">
             <div className="flex flex-row items-center mb-10">
                 <div className="mr-5">
-                    <NavbarIcon to="/profile/:principal" icon={<IconArrowBack/>}/>
+                    <button className="flex size-6 cursor-pointer items-center justify-center"
+                        onClick={() => navigate(-1)}>
+                        <IconArrowBack />
+                    </button>
                 </div>
                 <p className="text-3xl">Add Product</p>
             </div>
@@ -22,28 +92,37 @@ const AddProduct: React.FC = () => {
             <div className="flex">
                 <div className="w-[40%] mr-10">
                     <div className="mb-5">
-                        <img src={image}/>
+                        <img src={imageUrl} alt="Product" />
                     </div>
-                    <button className="w-full border-black border p-5">Add Image</button>
+                    <button onClick={handleImage} className="w-full border-black border p-5">Add Image</button>
                 </div>
 
                 <div className="w-full">
                     <div className="space-y-4">
-                        <Input label="Product Name" data={productName} inputOnChange={(e) => {setProductName(e.target.value)}}/>
-                        <Input label="Price" data={price} inputOnChange={(e) => {setPrice(e.target.value)}}/>
-                        <Input label="Stock" data={stock} inputOnChange={(e) => {setStock(e.target.value)}}/>
+                        <Input label="Product Name" data={productName} inputOnChange={(e) => setProductName(e.target.value)} />
+                        <Input label="Price" data={price} inputOnChange={(e) => setPrice(Number(e.target.value))} />
+                        <Input label="Stock" data={stock} inputOnChange={(e) => setStock(Number(e.target.value))} />
                         <div>
                             <label>Category</label>
-
-                            <CategoryField/>
+                            <CategoryField selectedClothing={selectedClothing} selectedGender={selectedGender} selectedSeason={selectedSeason} selectedType={selectedType}
+                                setSelectedClothing={setSelectedClothing} setSelectedGender={setSelectedGender} setSelectedSeason={setSelectedSeason} setSelectedType={setSelectedType}
+                            />
                         </div>
                     </div>
 
-                    <button className="w-full mt-5 p-4 bg-black border-black border text-white">Add Product</button>
+                    <p className="text-xs min-h-4 text-red-500 mt-3">{error}</p>
+
+                    <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Add Product</button>
                 </div>
             </div>
+            <input
+                onChange={handleImageChange}
+                className="hidden"
+                type="file"
+                ref={imageInput}
+            />
         </div>
-    )
-}
+    );
+};
 
 export default AddProduct;
