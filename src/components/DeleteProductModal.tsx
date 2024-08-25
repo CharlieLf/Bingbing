@@ -19,8 +19,8 @@ const DeleteProductModal: React.FC<Props> = ({ product, onClose, handleDeletePro
                         <p>This action can't be undone.</p>
                     </div>
                     <div className="flex gap-4 w-full justify-end">
-                        <ButtonSmall onclick={handleDeleteProduct} text="Yes" variant="secondary" />
                         <ButtonSmall onclick={onClose} text="No" />
+                        <ButtonSmall onclick={handleDeleteProduct} text="Yes" variant="secondary" />
                     </div>
                 </div>
             </div>

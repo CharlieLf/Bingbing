@@ -8,10 +8,11 @@ import { getProductQuery } from "@/services/productService";
 
 const ProductDetail: React.FC = () => {
     let { id } = useParams();
-    const { product, getProduct } = getProductQuery(Number.parseInt(id ?? '0'));
+    const { product, getProduct } = getProductQuery();
 
     async function fetchProductData() {
-        await getProduct();
+        if (!id) return;
+        await getProduct([BigInt(Number.parseInt(id))]);
     }
 
     useEffect(() => {

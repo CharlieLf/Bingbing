@@ -10,13 +10,15 @@ interface Props {
 const ProfileProductCard: React.FC<Props> = ({ product, handleDelete }) => {
     return (
         <div className="w-full flex p-4 shadow-md mb-4  gap-x-8">
-            <div className="w-[200px] h-[200px] flex-shrink-0">
-                <img
-                    className="w-full h-full object-cover"
-                    src={product.image}
-                    alt={product.name}
-                />
-            </div>
+            <Link to={`/productDetail/${product.id}`}>
+                <div className="w-[200px] h-[200px] flex-shrink-0 cursor-pointer">
+                    <img
+                        className="w-full h-full object-cover"
+                        src={product.image}
+                        alt={product.name}
+                    />
+                </div>
+            </Link>
             <div className="flex flex-col p-4 justify-between w-full">
                 <div>
                     <div className="flex justify-between">

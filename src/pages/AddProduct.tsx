@@ -3,14 +3,11 @@ import defaultImage from "../assets/product/register.jpg";
 import { useRef, useState } from "react";
 import CategoryField from "@components/CategoryField";
 import IconArrowBack from "@assets/icons/IconArrowBack";
-import NavbarIcon from "@components/NavbarIcon";
 import { ClothingType, Gender, genderSelection, Season, seasonSelection, typeSelection } from "@models/category";
 import { createProductUpdate } from "@/services/productService";
-import { useAuth } from "@ic-reactor/react";
 import { useNavigate } from "react-router-dom";
 
 const AddProduct: React.FC = () => {
-    const { identity } = useAuth();
     const navigate = useNavigate();
     const [productName, setProductName] = useState<string>('');
     const [price, setPrice] = useState<number>(0);
@@ -24,7 +21,7 @@ const AddProduct: React.FC = () => {
 
     const [imageUrl, setImageUrl] = useState<string>(defaultImage);
     const imageInput = useRef<HTMLInputElement>(null);
-    const { createProduct } = createProductUpdate(productName, price, stock, image, selectedGender, selectedSeason, selectedType, selectedClothing);
+    const { createProduct } = createProductUpdate();
 
     const [error, setError] = useState<string>('');
 
@@ -59,7 +56,7 @@ const AddProduct: React.FC = () => {
             return;
         }
         try {
-            const result = await createProduct();
+            const result = await createProduct([productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType, selectedClothing!]);
             if (result) {
                 setProductName('');
                 setPrice(0);
@@ -71,6 +68,7 @@ const AddProduct: React.FC = () => {
                 setSelectedType(typeSelection[0]);
                 setImageUrl(defaultImage);
                 setError('');
+                navigate(-1);
             }
         } catch (_) {
             setError('Failed to add product');

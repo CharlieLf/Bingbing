@@ -5,13 +5,14 @@ import { useAgentManager, useAuth } from "@ic-reactor/react";
 import { AuthClientLoginOptions } from "@ic-reactor/react/dist/types";
 import User from "@models/user";
 import { createContext, useEffect, useState } from "react";
+import { Identity } from "@dfinity/agent";
 
 interface AuthContextProps {
     user: User | null | undefined;
     setUser: (user: User | null | undefined) => void;
     balance: number;
     login: (options?: AuthClientLoginOptions) => Promise<void>;
-    getIdentity: () => Promise<void>;
+    getIdentity: () => Identity | null;
     logout: () => Promise<void>;
     fetchUser: () => Promise<void>;
 }
@@ -25,7 +26,7 @@ const AuthContext = createContext<AuthContextProps>({
     setUser: () => undefined,
     balance: 0,
     login: async () => undefined,
-    getIdentity: async () => undefined,
+    getIdentity: () => null,
     logout: async () => undefined,
     fetchUser: async () => undefined
 });
@@ -35,7 +36,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     const { authenticating } = useServiceContext();
     const { getUser, getUserLoading } = getUserQuery();
     const { balance, getBalance } = getBalanceQuery();
-    const { login, logout } = useAgentManager();
+    const { login, logout, getIdentity } = useAgentManager();
 
     const fetchUser = async () => {
         const result = await getUser();
@@ -64,10 +65,10 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
             user,
             setUser,
             balance,
-            getIdentity: login,
             login,
             logout: handleLogout,
-            fetchUser
+            fetchUser,
+            getIdentity
         }}>
             {children}
         </AuthContext.Provider>

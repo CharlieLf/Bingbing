@@ -4,9 +4,8 @@ import registerImage from '../assets/product/register.jpg';
 import Input from '@components/Input';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAgentManager, useAuth } from '@ic-reactor/react';
 import useAuthContext from "@hooks/useAuthContext";
-import { createUserQuery, getUserQuery } from "@/services/userService";
+import { createUserQuery } from "@/services/userService";
 import ValidationUtils from "@utils/validationUtils";
 
 const Register: React.FC = () => {
@@ -17,8 +16,8 @@ const Register: React.FC = () => {
     const [address, setAddress] = useState<string>('');
     const [error, setError] = useState<string>('');
 
-    const { createUser } = createUserQuery(name, email, phoneNumber, dob?.getTime(), address);
-    const { login, fetchUser } = useAuthContext();
+    const { createUser } = createUserQuery();
+    const { login, fetchUser, getIdentity } = useAuthContext();
 
     async function handleRegister(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
@@ -43,17 +42,22 @@ const Register: React.FC = () => {
                 setError('Address must be at least 4 characters long');
                 return;
             }
-            await login();
-            const result = await createUser();
-            if (!result) {
-                setError('Registration failed');
-                return;
-            }
-            if ('err' in result) {
-                setError('User already exists');
-                return;
-            }
-            await fetchUser();
+            await login({
+                onSuccess: async () => {
+                    const principal = getIdentity()?.getPrincipal();
+                    let result = null;
+                    if (principal) {
+                        result = await createUser([{ name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, [principal]]);
+                    } else {
+                        result = await createUser([{ name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, []]);
+                    }
+                    if (result && 'err' in result) {
+                        setError('User already exists');
+                        return;
+                    }
+                    await fetchUser();
+                },
+            });
         } catch (e: any) {
             setError(e.message);
         }

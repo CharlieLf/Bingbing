@@ -14,12 +14,11 @@ export function getAllProductsQuery() {
     return { products, getAllProducts };
 }
 
-export function getProductQuery(productId: number) {
+export function getProductQuery() {
     const { useQueryCall: productQuery } = useServiceContext().productService;
     const [product, setProduct] = useState<Product | undefined | null>(null);
     const { call: getProduct } = productQuery({
         functionName: "getProduct",
-        args: [BigInt(productId)],
         onSuccess: (productData) => {
             if (productData && productData.length === 1) {
                 setProduct(Product.castToProduct(productData[0]));
@@ -31,12 +30,11 @@ export function getProductQuery(productId: number) {
     return { product, getProduct };
 }
 
-export function getProductsByOwnerQuery(owner: string) {
+export function getProductsByOwnerQuery() {
     const { useQueryCall: productQuery } = useServiceContext().productService;
     const [products, setProducts] = useState<Product[]>([]);
     const { call: getProductsByOwner } = productQuery({
         functionName: "getProductsByOwner",
-        args: [owner],
         onSuccess: (productData) => setProducts(productData?.map(Product.castToProduct) ?? []),
         refetchOnMount: false
     });
@@ -44,31 +42,28 @@ export function getProductsByOwnerQuery(owner: string) {
     return { products, getProductsByOwner };
 }
 
-export function createProductUpdate(name: string, price: number, stock: number, image: Uint8Array, gender: string, season: string, clothingType: string, clothing: string = "") {
+export function createProductUpdate() {
     const { useUpdateCall: productUpdate } = useServiceContext().productService;
     const { call: createProduct } = productUpdate({
         functionName: "createProduct",
-        args: [name, BigInt(price), BigInt(stock), image, gender, season, clothingType, clothing!],
     })
 
     return { createProduct };
 }
 
-export function editProductUpdate(id: number, name: string, price: number, stock: number, image: Uint8Array, gender: string, season: string, clothingType: string, clothing: string = "") {
+export function editProductUpdate() {
     const { useUpdateCall: productUpdate } = useServiceContext().productService;
     const { call: editProduct } = productUpdate({
         functionName: "updateProduct",
-        args: [BigInt(id), name, BigInt(price), BigInt(stock), image, gender, season, clothingType, clothing!],
     })
 
     return { editProduct };
 }
 
-export function deleteProductUpdate(id: number) {
+export function deleteProductUpdate() {
     const { useUpdateCall: productUpdate } = useServiceContext().productService;
     const { call: deleteProduct } = productUpdate({
         functionName: "deleteProduct",
-        args: [BigInt(id)],
     })
 
     return { deleteProduct };

@@ -5,7 +5,7 @@ interface Props {
   setCategory: (category: string) => void;
 }
 
-const categories = ['All', 'Shirts', 'Pants', 'Shoes', 'Accessories'];
+const categories = ['All', 'Tops', 'Bottoms', 'Outerwear', 'Men', 'Women', 'Accessories'];
 
 const CategoryBar: React.FC<Props> = ({ category, setCategory }) => {
   return (

@@ -12,12 +12,11 @@ export function getUserQuery() {
     return { getUser, getUserLoading };
 }
 
-export function createUserQuery(name: string, email: string, phoneNumber: string, dob: number = Date.now(), address: string) {
+export function createUserQuery() {
     const { useUpdateCall: userUpdate } = useServiceContext().userService;
 
-    const {call: createUser} = userUpdate({
+    const { call: createUser } = userUpdate({
         functionName: "createUser",
-        args: [{name, email, phoneNumber, dateOfBirth: BigInt(dob!), address}],
     });
 
     return { createUser };

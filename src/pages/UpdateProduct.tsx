@@ -1,5 +1,4 @@
 import IconArrowBack from "@assets/icons/IconArrowBack"
-import NavbarIcon from "@components/NavbarIcon"
 import Input from "@components/Input";
 import { useEffect, useRef, useState } from "react";
 import CategoryField from "@components/CategoryField";
@@ -13,7 +12,7 @@ import Product from "@models/product";
 const UpdateProduct: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { product, getProduct } = getProductQuery(Number.parseInt(id ?? '0'));
+    const { product, getProduct } = getProductQuery();
     const { identity } = useAuth();
 
     const [productName, setProductName] = useState<string>('');
@@ -29,7 +28,7 @@ const UpdateProduct: React.FC = () => {
     const [imageUrl, setImageUrl] = useState<string>('');
     const imageInput = useRef<HTMLInputElement>(null);
 
-    const { editProduct } = editProductUpdate(Number.parseInt(id ?? '0'), productName, price, stock, image, selectedGender, selectedSeason, selectedType, selectedClothing ?? '');
+    const { editProduct } = editProductUpdate();
     const [error, setError] = useState<string>('');
 
     const handleImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -54,7 +53,6 @@ const UpdateProduct: React.FC = () => {
             return uint8Array;
         } catch (error) {
             console.error('Error fetching Uint8Array:', error);
-            throw error;
         }
     }
 
@@ -83,7 +81,7 @@ const UpdateProduct: React.FC = () => {
         }
         try {
             setError('');
-            const result = await editProduct();
+            const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedClothing, selectedType!]);
             if (result) {
                 setProductName('');
                 setPrice(0);
@@ -95,6 +93,7 @@ const UpdateProduct: React.FC = () => {
                 setSelectedType(typeSelection[0]);
                 setImageUrl(defaultImage);
                 setError('');
+                navigate(-1);
             }
         } catch (_) {
             setError('Failed to add product');
@@ -102,7 +101,7 @@ const UpdateProduct: React.FC = () => {
     }
 
     async function fetchProductData() {
-        await getProduct();
+        await getProduct([BigInt(Number(id ?? '0'))]);
     }
 
     async function updateFormData(product: Product) {
@@ -114,7 +113,7 @@ const UpdateProduct: React.FC = () => {
         setSelectedSeason(product.season);
         setSelectedType(product.clothingType);
         setImageUrl(product.image);
-        setImage(await fetchUint8ArrayFromUrl(product.image));
+        setImage(await fetchUint8ArrayFromUrl(product.image) ?? new Uint8Array());
     }
 
     useEffect(() => {
