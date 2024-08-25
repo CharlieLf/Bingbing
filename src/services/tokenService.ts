@@ -10,9 +10,13 @@ export function getBalanceQuery() {
         args: [],
         refetchOnMount: false,
         onSuccess: (result) => {
+            console.log(result);
+            
             if (!result || 'err' in result) {
                 throw new Error("Failed to get balance");
             }
+            console.log(result.ok);
+            
             setBalance(Number(result.ok));
         },
     })

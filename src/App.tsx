@@ -10,13 +10,13 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import UnauthorizedRoute from './routes/UnauthorizedRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { AgentProvider } from '@ic-reactor/react';
-import { createAgentManager } from '@ic-reactor/react/dist/core';
 import { ServiceContextProvider } from './contexts/ServiceContext';
 import TryOn from '@pages/TryOn';
 import Carts from '@pages/Cart';
 import Favorite from '@pages/Favorite';
 import Checkout from '@pages/CheckOut';
 import History from '@pages/History';
+import UpdateProfile from '@pages/UpdateProfile';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -27,21 +27,20 @@ const router = createBrowserRouter(
     <Route key="profile" path="/profile/:principal" element={<ProtectedRoute><Profile /></ProtectedRoute>} />,
     <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />,
     <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
+    <Route key="editProduct" path="/editProduct/:id" element={<ProtectedRoute><UpdateProfile /></ProtectedRoute>} />,
     <Route key="tryon" path="/tryon/:id" element={<ProtectedRoute><TryOn /></ProtectedRoute>} />,
     <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
     <Route key="favorite" path="/favorite" element={<ProtectedRoute><Favorite /></ProtectedRoute>} />,
     <Route key="checkout" path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />,
     <Route key="history" path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />,
+    <Route key="editProfile" path="/editProfile" element={<ProtectedRoute><UpdateProfile /></ProtectedRoute>} />,
   ]),
 );
 
 export default function App() {
-  const agentManager = createAgentManager({
-    host: "http://localhost:4943"
-  });
 
   return (
-    <AgentProvider withProcessEnv agentManager={agentManager}>
+    <AgentProvider withProcessEnv>
       <ServiceContextProvider>
         <AuthProvider>
           <RouterProvider router={router} />

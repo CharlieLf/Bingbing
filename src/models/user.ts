@@ -1,9 +1,12 @@
+import TypeUtils from "@utils/typeUtils";
+
 interface UserProps {
     name: string;
     email: string;
     phoneNumber: string;
     dateOfBirth: Date;
     address: string;
+    image: string;
 }
 
 interface UserData {
@@ -12,6 +15,7 @@ interface UserData {
     phoneNumber: string;
     dateOfBirth: bigint;
     address: string;
+    image: number[] | Uint8Array;
 }
 
 export default class User {
@@ -20,13 +24,15 @@ export default class User {
     phoneNumber: string;
     dateOfBirth: Date;
     address: string;
+    image: string;
 
-    constructor({ name, email, address, dateOfBirth, phoneNumber }: UserProps) {
+    constructor({ name, email, address, dateOfBirth, phoneNumber, image }: UserProps) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
+        this.image = image;
     }
 
     static castToUser(u: UserData): User {
@@ -36,6 +42,7 @@ export default class User {
             phoneNumber: u.phoneNumber,
             dateOfBirth: new Date(Number(u.dateOfBirth)),
             address: u.address,
+            image: TypeUtils.byteArrayToImageURL(u.image),
         });
     }
 }

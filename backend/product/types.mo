@@ -8,8 +8,12 @@ module {
         name : Text;
         price : Nat64;
         stock: Nat64;
-        description : Text;
         image : Blob;
         owner : Text;
+
+        gender : Text;
+        season: Text;
+        clothingType: Text;
+        clothing: Text;
     };
 }

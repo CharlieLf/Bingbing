@@ -1,10 +1,11 @@
 import CategoryChoice from './CategoryChoice';
-import categories, { CategoryType } from '@models/category';
 
 interface Props {
-  category: CategoryType;
-  setCategory: (category: CategoryType) => void;
+  category: string;
+  setCategory: (category: string) => void;
 }
+
+const categories = ['All', 'Tops', 'Bottoms', 'Outerwear', 'Men', 'Women', 'Accessories'];
 
 const CategoryBar: React.FC<Props> = ({ category, setCategory }) => {
   return (
