@@ -9,6 +9,7 @@ actor {
   let ledger = HashMap.HashMap<Principal, Nat>(0, Principal.equal, Principal.hash);
   type Result<Ok, Error> = Result.Result<Ok, Error>;
 
+
   public query ({ caller }) func balance() : async Result<Nat, Text> {
     switch (ledger.get(caller)) {
       case (?balance) {
@@ -20,18 +21,19 @@ actor {
     };
   };
 
-  public func mint(owner : Principal, amount : Nat) : async Result<(), Text> {
 
-    switch (ledger.get(owner)) {
-      case (?balance) {
-        ledger.put(owner, balance + amount);
-        #ok(());
-      };
-      case (null) {
-        ledger.put(owner, amount);
-        #ok(());
-      };
-    };
+    public func mint(owner : Principal, amount: Nat) : async Result<(), Text>{
+
+        switch(ledger.get(owner)){
+            case (?balance){
+                ledger.put(owner, balance + amount);
+                #ok(());
+            };
+            case (null){
+                ledger.put(owner, amount);
+                #ok(());
+            };
+        };
 
   };
 
