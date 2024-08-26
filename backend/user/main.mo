@@ -2,7 +2,8 @@ import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
 import Types "types";
-import TokenActorModules "../token/interface"
+import TokenActorModules "../token/interface";
+import CartActorModules "../cart/interface";
 
 actor {
 
@@ -11,7 +12,18 @@ actor {
   type User = Types.User;
 
   let tokenActor = actor "c2lt4-zmaaa-aaaaa-qaaiq-cai" : TokenActorModules.TokenActor;
+  let cartActor = actor "cgpjn-omaaa-aaaaa-qaakq-cai" : CartActorModules.CartActor;
+
   var users = HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
+
+    public shared ({caller}) func tesCreateWallet(amount: Nat) : async Result<(), Text> {
+        let _ = await tokenActor.mint(caller, amount);
+        return #ok();
+    };
+
+    public query func getAllUser(): async [Principal]{
+      return Iter.toArray(users.keys());
+    };
 
   public shared ({ caller }) func createUser(user : User, owner : ?Principal) : async Result<(), Text> {
     switch (owner) {
@@ -19,7 +31,9 @@ actor {
         switch (users.get(owner)) {
           case (null) {
             users.put(owner, user);
-            let _ = await tokenActor.mint(owner, 1000);
+            let mintRes = await tokenActor.mint(owner, 1000);
+            if(mintRes != #ok())return #err("Cannot mint token, ambiguous Identity");
+            cartActor.createCart(owner);
             return #ok();
           };
           case (?user) {
@@ -31,7 +45,9 @@ actor {
         switch (users.get(caller)) {
           case (null) {
             users.put(caller, user);
-            let _ = await tokenActor.mint(caller, 1000);
+            let mintRes = await tokenActor.mint(caller, 1000);
+            if(mintRes != #ok())return #err("Cannot mint token, ambiguous Identity");
+            cartActor.createCart(caller);
             return #ok();
           };
           case (?user) {
@@ -48,7 +64,7 @@ actor {
         return #ok(user);
       };
       case (null) {
-        return #err("User not found");
+        return #err("User not found : " # Principal.toText(caller));
       };
     };
   };

@@ -21,9 +21,9 @@ actor {
 
     let carts = HashMap.HashMap<Principal, UserCartItem>(0, Principal.equal, Principal.hash);
 
-    public shared ({caller}) func createCart() : (){
+    public shared func createCart(user: Principal) : (){
 
-        carts.put(caller, HashMap.HashMap<Principal, UserCartDetail>(0, Principal.equal, Principal.hash));
+        carts.put(user, HashMap.HashMap<Principal, UserCartDetail>(0, Principal.equal, Principal.hash));
         return ();
 
     };
