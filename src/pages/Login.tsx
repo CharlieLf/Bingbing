@@ -1,33 +1,25 @@
 import { useState } from 'react';
 import loginImage from '../assets/product/login.jpg';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@ic-reactor/react';
-import useUser from '@hooks/useUser';
+import useAuthContext from '@hooks/useAuthContext';
+import { getUserQuery } from '@/services/userService';
 
 const Login: React.FC = () => {
-    const { getUser } = useUser().getUser();
     const [error, setError] = useState<string>('');
-    const { login, logout } = useAuth({
-        onLoginSuccess: async () => {
-            const result = await getUser();
-            if (!result) {
-                setError('An error occurred');
-                await logout();
-                return;
-            }
-            if ('err' in result) {
-                await logout();
-                setError(result.err);
-                return;
-            }
-        },
-        onLoginError: (error) => {
-            setError(error ?? 'An error occurred');
-        }
-    });
+    const { login, fetchUser } = useAuthContext();
+    const { getUser } = getUserQuery();
 
     async function handleLogin() {
-        await login();
+        await login({
+            onSuccess: async () => {
+                const result = await getUser()
+                if (!result || 'err' in result) {
+                    setError('User not found');
+                    return;
+                }
+                await fetchUser();
+            }
+        });
     }
 
     return (

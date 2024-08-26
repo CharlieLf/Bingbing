@@ -16,7 +16,7 @@
     "dfx:generate": "dfx generate",
     "dfx:deploy-deps": "dfx deps pull && dfx deps deploy",
     "dfx:deploy": "dfx deploy",
-    "backend": "npm run dfx:create && npm run dfx:build && npm run dfx:generate && npm run dfx:deploy && npm run dfx:deploy-deps",
+    "backend": "npm run dfx:create && npm run dfx:generate && npm run dfx:deploy && npm run dfx:deploy-deps",
     "frontend": "vite --port 3000",
     "build": "tsc && vite build",
     "test": "run-s test:backend test:frontend",
@@ -31,7 +31,8 @@
     "react": "^18.2.0",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.26.1"
+    "react-router-dom": "^6.26.1",
+    "react-webcam": "^7.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

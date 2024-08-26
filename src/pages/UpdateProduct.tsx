@@ -1,28 +1,34 @@
+import IconArrowBack from "@assets/icons/IconArrowBack"
 import Input from "@components/Input";
-import defaultImage from "../assets/product/register.jpg";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CategoryField from "@components/CategoryField";
-import IconArrowBack from "@assets/icons/IconArrowBack";
-import { ClothingType, Gender, genderSelection, Season, seasonSelection, typeSelection } from "@models/category";
-import { createProductUpdate } from "@/services/productService";
-import { useNavigate } from "react-router-dom";
+import { Gender, genderSelection, Season, seasonSelection, ClothingType, typeSelection } from "@models/category";
+import { editProductUpdate, getProductQuery } from "@/services/productService";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "@ic-reactor/react";
+import defaultImage from "@assets/product/register.jpg";
+import Product from "@models/product";
 
-const AddProduct: React.FC = () => {
+const UpdateProduct: React.FC = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
+    const { product, getProduct } = getProductQuery();
+    const { identity } = useAuth();
+
     const [productName, setProductName] = useState<string>('');
     const [price, setPrice] = useState<number>(0);
     const [stock, setStock] = useState<number>(0);
-    const [image, setImage] = useState<Uint8Array>(new Uint8Array());
 
     const [selectedGender, setSelectedGender] = useState<Gender>(genderSelection[0]);
     const [selectedSeason, setSelectedSeason] = useState<Season>(seasonSelection[0]);
     const [selectedType, setSelectedType] = useState<ClothingType>(typeSelection[0]);
     const [selectedClothing, setSelectedClothing] = useState<string | undefined>();
 
-    const [imageUrl, setImageUrl] = useState<string>(defaultImage);
+    const [image, setImage] = useState<Uint8Array>(new Uint8Array());
+    const [imageUrl, setImageUrl] = useState<string>('');
     const imageInput = useRef<HTMLInputElement>(null);
-    const { createProduct } = createProductUpdate();
 
+    const { editProduct } = editProductUpdate();
     const [error, setError] = useState<string>('');
 
     const handleImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -31,6 +37,24 @@ const AddProduct: React.FC = () => {
             imageInput.current.click();
         }
     };
+
+    async function fetchUint8ArrayFromUrl(url: string) {
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            return uint8Array;
+        } catch (error) {
+            console.error('Error fetching Uint8Array:', error);
+        }
+    }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -56,7 +80,8 @@ const AddProduct: React.FC = () => {
             return;
         }
         try {
-            const result = await createProduct([productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType, selectedClothing!]);
+            setError('');
+            const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedClothing, selectedType!]);
             if (result) {
                 setProductName('');
                 setPrice(0);
@@ -75,6 +100,42 @@ const AddProduct: React.FC = () => {
         }
     }
 
+    async function fetchProductData() {
+        await getProduct([BigInt(Number(id ?? '0'))]);
+    }
+
+    async function updateFormData(product: Product) {
+        setProductName(product.name);
+        setPrice(product.price);
+        setStock(product.stock);
+        setSelectedClothing(product.clothing);
+        setSelectedGender(product.gender);
+        setSelectedSeason(product.season);
+        setSelectedType(product.clothingType);
+        setImageUrl(product.image);
+        setImage(await fetchUint8ArrayFromUrl(product.image) ?? new Uint8Array());
+    }
+
+    useEffect(() => {
+        if (id) {
+            fetchProductData();
+        }
+    }, [id])
+
+    useEffect(() => {
+        if (!product) return;
+        if (product.owner !== identity?.getPrincipal().toText()) return;
+        updateFormData(product);
+    }, [product])
+
+    if (product === undefined) {
+        return <div>Loading...</div>
+    }
+
+    if (product === null) {
+        return <div>Product not found</div>
+    }
+
     return (
         <div className="my-10 mx-20">
             <div className="flex flex-row items-center mb-10">
@@ -84,33 +145,34 @@ const AddProduct: React.FC = () => {
                         <IconArrowBack />
                     </button>
                 </div>
-                <p className="text-3xl">Add Product</p>
+                <p className="text-3xl">Edit Product Detail</p>
             </div>
 
             <div className="flex">
                 <div className="w-[40%] mr-10">
                     <div className="mb-5">
-                        <img src={imageUrl} alt="Product" />
+                        <img src={imageUrl} />
                     </div>
-                    <button onClick={handleImage} className="w-full border-black border p-5">Add Image</button>
+                    <button onClick={handleImage} className="w-full border-black border p-5">Edit Image</button>
                 </div>
 
                 <div className="w-full">
                     <div className="space-y-4">
-                        <Input label="Product Name" data={productName} inputOnChange={(e) => setProductName(e.target.value)} />
+                        <Input label="Product Name" data={productName} inputOnChange={(e) => { setProductName(e.target.value) }} />
                         <Input label="Price" data={price} inputOnChange={(e) => setPrice(Number(e.target.value))} />
                         <Input label="Stock" data={stock} inputOnChange={(e) => setStock(Number(e.target.value))} />
                         <div>
                             <label>Category</label>
+
                             <CategoryField selectedClothing={selectedClothing} selectedGender={selectedGender} selectedSeason={selectedSeason} selectedType={selectedType}
                                 setSelectedClothing={setSelectedClothing} setSelectedGender={setSelectedGender} setSelectedSeason={setSelectedSeason} setSelectedType={setSelectedType}
                             />
                         </div>
                     </div>
 
-                    <p className="text-xs min-h-4 text-red-500 mt-3">{error}</p>
+                    <p className="text-sm text-red-500 mt-3">{error}</p>
 
-                    <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Add Product</button>
+                    <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Update Product</button>
                 </div>
             </div>
             <input
@@ -120,7 +182,7 @@ const AddProduct: React.FC = () => {
                 ref={imageInput}
             />
         </div>
-    );
-};
+    )
+}
 
-export default AddProduct;
+export default UpdateProduct;
