@@ -1,59 +1,52 @@
-import './App.css';
-import motokoLogo from './assets/motoko_moving.png';
-import motokoShadowLogo from './assets/motoko_shadow.png';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
-import { useQueryCall, useUpdateCall } from '@ic-reactor/react';
+import '@/output.css';
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
+import Home from '@pages/Home';
+import Login from '@pages/Login';
+import Profile from '@pages/Profile';
+import Register from '@pages/Register';
+import AddProduct from '@pages/AddProduct';
+import ProductDetail from '@pages/ProductDetail';
+import ProtectedRoute from './routes/ProtectedRoute';
+import UnauthorizedRoute from './routes/UnauthorizedRoute';
+import { AuthProvider } from './contexts/AuthContext';
+import { AgentProvider } from '@ic-reactor/react';
+import { ServiceContextProvider } from './contexts/ServiceContext';
+import TryOn from '@pages/TryOn';
+import Carts from '@pages/Cart';
+import Favorite from '@pages/Favorite';
+import Checkout from '@pages/CheckOut';
+import History from '@pages/History';
+import UpdateProfile from '@pages/UpdateProfile';
+import UpdateProduct from '@pages/UpdateProduct';
 
-function App() {
-  const { data: count, call: refetchCount } = useQueryCall({
-    functionName: 'get',
-  });
+const router = createBrowserRouter(
+  createRoutesFromElements([
+    <Route key="login" path="/login" element={<UnauthorizedRoute><Login /></UnauthorizedRoute>} />,
+    <Route key="register" path="/register" element={<UnauthorizedRoute><Register /></UnauthorizedRoute>} />,
 
-  const { call: increment, loading } = useUpdateCall({
-    functionName: 'inc',
-    onSuccess: () => {
-      refetchCount();
-    },
-  });
+    <Route key="home" path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />,
+    <Route key="profile" path="/profile/:principal" element={<ProtectedRoute><Profile /></ProtectedRoute>} />,
+    <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />,
+    <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
+    <Route key="editProduct" path="/editProduct/:id" element={<ProtectedRoute><UpdateProduct /></ProtectedRoute>} />,
+    <Route key="tryon" path="/tryon/:id" element={<ProtectedRoute><TryOn /></ProtectedRoute>} />,
+    <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
+    <Route key="favorite" path="/favorite" element={<ProtectedRoute><Favorite /></ProtectedRoute>} />,
+    <Route key="checkout" path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />,
+    <Route key="history" path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />,
+    <Route key="editProfile" path="/editProfile" element={<ProtectedRoute><UpdateProfile /></ProtectedRoute>} />,
+  ]),
+);
+
+export default function App() {
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <a
-          href="https://internetcomputer.org/docs/current/developer-docs/build/cdks/motoko-dfinity/motoko/"
-          target="_blank"
-        >
-          <span className="logo-stack">
-            <img
-              src={motokoShadowLogo}
-              className="logo motoko-shadow"
-              alt="Motoko logo"
-            />
-            <img src={motokoLogo} className="logo motoko" alt="Motoko logo" />
-          </span>
-        </a>
-      </div>
-      <h1>Vite + React + Motoko</h1>
-      <div className="card">
-        <button onClick={increment} disabled={loading}>
-          count is {count?.toString() ?? 'loading...'}
-        </button>
-        <p>
-          Edit <code>backend/Backend.mo</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite, React, and Motoko logos to learn more
-      </p>
-    </div>
+    <AgentProvider withProcessEnv>
+      <ServiceContextProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </ServiceContextProvider>
+    </AgentProvider>
   );
 }
-
-export default App;

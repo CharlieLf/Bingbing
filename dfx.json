@@ -1,14 +1,46 @@
 {
   "canisters": {
-    "backend": {
+    "token": {
       "type": "motoko",
-      "main": "backend/Backend.mo",
+      "main": "backend/token/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
+    "user": {
+      "type": "motoko",
+      "main": "backend/user/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
+    "cart": {
+      "type": "motoko",
+      "main": "backend/cart/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
+    "transaction": {
+      "type": "motoko",
+      "main": "backend/transaction/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
+    "internet-identity": {
+      "type": "pull",
+      "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+    },
+    "product": {
+      "type": "motoko",
+      "main": "backend/product/main.mo",
       "declarations": {
         "node_compatibility": true
       }
     },
     "frontend": {
-      "dependencies": ["backend"],
+      "dependencies": ["user", "token", "product", "cart", "transaction"],
       "type": "assets",
       "source": ["dist/"]
     }
