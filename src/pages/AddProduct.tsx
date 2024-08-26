@@ -62,25 +62,32 @@ const AddProduct: React.FC = () => {
 
         try {
             const result = await createProduct([productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType, selectedClothing!]);
-            if (result) {
-                Swal.fire({
-                    title: "Success!",
-                    text: "The product was successfully added!",
-                    icon: "success"
-                })
-
-                setProductName('');
-                setPrice(0);
-                setStock(0);
-                setImage(new Uint8Array());
-                setSelectedClothing(undefined);
-                setSelectedGender(genderSelection[0]);
-                setSelectedSeason(seasonSelection[0]);
-                setSelectedType(typeSelection[0]);
-                setImageUrl(defaultImage);
-                setError('');
-                navigate(-1);
+            if (!result) {
+                setError('Failed to add product');
+                return;
             }
+            if ('err' in result) {
+                setError(result.err);
+                return;
+            }
+
+            Swal.fire({
+                title: "Success!",
+                text: "The product was successfully added!",
+                icon: "success"
+            })
+
+            setProductName('');
+            setPrice(0);
+            setStock(0);
+            setImage(new Uint8Array());
+            setSelectedClothing(undefined);
+            setSelectedGender(genderSelection[0]);
+            setSelectedSeason(seasonSelection[0]);
+            setSelectedType(typeSelection[0]);
+            setImageUrl(defaultImage);
+            setError('');
+            navigate(-1);
         } catch (_) {
             setError('Failed to add product');
         } finally {
@@ -130,12 +137,7 @@ const AddProduct: React.FC = () => {
                     }
                 </div>
             </div>
-            <input
-                onChange={handleImageChange}
-                className="hidden"
-                type="file"
-                ref={imageInput}
-            />
+            <input className="hidden" onChange={handleImageChange} type="file" ref={imageInput} accept="image/*" />
         </div>
     );
 };

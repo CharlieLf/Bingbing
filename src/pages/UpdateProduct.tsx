@@ -9,6 +9,7 @@ import { useAuth } from "@ic-reactor/react";
 import defaultImage from "@assets/product/testing.jpg";
 import Product from "@models/product";
 import Swal from "sweetalert2";
+import TypeUtils from "@utils/TypeUtils";
 
 const UpdateProduct: React.FC = () => {
     const { id } = useParams();
@@ -40,24 +41,6 @@ const UpdateProduct: React.FC = () => {
         }
     };
 
-    async function fetchUint8ArrayFromUrl(url: string) {
-        try {
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-
-            const arrayBuffer = await response.arrayBuffer();
-
-            const uint8Array = new Uint8Array(arrayBuffer);
-
-            return uint8Array;
-        } catch (error) {
-            console.error('Error fetching Uint8Array:', error);
-        }
-    }
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
@@ -77,7 +60,7 @@ const UpdateProduct: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        if (!productName || !price || !stock || image === new Uint8Array() || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
+        if (!productName || !price || !stock || image.length === 0 || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
             setError('Please fill all fields');
             return;
         }
@@ -86,8 +69,7 @@ const UpdateProduct: React.FC = () => {
 
         try {
             setError('');
-            const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedClothing, selectedType!]);
-            console.log(result)
+            const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType!, selectedClothing]);
             if (result) {
                 Swal.fire({
                     title: "Success!",
@@ -115,7 +97,9 @@ const UpdateProduct: React.FC = () => {
     }
 
     async function fetchProductData() {
-        await getProduct([BigInt(Number(id ?? '0'))]);
+        const principal = identity?.getPrincipal();
+        if (!principal) return;
+        await getProduct([BigInt(Number(id ?? '0')), [principal]]);
     }
 
     async function updateFormData(product: Product) {
@@ -127,7 +111,7 @@ const UpdateProduct: React.FC = () => {
         setSelectedSeason(product.season);
         setSelectedType(product.clothingType);
         setImageUrl(product.image);
-        setImage(await fetchUint8ArrayFromUrl(product.image) ?? new Uint8Array());
+        setImage(await TypeUtils.fetchUint8ArrayFromUrl(product.image) ?? new Uint8Array());
     }
 
     useEffect(() => {
@@ -177,7 +161,6 @@ const UpdateProduct: React.FC = () => {
                         <Input label="Stock" data={stock} inputOnChange={(e) => setStock(Number(e.target.value))} />
                         <div>
                             <label>Category</label>
-
                             <CategoryField selectedClothing={selectedClothing} selectedGender={selectedGender} selectedSeason={selectedSeason} selectedType={selectedType}
                                 setSelectedClothing={setSelectedClothing} setSelectedGender={setSelectedGender} setSelectedSeason={setSelectedSeason} setSelectedType={setSelectedType}
                             />

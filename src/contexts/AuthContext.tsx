@@ -39,14 +39,14 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     const { login, logout, getIdentity } = useAgentManager();
 
     const fetchUser = async () => {
-        const result = await getUser();
+        const result = await getUser([[]]);
         if (!result || 'err' in result) {
             await logout();
             setUser(null);
             return;
         }
         setUser(User.castToUser(result.ok));
-        // await getBalance();
+        await getBalance();
     }
     
     const handleLogout = async () => {

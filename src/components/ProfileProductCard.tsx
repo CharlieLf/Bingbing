@@ -5,9 +5,10 @@ import { Link } from "react-router-dom";
 interface Props {
     product: Product;
     handleDelete: (product: Product) => void;
+    isOwner: boolean;
 }
 
-const ProfileProductCard: React.FC<Props> = ({ product, handleDelete }) => {
+const ProfileProductCard: React.FC<Props> = ({ product, handleDelete, isOwner }) => {
     return (
         <div className="w-full flex p-4 shadow-md mb-4  gap-x-8">
             <Link to={`/productDetail/${product.id}`}>
@@ -27,12 +28,12 @@ const ProfileProductCard: React.FC<Props> = ({ product, handleDelete }) => {
                     </div>
                     <p className="text-md text-gray-600">IDR {product.formatPrice()}</p>
                 </div>
-                <div className="flex gap-2">
+                {isOwner && <div className="flex gap-2">
                     <Link to={`/editProduct/${product.id}`}>
                         <ButtonSmall text="EDIT" variant="secondary" />
                     </Link>
                     <ButtonSmall onclick={() => handleDelete(product)} text="DELETE" />
-                </div>
+                </div>}
             </div>
         </div>
     );

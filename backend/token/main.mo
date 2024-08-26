@@ -10,6 +10,19 @@ actor {
   let ledger = HashMap.HashMap<Principal, Nat>(0, Principal.equal, Principal.hash);
   type Result<Ok, Error> = Result.Result<Ok, Error>;
 
+    public query func seeAllLedger(): async [{ owner: Principal; balance: Nat }] {
+    type data = { owner: Principal; balance: Nat };
+
+    let listData: [data] = Iter.toArray(Iter.map(ledger.entries(), 
+        func(entry: (Principal, Nat)) : data {
+            let (owner, balance) = entry;
+            return { owner; balance };
+        }
+    ));
+
+    return listData;
+  };
+
   public query ({ caller }) func balance() : async Result<Nat, Text> {
     switch (ledger.get(caller)) {
       case (?balance) {
@@ -22,6 +35,9 @@ actor {
   };
 
   public func mint(owner : Principal, amount : Nat) : async Result<(), Text> {
+    if(Principal.toText(owner) == "2vxsx-fae"){
+      return #err("Anonymous not permited to mint");
+    };
 
     switch (ledger.get(owner)) {
       case (?balance) {

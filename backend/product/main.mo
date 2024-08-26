@@ -66,6 +66,7 @@ actor {
         if (product.owner != Principal.toText(caller)) {
           return #err("Unauthorized");
         };
+        size -= 1;
         products.delete(key);
         return #ok();
       };
@@ -73,9 +74,28 @@ actor {
   };
 
   public shared query func getProduct(
-    key : Nat64
+    key : Nat64,
+    owner : ?Principal,
   ) : async ?Product {
-    products.get(key);
+    switch (owner) {
+      case (?owner) {
+        let product = products.get(key);
+        switch (product) {
+          case (?value) {
+            if (value.owner == Principal.toText(owner)) {
+              return product;
+            };
+            return null;
+          };
+          case (null) {
+            return null;
+          };
+        };
+      };
+      case (null) {
+        return products.get(key);
+      };
+    };
   };
 
   public shared query func getAllProducts() : async [Product] {
