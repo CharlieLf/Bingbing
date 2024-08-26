@@ -3,22 +3,26 @@ import { useState } from "react";
 
 export function getBalanceQuery() {
     const [balance, setBalance] = useState(0);
-    const { useQueryCall: query } = useServiceContext().tokenService;
+    const { useQueryCall: balanceQuery } = useServiceContext().tokenService;
 
-    const { call: getBalance } = query({
+    const { call: getBalance } = balanceQuery({
         functionName: "balance",
         args: [],
         refetchOnMount: false,
         onSuccess: (result) => {
-            console.log(result);
-            
             if (!result || 'err' in result) {
                 throw new Error("Failed to get balance");
             }
-            console.log(result.ok);
-            
             setBalance(Number(result.ok));
         },
     })
     return { balance, getBalance };
+}
+
+export function mintUpdate() {
+    const { useUpdateCall: balanceUpdate } = useServiceContext().tokenService;
+    const { call: mint } = balanceUpdate({
+        functionName: "mint"
+    })
+    return { mint };
 }

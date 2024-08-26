@@ -40,7 +40,7 @@
       }
     },
     "frontend": {
-      "dependencies": ["user", "token", "product"],
+      "dependencies": ["user", "token", "product", "cart", "transaction"],
       "type": "assets",
       "source": ["dist/"]
     }

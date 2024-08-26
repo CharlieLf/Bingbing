@@ -5,7 +5,7 @@ import Input from '@components/Input';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useAuthContext from "@hooks/useAuthContext";
-import { createUserQuery } from "@/services/userService";
+import { createUserUpdate } from "@/services/userService";
 import ValidationUtils from "@utils/validationUtils";
 
 const Register: React.FC = () => {
@@ -16,7 +16,7 @@ const Register: React.FC = () => {
     const [address, setAddress] = useState<string>('');
     const [error, setError] = useState<string>('');
 
-    const { createUser } = createUserQuery();
+    const { createUser } = createUserUpdate();
     const { login, fetchUser, getIdentity } = useAuthContext();
 
     async function handleRegister(e: React.MouseEvent<HTMLButtonElement>) {

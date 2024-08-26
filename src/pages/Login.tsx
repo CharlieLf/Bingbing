@@ -12,7 +12,7 @@ const Login: React.FC = () => {
     async function handleLogin() {
         await login({
             onSuccess: async () => {
-                const result = await getUser()
+                const result = await getUser([[]])
                 if (!result || 'err' in result) {
                     setError('User not found');
                     return;
