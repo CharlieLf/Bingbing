@@ -66,6 +66,7 @@ actor {
         if (product.owner != Principal.toText(caller)) {
           return #err("Unauthorized");
         };
+        size -= 1;
         products.delete(key);
         return #ok();
       };

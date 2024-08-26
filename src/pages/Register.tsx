@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import useAuthContext from "@hooks/useAuthContext";
 import { createUserUpdate } from "@/services/userService";
 import ValidationUtils from "@utils/validationUtils";
+import useServiceContext from "@hooks/useServiceContext";
 
 const Register: React.FC = () => {
     const [name, setName] = useState<string>('');
@@ -18,6 +19,7 @@ const Register: React.FC = () => {
 
     const { createUser } = createUserUpdate();
     const { login, fetchUser, getIdentity } = useAuthContext();
+    const { tokenCanisterId, cartCanisterId } = useServiceContext();
 
     async function handleRegister(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
@@ -47,9 +49,9 @@ const Register: React.FC = () => {
                     const principal = getIdentity()?.getPrincipal();
                     let result = null;
                     if (principal) {
-                        result = await createUser([{ name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, [principal]]);
+                        result = await createUser([tokenCanisterId, cartCanisterId, { name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, [principal]]);
                     } else {
-                        result = await createUser([{ name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, []]);
+                        result = await createUser([tokenCanisterId, cartCanisterId, { name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, []]);
                     }
                     if (result && 'err' in result) {
                         setError('User already exists');

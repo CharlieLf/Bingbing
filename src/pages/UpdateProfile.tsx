@@ -4,7 +4,7 @@ import ButtonSmall from "@components/ButtonSmall";
 import EditProfileInput from "@components/EditProfileInput";
 import useAuthContext from "@hooks/useAuthContext";
 import NavbarLayout from "@layouts/NavbarLayout";
-import TypeUtils from "@utils/typeUtils";
+import TypeUtils from "@utils/TypeUtils";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
