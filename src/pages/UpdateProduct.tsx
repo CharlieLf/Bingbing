@@ -84,7 +84,9 @@ const UpdateProduct: React.FC = () => {
     }
 
     async function fetchProductData() {
-        await getProduct([BigInt(Number(id ?? '0'))]);
+        const principal = identity?.getPrincipal();
+        if (!principal) return;
+        await getProduct([BigInt(Number(id ?? '0')), [principal]]);
     }
 
     async function updateFormData(product: Product) {
@@ -146,7 +148,6 @@ const UpdateProduct: React.FC = () => {
                         <Input label="Stock" data={stock} inputOnChange={(e) => setStock(Number(e.target.value))} />
                         <div>
                             <label>Category</label>
-
                             <CategoryField selectedClothing={selectedClothing} selectedGender={selectedGender} selectedSeason={selectedSeason} selectedType={selectedType}
                                 setSelectedClothing={setSelectedClothing} setSelectedGender={setSelectedGender} setSelectedSeason={setSelectedSeason} setSelectedType={setSelectedType}
                             />

@@ -22,7 +22,7 @@ export function getSelfCartQuery() {
                 setCart(null);
                 return;
             }
-            setCart(data.ok.map((d: any) => Cart.castToCart(d)));
+            setCart(data.ok.map((d) => Cart.castToCart(d)));
         }
     })
     return { getSelfCart };

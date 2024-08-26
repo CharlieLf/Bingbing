@@ -10,7 +10,7 @@ actor {
   type HashMap<K, V> = Types.HashMap<K, V>;
   type User = Types.User;
 
-  let tokenActor = actor "c2lt4-zmaaa-aaaaa-qaaiq-cai" : TokenActorModules.TokenActor;
+  let tokenActor = actor "br5f7-7uaaa-aaaaa-qaaca-cai" : TokenActorModules.TokenActor;
   var users = HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
 
   public shared ({ caller }) func createUser(user : User, owner : ?Principal) : async Result<(), Text> {
@@ -19,8 +19,12 @@ actor {
         switch (users.get(owner)) {
           case (null) {
             users.put(owner, user);
-            let _ = await tokenActor.mint(owner, 1000);
-            return #ok();
+            let result = await tokenActor.mint(owner, 1000);
+            if (result == #ok()) {
+              return #ok();
+            } else {
+              return #err("Failed to mint tokens");
+            };
           };
           case (?user) {
             return #err("User already exists");
@@ -31,8 +35,12 @@ actor {
         switch (users.get(caller)) {
           case (null) {
             users.put(caller, user);
-            let _ = await tokenActor.mint(caller, 1000);
-            return #ok();
+            let result = await tokenActor.mint(caller, 1000);
+            if (result == #ok()) {
+              return #ok();
+            } else {
+              return #err("Failed to mint tokens");
+            };
           };
           case (?user) {
             return #err("User already exists");
@@ -42,13 +50,27 @@ actor {
     };
   };
 
-  public shared query ({ caller }) func getUser() : async Result<User, Text> {
-    switch (users.get(caller)) {
-      case (?user) {
-        return #ok(user);
+  public shared query ({ caller }) func getUser(principal : ?Principal) : async Result<User, Text> {
+    switch (principal) {
+      case (?principal) {
+        switch (users.get(principal)) {
+          case (?user) {
+            return #ok(user);
+          };
+          case (null) {
+            return #err("User not found");
+          };
+        };
       };
       case (null) {
-        return #err("User not found");
+        switch (users.get(caller)) {
+          case (?user) {
+            return #ok(user);
+          };
+          case (null) {
+            return #err("User not found");
+          };
+        };
       };
     };
   };

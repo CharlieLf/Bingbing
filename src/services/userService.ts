@@ -5,7 +5,6 @@ export function getUserQuery() {
 
     const { call: getUser, loading: getUserLoading } = userQuery({
         functionName: "getUser",
-        args: [],
         refetchOnMount: false,
         refetchInterval: 0
     })

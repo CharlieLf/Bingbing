@@ -14,7 +14,7 @@ const ProductDetail: React.FC = () => {
 
     async function fetchProductData() {
         if (!id) return;
-        await getProduct([BigInt(Number.parseInt(id))]);
+        await getProduct([BigInt(Number.parseInt(id)), []]);
     }
 
     async function handleAddOrUpdateCart() {
