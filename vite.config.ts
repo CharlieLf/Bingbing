@@ -13,7 +13,7 @@ export default defineConfig({
     outDir: '../dist',
     emptyOutDir: true,
   },
-  optimizeDeps: {
+  optimizeDeps: { 
     esbuildOptions: {
       define: {
         global: 'globalThis',

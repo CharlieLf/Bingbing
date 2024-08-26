@@ -30,6 +30,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     const { login, logout } = useAgentManager();
 
     const fetchUser = async () => {
+        console.log(getUser)
         await getUser();
     }
 
