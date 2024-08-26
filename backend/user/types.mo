@@ -12,6 +12,7 @@ module {
         phoneNumber : Text;
         dateOfBirth : Time.Time;
         address : Text;
+        image : Blob;
     };
     
 }   
