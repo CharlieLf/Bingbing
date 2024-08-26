@@ -6,33 +6,54 @@ import { useEffect, useState } from "react";
 const Carts: React.FC = () => {
     const { carts, getSelfCart } = getSelfCartQuery();
     const [cartCount, setCartCount] = useState<Map<number, number>>(new Map());
+    const [selectedCart, setSelectedCart] = useState<Map<number, boolean>>(new Map());
 
     async function fetchCartData() {
         await getSelfCart();
     }
 
     function updateCartCount(productId: number, quantity: number) {
-        setCartCount(new Map(cartCount.set(productId, quantity)));
+        setCartCount(prev => {
+            const newCartCount = new Map(prev);
+            newCartCount.set(productId, quantity);
+            return newCartCount;
+        });
+    }
+
+    function updateSelectedCart(productId: number, selected: boolean) {
+        setSelectedCart(prev => {
+            const newSelectedCart = new Map(prev);
+            newSelectedCart.set(productId, selected);
+            return newSelectedCart;
+        });
     }
 
     useEffect(() => {
-        console.log(carts);
-
+        const cartCount = new Map<number, number>();
         carts?.forEach(cart => {
             cart.cartDetails.forEach(cartDetail => {
                 cartCount.set(cartDetail.productId, cartDetail.quantity);
             })
         })
+        setCartCount(cartCount);
+
+        const selectedCart = new Map<number, boolean>();
+        carts?.forEach(cart => {
+            cart.cartDetails.forEach(cartDetail => {
+                selectedCart.set(cartDetail.productId, false);
+            })
+        })
+        setSelectedCart(selectedCart);
     }, [carts])
-
-    useEffect(() => {
-        console.log(cartCount);
-
-    }, [cartCount])
 
     useEffect(() => {
         fetchCartData();
     }, [])
+
+    useEffect(() => {
+        console.log(selectedCart);
+        
+    }, [selectedCart])
 
     return (
         <NavbarLayout>
@@ -44,7 +65,10 @@ const Carts: React.FC = () => {
                         return <ShopCard checkbox={true}
                             cart={cart} key={idx}
                             cartCount={cartCount}
-                            updateCartCount={updateCartCount} />
+                            updateCartCount={updateCartCount}
+                            selectedCart={selectedCart}
+                            updateSelectedCart={updateSelectedCart}
+                        />
                     })}
                 </div>
 
