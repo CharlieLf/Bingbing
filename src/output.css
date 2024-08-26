@@ -650,8 +650,8 @@ body{
   margin-right: 1.25rem;
 }
 
-.mt-10{
-  margin-top: 2.5rem;
+.mt-2{
+  margin-top: 0.5rem;
 }
 
 .mt-3{
@@ -704,6 +704,10 @@ body{
   height: 25vh;
 }
 
+.h-\[35vh\]{
+  height: 35vh;
+}
+
 .h-\[45vh\]{
   height: 45vh;
 }
@@ -719,6 +723,18 @@ body{
 
 .h-screen{
   height: 100vh;
+}
+
+.h-\[\]{
+  height: ;
+}
+
+.h-\[80\%\]{
+  height: 80%;
+}
+
+.h-\[90\%\]{
+  height: 90%;
 }
 
 .min-h-4{
@@ -790,10 +806,6 @@ body{
   width: 100vw;
 }
 
-.w-\[\]{
-  width: ;
-}
-
 .flex-1{
   flex: 1 1 0%;
 }
@@ -822,10 +834,6 @@ body{
 
 .flex-col{
   flex-direction: column;
-}
-
-.place-content-center{
-  place-content: center;
 }
 
 .items-end{
@@ -1026,6 +1034,11 @@ body{
 .bg-white{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.bg-red-500{
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-50{
@@ -1245,6 +1258,11 @@ body{
 .hover\:bg-white:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-gray-900:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-opacity-80:hover{

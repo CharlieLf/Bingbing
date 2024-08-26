@@ -58,7 +58,7 @@ const UpdateProduct: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        if (!productName || !price || !stock || image === new Uint8Array() || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
+        if (!productName || !price || !stock || image.length === 0 || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
             setError('Please fill all fields');
             return;
         }
