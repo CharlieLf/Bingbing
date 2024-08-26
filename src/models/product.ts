@@ -1,4 +1,4 @@
-import TypeUtils from "@utils/typeUtils";
+import TypeUtils from "@utils/TypeUtils";
 import { ClothingType, Gender, Season } from "./category";
 
 interface ProductProps {

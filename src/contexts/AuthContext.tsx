@@ -46,7 +46,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
             return;
         }
         setUser(User.castToUser(result.ok));
-        await getBalance(); 
+        await getBalance();
     }
     
     const handleLogout = async () => {
