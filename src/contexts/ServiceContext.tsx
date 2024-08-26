@@ -22,6 +22,10 @@ type ServiceType = {
     productService: CreateReactorReturnType<ActorSubclass<_SERVICE_PRODUCT>>;
     cartService: CreateReactorReturnType<ActorSubclass<_SERVICE_CART>>;
     authenticating: boolean;
+    userCanisterId: string;
+    tokenCanisterId: string;
+    productCanisterId: string;
+    cartCanisterId: string;
 };
 
 const ServiceContext = createContext<ServiceType | undefined>(undefined);
@@ -69,7 +73,17 @@ const ServiceContextProvider: React.FC<Props> = ({ children }) => {
     }), [agentManager]);
 
     return (
-        <ServiceContext.Provider value={{ userService, tokenService, productService, cartService, authenticating }}>
+        <ServiceContext.Provider value={{
+            userService,
+            tokenService,
+            productService,
+            cartService,
+            authenticating,
+            userCanisterId,
+            tokenCanisterId,
+            productCanisterId,
+            cartCanisterId
+        }}>
             {children}
         </ServiceContext.Provider>
     );

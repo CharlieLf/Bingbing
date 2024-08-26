@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@ic-reactor/react";
 import defaultImage from "@assets/product/register.jpg";
 import Product from "@models/product";
-import TypeUtils from "@utils/typeUtils";
+import TypeUtils from "@utils/TypeUtils";
 
 const UpdateProduct: React.FC = () => {
     const { id } = useParams();
@@ -64,7 +64,7 @@ const UpdateProduct: React.FC = () => {
         }
         try {
             setError('');
-            const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedClothing, selectedType!]);
+            const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType!, selectedClothing]);
             if (result) {
                 setProductName('');
                 setPrice(0);
