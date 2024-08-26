@@ -1,8 +1,11 @@
+import { getSelfCartQuery } from "@/services/cartService";
 import InputNumber from "@components/InputNumber";
 import ShopCard from "@components/ShopCard";
 import NavbarLayout from "@layouts/NavbarLayout";
 
 const Carts: React.FC = () => {
+    const { getSelfCart } = getSelfCartQuery();
+
     return(
         <NavbarLayout>
             <p className="self-start px-20 text-3xl font-medium">Cart</p>

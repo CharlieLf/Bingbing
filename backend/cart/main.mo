@@ -28,7 +28,7 @@ actor {
 
     };
 
-    public shared ({caller}) func addOrUpdateCart(sellerId: Text, product: Product, quantity: Nat) : async Result<(), Text> {
+    public shared ({caller}) func addOrUpdateCart(sellerId: Text, productId: Nat64, quantity: Nat) : async Result<(), Text> {
 
         switch(carts.get(caller)){
             case(null){
@@ -38,12 +38,12 @@ actor {
                 
                 switch(cart.get(Principal.fromText(sellerId))){
                     case(null){
-                        let newCartItem = _produceCartItem(product.id, quantity);
+                        let newCartItem = _produceCartItem(productId, quantity);
                         cart.put(Principal.fromText(sellerId), newCartItem);
                         return #ok(());
                     };
                     case(?cartItem){
-                        cartItem.put(product.id, quantity);
+                        cartItem.put(productId, quantity);
                         return #ok(());
                     };
                 };

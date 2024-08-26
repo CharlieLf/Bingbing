@@ -42,7 +42,7 @@ export default class User {
             phoneNumber: u.phoneNumber,
             dateOfBirth: new Date(Number(u.dateOfBirth)),
             address: u.address,
-            image: TypeUtils.byteArrayToImageURL(u.image),
+            image: u.image.length === 0 ? "" : TypeUtils.byteArrayToImageURL(u.image),
         });
     }
 }

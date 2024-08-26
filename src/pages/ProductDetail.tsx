@@ -1,18 +1,34 @@
-import Product from "@models/product";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import IconHeart from "../assets/icons/IconHeart";
 import NavbarLayout from "@layouts/NavbarLayout";
 import { getProductQuery } from "@/services/productService";
+import { addOrUpdateCartUpdate } from "@/services/cartService";
 
 
 const ProductDetail: React.FC = () => {
+    const navigate = useNavigate();
     let { id } = useParams();
     const { product, getProduct } = getProductQuery();
+    const { addOrUpdateCart } = addOrUpdateCartUpdate()
 
     async function fetchProductData() {
         if (!id) return;
-        await getProduct([BigInt(Number.parseInt(id))]);
+        await getProduct([BigInt(Number.parseInt(id)), []]);
+    }
+
+    async function handleAddOrUpdateCart() {
+        if (!product) return;
+        const result = await addOrUpdateCart([product.owner, BigInt(product.id), BigInt(1)]);
+        if (!result) {
+            console.log("Failed to add to cart");
+            return;
+        }
+        if ('err' in result) {
+            console.log(result.err);
+            return;
+        }
+        navigate(-1);
     }
 
     useEffect(() => {
@@ -40,7 +56,8 @@ const ProductDetail: React.FC = () => {
                         </div>
 
                         <div className="space-y-5">
-                            <button className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">ADD TO CART</button>
+                            <button onClick={handleAddOrUpdateCart}
+                                className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">ADD TO CART</button>
                             <button className="w-full bg-white border-black border-2 p-3 text-lg font-bold">TRY ON</button>
                         </div>
 
@@ -49,7 +66,6 @@ const ProductDetail: React.FC = () => {
                 </div>
             ) :
                 product === undefined ? (
-
                     <p>Loading...</p>
                 ) :
                     (
