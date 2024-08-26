@@ -17,6 +17,7 @@ import Favorite from '@pages/Favorite';
 import Checkout from '@pages/CheckOut';
 import History from '@pages/History';
 import UpdateProfile from '@pages/UpdateProfile';
+import UpdateProduct from '@pages/UpdateProduct';
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -27,7 +28,7 @@ const router = createBrowserRouter(
     <Route key="profile" path="/profile/:principal" element={<ProtectedRoute><Profile /></ProtectedRoute>} />,
     <Route key="addProduct" path="/addProduct" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />,
     <Route key="productDetail" path="/productDetail/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />,
-    <Route key="editProduct" path="/editProduct/:id" element={<ProtectedRoute><UpdateProfile /></ProtectedRoute>} />,
+    <Route key="editProduct" path="/editProduct/:id" element={<ProtectedRoute><UpdateProduct /></ProtectedRoute>} />,
     <Route key="tryon" path="/tryon/:id" element={<ProtectedRoute><TryOn /></ProtectedRoute>} />,
     <Route key="cart" path="/cart" element={<ProtectedRoute><Carts /></ProtectedRoute>} />,
     <Route key="favorite" path="/favorite" element={<ProtectedRoute><Favorite /></ProtectedRoute>} />,

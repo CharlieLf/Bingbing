@@ -1,11 +1,12 @@
 import Input from "@components/Input";
-import defaultImage from "../assets/product/register.jpg";
+import defaultImage from "../assets/product/testing.jpg";
 import { useRef, useState } from "react";
 import CategoryField from "@components/CategoryField";
 import IconArrowBack from "@assets/icons/IconArrowBack";
 import { ClothingType, Gender, genderSelection, Season, seasonSelection, typeSelection } from "@models/category";
 import { createProductUpdate } from "@/services/productService";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const AddProduct: React.FC = () => {
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const AddProduct: React.FC = () => {
     const imageInput = useRef<HTMLInputElement>(null);
     const { createProduct } = createProductUpdate();
 
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
     const handleImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -51,13 +53,22 @@ const AddProduct: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        if (!productName || !price || !stock || image === new Uint8Array() || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
+        if (!productName || !price || !stock || image.length === 0 || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
             setError('Please fill all fields');
             return;
         }
+
+        setLoading(true);
+
         try {
             const result = await createProduct([productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType, selectedClothing!]);
             if (result) {
+                Swal.fire({
+                    title: "Success!",
+                    text: "The product was successfully added!",
+                    icon: "success"
+                })
+
                 setProductName('');
                 setPrice(0);
                 setStock(0);
@@ -72,6 +83,8 @@ const AddProduct: React.FC = () => {
             }
         } catch (_) {
             setError('Failed to add product');
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -89,8 +102,8 @@ const AddProduct: React.FC = () => {
 
             <div className="flex">
                 <div className="w-[40%] mr-10">
-                    <div className="mb-5">
-                        <img src={imageUrl} alt="Product" />
+                    <div className="mb-5 h-full">
+                        <img src={imageUrl} alt="Product" className="h-full object-cover"/>
                     </div>
                     <button onClick={handleImage} className="w-full border-black border p-5">Add Image</button>
                 </div>
@@ -110,7 +123,11 @@ const AddProduct: React.FC = () => {
 
                     <p className="text-xs min-h-4 text-red-500 mt-3">{error}</p>
 
-                    <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Add Product</button>
+                    {loading ? 
+                        <button className="w-full mt-3 p-4 bg-gray-400 text-white font-bold">Loading...</button>
+                        :
+                        <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Add Product</button>
+                    }
                 </div>
             </div>
             <input

@@ -6,12 +6,12 @@ export function getAllProductsQuery() {
     const { useQueryCall: productQuery } = useServiceContext().productService;
 
     const [products, setProducts] = useState<Product[]>([]);
-    const { call: getAllProducts } = productQuery({
+    const { call: getAllProducts, loading: getAllProductsLoading } = productQuery({
         functionName: "getAllProducts",
         onSuccess: (productData) => setProducts(productData?.map(Product.castToProduct) ?? []),
         refetchOnMount: false
     });
-    return { products, getAllProducts };
+    return { products, getAllProducts, getAllProductsLoading };
 }
 
 export function getProductQuery() {
