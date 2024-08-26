@@ -1,6 +1,5 @@
 import Result "mo:base/Result";
 import Time "mo:base/Time";
-import Principal "mo:base/Principal";
 import Products "../product/types";
 
 module {
@@ -13,13 +12,12 @@ module {
         details: [TransactionDetail];
         date: Time.Time;
         seller: Text;
-        buyer: Principal;
+        buyer: Text;
     };
 
     public type TransactionDetail = {
         product: Product;
         quantity: Nat;
-        price: Nat64;
     }
     
 }   

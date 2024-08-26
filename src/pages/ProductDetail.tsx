@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import IconHeart from "../assets/icons/IconHeart";
+import { useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import IconHeart from "@assets/icons/IconHeart";
 import NavbarLayout from "@layouts/NavbarLayout";
 import { getProductQuery } from "@/services/productService";
 import { addOrUpdateCartUpdate } from "@/services/cartService";
@@ -58,7 +58,8 @@ const ProductDetail: React.FC = () => {
                         <div className="space-y-5">
                             <button onClick={handleAddOrUpdateCart}
                                 className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">ADD TO CART</button>
-                            <button className="w-full bg-white border-black border-2 p-3 text-lg font-bold">TRY ON</button>
+                            <button onClick={() => navigate(`/tryon/${id}`)}
+                                className="w-full bg-white border-black border-2 p-3 text-lg font-bold">TRY ON</button>
                         </div>
 
                         <p className="italic text-sm">*Colors may appear different due to variations in screen lighting.</p>
