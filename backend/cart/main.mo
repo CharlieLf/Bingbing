@@ -30,44 +30,43 @@ actor {
 
     public shared ({caller}) func addOrUpdateCart(sellerId: Text, productId: Nat64, quantity: Nat) : async Result<(), Text> {
 
-        switch(carts.get(caller)){
-            case(null){
-                return #err("Cart not found");
-            };
-            case(?cart){
-                
-                switch(cart.get(Principal.fromText(sellerId))){
-                    case(null){
-                        let newCartItem = _produceCartItem(productId, quantity);
-                        cart.put(Principal.fromText(sellerId), newCartItem);
-                        return #ok(());
-                    };
-                    case(?cartItem){
-                        cartItem.put(productId, quantity);
-                        return #ok(());
-                    };
-                };
+        let ownerCart = switch(carts.get(caller)){
+            case(null) {return #err("Cart not found")};
+            case(?cart) {cart};
+        };
 
+        if(caller == Principal.fromText(sellerId)){
+            return #err("You can't add your own product to cart");
+        };
+
+        switch(ownerCart.get(Principal.fromText(sellerId))){
+            case(null){
+                let newCartItem = _produceCartItem(productId, quantity);
+                ownerCart.put(Principal.fromText(sellerId), newCartItem);
+                return #ok(());
+            };
+            case(?cartItem){
+                cartItem.put(productId, quantity);
+                return #ok(());
             };
         };
 
     };
 
     public shared ({caller}) func removeCartItem(sellerId: Text, productId: Nat64) : async Result<(), Text> {
-        switch(carts.get(caller)){
+
+        let ownerCart = switch(carts.get(caller)){
+            case(null) {return #err("Cart not found")};
+            case(?cart) {cart};
+        };
+
+        switch(ownerCart.get(Principal.fromText(sellerId))){
             case(null){
-                return #err("Cart not found");
+                return #err("Cart Item not found");
             };
-            case(?cart){
-                switch(cart.get(Principal.fromText(sellerId))){
-                    case(null){
-                        return #err("Seller not found");
-                    };
-                    case(?cartItem){
-                        cartItem.delete(productId);
-                        return #ok(());
-                    };
-                };
+            case(?cartItem){
+                cartItem.delete(productId);
+                return #ok(());
             };
         };
     };
