@@ -11,21 +11,14 @@ actor {
   type HashMap<K, V> = Types.HashMap<K, V>;
   type User = Types.User;
 
-  let tokenActor = actor "c2lt4-zmaaa-aaaaa-qaaiq-cai" : TokenActorModules.TokenActor;
-  let cartActor = actor "cgpjn-omaaa-aaaaa-qaakq-cai" : CartActorModules.CartActor;
-
   var users = HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
 
-    public shared ({caller}) func tesCreateWallet(amount: Nat) : async Result<(), Text> {
-        let _ = await tokenActor.mint(caller, amount);
-        return #ok();
-    };
 
-    public query func getAllUser(): async [Principal]{
-      return Iter.toArray(users.keys());
-    };
+  public shared ({ caller }) func createUser(tokenCanisterId: Text, cartCanisterId: Text, user : User, owner : ?Principal ) : async Result<(), Text> {
 
-  public shared ({ caller }) func createUser(user : User, owner : ?Principal) : async Result<(), Text> {
+    let tokenActor = actor (tokenCanisterId) : TokenActorModules.TokenActor;
+    let cartActor = actor (cartCanisterId) : CartActorModules.CartActor;
+
     switch (owner) {
       case (?owner) {
         switch (users.get(owner)) {
