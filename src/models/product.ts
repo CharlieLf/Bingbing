@@ -14,7 +14,7 @@ interface ProductProps {
     clothing: string;
 }
 
-interface ProductData {
+export interface ProductData {
     id: bigint;
     name: string;
     image: number[] | Uint8Array;
