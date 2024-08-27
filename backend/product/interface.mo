@@ -7,10 +7,6 @@ module {
     type Product = Types.Product;
 
     public type ProductActor = actor {
-        createProduct:(product: Product) -> ();
-        updateProduct:(productId: Nat64, product: Product) -> ();
-        removeProduct:(productId: Nat64) -> ();
-        getProduct:(productId: Nat64) -> async Result<Product, Text>;
-        getProducts:() -> async Result<[Product], Text>;
+        getProduct: (key : Nat64,owner : ?Principal,) -> async ?Product;
     }
 }

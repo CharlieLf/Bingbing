@@ -15,9 +15,14 @@ module {
         quantity : Nat;
     };
 
+    public type ShownCartDetail = {
+        product : ?Product;
+        quantity : Nat;
+    };
+
     public type ShownCart = {
         owner : Text;
-        products : [CartDetail];
+        products : [ShownCartDetail];
     }
     
 }   

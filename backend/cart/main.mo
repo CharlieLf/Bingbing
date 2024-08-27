@@ -5,6 +5,7 @@ import Buffer "mo:base/Buffer";
 import Nat64 "mo:base/Nat64";
 import Products "../product/types";
 import Types "./types";
+import ProductActorModules "../product/interface";
 
 actor {
 
@@ -16,8 +17,11 @@ actor {
     
     type CartDetail = Types.CartDetail;
     type ShownCart = Types.ShownCart;
+    type ShownCartDetail = Types.ShownCartDetail;
     type UserCartDetail = HashMap<Nat64, Nat>;
     type UserCartItem = HashMap<Principal, UserCartDetail>;
+    
+    let productActor = actor "" : ProductActorModules.ProductActor;
 
     let carts = HashMap.HashMap<Principal, UserCartItem>(0, Principal.equal, Principal.hash);
 
@@ -71,7 +75,7 @@ actor {
         };
     };
 
-    public shared query ({caller}) func getSelfCart() : async Result<[ShownCart], Text>{
+    public shared ({caller}) func getSelfCart() : async Result<[ShownCart], Text>{
         switch(carts.get(caller)){
             case(null){
                 return #err("Empty Cart");
@@ -80,11 +84,11 @@ actor {
                 let shownCart = Buffer.Buffer<ShownCart>(0);
 
                 for ((ownerId, products) in cart.entries()) {
-                    var itemList = Buffer.Buffer<CartDetail>(0);
+                    var itemList = Buffer.Buffer<ShownCartDetail>(0);
 
                     for((productId, quantity) in products.entries()){
                         let detail = {
-                            productId = productId;
+                            product = await productActor.getProduct(productId, ?caller);
                             quantity = quantity;
                         };
                         itemList.add(detail);
