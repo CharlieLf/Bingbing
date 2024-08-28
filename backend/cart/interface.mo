@@ -15,5 +15,6 @@ module {
         addOrUpdateCart : (sellerId : Text, product : Product, quantity : Nat) -> async Result<(), Text>;
         removeCartItem : (sellerId : Text, productId : Nat64) -> async Result<(), Text>;
         getSelfCart : () -> async Result<[ShownCart], Text>;
+        removeNoProductCart: (sellerId : Principal, productId : Nat64) -> ();
     };
 };

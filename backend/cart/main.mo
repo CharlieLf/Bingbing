@@ -69,6 +69,19 @@ actor {
         };
     };
 
+    public shared func removeNoProductCart(sellerId : Principal, productId : Nat64) : (){
+        for(ownerCart in carts.vals()){
+            switch(ownerCart.get(sellerId)){
+                case (null) {};
+                case (?cartItem) {
+                    if(cartItem.get(productId) != null){
+                        ownerCart.delete(sellerId);
+                    };
+                };
+            };
+        }
+    };
+
     public shared ({ caller }) func getSelfCart(productCanisterId : Text) : async Result<[ShownCart], Text> {
         let productActor = actor (productCanisterId) : ProductActorModules.ProductActor;
         switch (carts.get(caller)) {
