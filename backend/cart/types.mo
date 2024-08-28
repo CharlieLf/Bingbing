@@ -7,6 +7,7 @@ module {
 
     public type Result<Ok, Err> = Result.Result<Ok, Err>;
     public type Product = Products.Product;
+    public type ProductWithoutImage = Products.ProductWithoutImage;
     public type HashMap<K, V> = HashMap.HashMap<K, V>;
     public type Buffer<T> = Buffer.Buffer<T>;
 
@@ -16,13 +17,13 @@ module {
     };
 
     public type ShownCartDetail = {
-        product : ?Product;
+        product : ?ProductWithoutImage;
         quantity : Nat;
     };
 
     public type ShownCart = {
         owner : Text;
         products : [ShownCartDetail];
-    }
-    
-}   
+    };
+
+};

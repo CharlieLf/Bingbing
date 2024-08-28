@@ -22,9 +22,8 @@ const AddProduct: React.FC = () => {
 
     const [imageUrl, setImageUrl] = useState<string>("");
     const imageInput = useRef<HTMLInputElement>(null);
-    const { createProduct } = createProductUpdate();
+    const { createProduct, createProductLoading } = createProductUpdate();
 
-    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
     const handleImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -53,12 +52,12 @@ const AddProduct: React.FC = () => {
     };
 
     const handleSubmit = async () => {
+        if (createProductLoading) return;
+
         if (!productName || !price || !stock || image.length === 0 || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
             setError('Please fill all fields');
             return;
         }
-
-        setLoading(true);
 
         try {
             const result = await createProduct([productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType, selectedClothing!]);
@@ -91,8 +90,6 @@ const AddProduct: React.FC = () => {
             navigate(-1);
         } catch (_) {
             setError('Failed to add product');
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -111,10 +108,10 @@ const AddProduct: React.FC = () => {
             <div className="flex">
                 <div className="w-[40%] mr-10">
                     <div className="mb-5 h-full">
-                        {imageUrl === "" ? 
+                        {imageUrl === "" ?
                             <div className="flex justify-center items-center h-full border border-black">No Image</div>
                             :
-                            <img src={imageUrl} alt="Product" className="h-full object-cover"/>
+                            <img src={imageUrl} alt="Product" className="h-full object-cover" />
                         }
                     </div>
                     <button onClick={handleImage} className="w-full border-black border p-5">Add Image</button>
@@ -135,7 +132,7 @@ const AddProduct: React.FC = () => {
 
                     <p className="text-xs min-h-4 text-red-500 mt-3">{error}</p>
 
-                    {loading ? 
+                    {createProductLoading ?
                         <button className="w-full mt-3 p-4 bg-gray-400 text-white font-bold">Loading...</button>
                         :
                         <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Add Product</button>
