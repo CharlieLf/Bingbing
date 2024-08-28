@@ -62,6 +62,7 @@ const AddProduct: React.FC = () => {
 
         try {
             const result = await createProduct([productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType, selectedClothing!]);
+            console.log(result);
             if (!result) {
                 setError('Failed to add product');
                 return;
