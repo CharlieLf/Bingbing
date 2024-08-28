@@ -1,3 +1,4 @@
+import Card from "@components/Card";
 import ShopCard from "@components/ShopCard";
 import NavbarLayout from "@layouts/NavbarLayout";
 import { useState } from "react";
@@ -16,15 +17,11 @@ const History:React.FC = () => {
                 </div>
 
                 { activeTab === "bought" && 
-                    <ShopCard checkbox="false" totalPrice="599,000"> {/* Notes: total price di sesuaikan */}
-                        <div></div>
-                    </ShopCard>
+                    <Card/>
                 }
 
                 { activeTab === "sold" && 
-                    <ShopCard checkbox="false" totalPrice="599,000"> {/* Notes: total price di sesuaikan */}
-                        <div></div>
-                    </ShopCard>
+                    <Card/>
                 }
             </div>
         </NavbarLayout>

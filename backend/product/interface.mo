@@ -7,6 +7,6 @@ module {
     type Product = Types.Product;
 
     public type ProductActor = actor {
-        getProduct: (key : Nat64,owner : ?Principal,) -> async ?Product;
-    }
-}
+        getProduct : (key : Nat64, owner : ?Principal) -> async ?Product;
+    };
+};

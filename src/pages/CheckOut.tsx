@@ -1,4 +1,5 @@
 import IconWallet from "@assets/icons/IconWallet";
+import Card from "@components/Card";
 import ShopCard from "@components/ShopCard";
 import NavbarLayout from "@layouts/NavbarLayout";
 
@@ -24,9 +25,7 @@ const Checkout:React.FC = () => {
                         </div>
                     </div>
 
-                    <ShopCard checkbox="false" totalPrice="">
-                        <div></div> {/* Tombol kanan kosong */}
-                    </ShopCard>
+                    <Card/>
                 </div>
 
                 <div className="bg-[#FFFDFD] w-[50%] h-fit p-5 border-gray-200 border">

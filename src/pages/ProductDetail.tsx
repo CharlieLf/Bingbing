@@ -1,20 +1,32 @@
-import { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import IconHeart from "@assets/icons/IconHeart";
 import NavbarLayout from "@layouts/NavbarLayout";
-import { getProductQuery } from "@/services/productService";
+import { getProductImageQuery, getProductQuery } from "@/services/productService";
 import { addOrUpdateCartUpdate } from "@/services/cartService";
+import ImagePlaceholder from "@components/ImagePlaceholder";
+import TypeUtils from "@utils/TypeUtils";
 
 
 const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
     let { id } = useParams();
-    const { product, getProduct } = getProductQuery();
+    const { product, getProduct, getProductLoading } = getProductQuery();
+    const [productImageUrl, setProductImageUrl] = useState<string | undefined | null>(null);
+    const { getProductImage } = getProductImageQuery();
     const { addOrUpdateCart } = addOrUpdateCartUpdate()
 
     async function fetchProductData() {
         if (!id) return;
-        await getProduct([BigInt(Number.parseInt(id)), []]);
+        const product = await getProduct([BigInt(Number.parseInt(id)), []]);
+        if (!product || 'err' in product) {
+            return;
+        }
+        const image = await getProductImage([BigInt(Number.parseInt(id))]);
+        if (!image || image.length === 0) {
+            return;
+        }
+        setProductImageUrl(TypeUtils.byteArrayToImageURL(image[0]));
     }
 
     async function handleAddOrUpdateCart() {
@@ -35,12 +47,20 @@ const ProductDetail: React.FC = () => {
         fetchProductData();
     }, []);
 
+    if (getProductLoading) {
+        return (
+            <NavbarLayout>
+                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+            </NavbarLayout>
+        )
+    }
+
     return (
         <NavbarLayout>
             {product ? (
                 <div className="flex w-full px-20 py-10">
-                    <div className="w-[40%] h-full">
-                        <img src={product?.image} />
+                    <div className="w-[40%]">
+                        <ImagePlaceholder imageUrl={productImageUrl} />
                     </div>
 
                     <div className="flex flex-col justify-between w-full mx-10">
@@ -67,12 +87,11 @@ const ProductDetail: React.FC = () => {
                 </div>
             ) :
                 product === undefined ? (
-                    <p>Loading...</p>
+                    <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
                 ) :
                     (
                         <p>Product not found</p>
                     )}
-
         </NavbarLayout>
     )
 }

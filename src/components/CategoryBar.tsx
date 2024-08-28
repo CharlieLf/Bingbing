@@ -9,7 +9,7 @@ const categories = ['All', 'Tops', 'Bottoms', 'Outerwear', 'Men', 'Women', 'Acce
 
 const CategoryBar: React.FC<Props> = ({ category, setCategory }) => {
   return (
-    <div className="sticky top-12 flex w-[50%] justify-evenly py-[10px] items-center">
+    <div className="sticky top-12 flex w-[50%] justify-evenly py-[10px] items-center z-50">
       {categories.map((category, idx) => {
         return (
           <CategoryChoice

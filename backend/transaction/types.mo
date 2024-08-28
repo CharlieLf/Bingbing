@@ -11,38 +11,38 @@ module {
     public type HashMap<K, V> = HashMap.HashMap<K, V>;
 
     public type TransactionHeader = {
-        id: Nat64;
-        details: HashMap<Principal, [ItemDetail]>;
-        date: Time.Time;
-        buyer: Principal;
+        id : Nat64;
+        details : HashMap<Principal, [ItemDetail]>;
+        date : Time.Time;
+        buyer : Principal;
     };
 
     public type ItemDetail = {
-        product: ?Product;
-        quantity: Nat;
+        product : ?Product;
+        quantity : Nat;
     };
 
     public type TransactionInput = {
         sellerPrincipal : Text;
-        items : [{productId : Nat64; quantity : Nat}];
+        items : [{ productId : Nat64; quantity : Nat }];
     };
 
     public type SellerHistory = {
-        items: [ItemDetail];
-        date: Time.Time;
+        items : [ItemDetail];
+        date : Time.Time;
         buyer : Text;
     };
 
     public type BuyerHistory = {
-        id: Nat64;
-        details: [SellerData];
-        date: Time.Time;
-        buyer: Principal;
+        id : Nat64;
+        details : [SellerData];
+        date : Time.Time;
+        buyer : Principal;
     };
 
     public type SellerData = {
-        seller: Principal;
-        items: [ItemDetail];
-    }
-    
-}   
+        seller : Principal;
+        items : [ItemDetail];
+    };
+
+};
