@@ -65,6 +65,9 @@ actor {
             };
             case (?cartItem) {
                 cartItem.delete(productId);
+                if(cartItem.size() == 0){
+                    ownerCart.delete(Principal.fromText(sellerId));
+                };
                 return #ok(());
             };
         };

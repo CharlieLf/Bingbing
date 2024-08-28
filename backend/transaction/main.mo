@@ -6,6 +6,7 @@ import Buffer "mo:base/Buffer";
 import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
 import ProductActorModules "../product/interface";
+import CartActorModules "../cart/interface";
 
 actor {
 
@@ -23,12 +24,12 @@ actor {
     stable var transactionSize : Nat64 = 0;
     let transactions = TrieMap.TrieMap<Nat64, TransactionHeader>(Nat64.equal, Nat64.toNat32);
 
-    public shared ({ caller }) func createTransaction(productCanisterId : Text, transactionData : [TransactionInput]) : async Result<(), Text> {
+    public shared ({ caller }) func createTransaction(cartCanisterId : Text, productCanisterId : Text, transactionData : [TransactionInput]) : async Result<(), Text> {
 
         var TransactionDetails = HashMap.HashMap<Principal, [ItemDetail]>(0, Principal.equal, Principal.hash);
 
         for (data in transactionData.vals()) {
-            let detail = await _createTransactionDetail(productCanisterId, data);
+            let detail = await _createTransactionDetail(cartCanisterId, productCanisterId, data);
             TransactionDetails.put(detail.seller, detail.details);
         };
 
@@ -105,12 +106,13 @@ actor {
         };
     };
 
-    private func _createTransactionDetail(productCanisterId : Text, input : TransactionInput) : async {
+    private func _createTransactionDetail(cartCanisterId : Text, productCanisterId : Text, input : TransactionInput) : async {
         seller : Principal;
         details : [ItemDetail];
     } {
         let itemDetails = Buffer.Buffer<ItemDetail>(0);
         let productActor = actor (productCanisterId) : ProductActorModules.ProductActor;
+        let cartActor = actor (cartCanisterId) : CartActorModules.CartActor;
 
         for (item in input.items.vals()) {
             let detail : ItemDetail = {
@@ -119,6 +121,10 @@ actor {
             };
 
             itemDetails.add(detail);
+            switch(await cartActor.removeCartItem(input.sellerPrincipal, item.productId)){
+                case (#ok()){};
+                case (#err(_)){};
+            }
         };
 
         return {
