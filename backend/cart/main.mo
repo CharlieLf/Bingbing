@@ -6,6 +6,7 @@ import Nat64 "mo:base/Nat64";
 import Products "../product/types";
 import Types "./types";
 import ProductActorModules "../product/interface";
+import UserActorModules "../user/interface";
 
 actor {
 
@@ -64,13 +65,30 @@ actor {
             };
             case (?cartItem) {
                 cartItem.delete(productId);
+                if(cartItem.size() == 0){
+                    ownerCart.delete(Principal.fromText(sellerId));
+                };
                 return #ok(());
             };
         };
     };
 
-    public shared ({ caller }) func getSelfCart(productCanisterId : Text) : async Result<[ShownCart], Text> {
+    public shared func removeNoProductCart(sellerId : Principal, productId : Nat64) : (){
+        for(ownerCart in carts.vals()){
+            switch(ownerCart.get(sellerId)){
+                case (null) {};
+                case (?cartItem) {
+                    if(cartItem.get(productId) != null){
+                        ownerCart.delete(sellerId);
+                    };
+                };
+            };
+        }
+    };
+
+    public shared ({ caller }) func getSelfCart(productCanisterId : Text, userCanisterId: Text) : async Result<[ShownCart], Text> {
         let productActor = actor (productCanisterId) : ProductActorModules.ProductActor;
+        let userActor = actor (userCanisterId) : UserActorModules.UserActor;
         switch (carts.get(caller)) {
             case (null) {
                 return #err("Empty Cart");
@@ -87,8 +105,12 @@ actor {
                         };
                         itemList.add(detail);
                     };
+                    let user = switch(await userActor.getUser(?ownerId)){
+                        case (#ok(user)) { user };
+                        case (#err(_)) { return #err("User not found") };
+                    };
                     shownCart.add({
-                        owner = Principal.toText(ownerId);
+                        ownerName = user.name;
                         products = Buffer.toArray(itemList);
                     });
 

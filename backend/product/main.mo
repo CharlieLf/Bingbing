@@ -5,6 +5,7 @@ import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
 import Types "types";
 import Utils "utils";
+import CartActorModules "../cart/interface"
 
 actor {
     type Result<Ok, Error> = Types.Result<Ok, Error>;
@@ -46,8 +47,10 @@ actor {
         };
     };
 
-    public shared ({ caller }) func deleteProduct(productId : Nat64) : async Result<(), Text> {
+    public shared ({ caller }) func deleteProduct(productId : Nat64, cartCanisterId : Text) : async Result<(), Text> {
         let product = products.get(productId);
+        let cartActor = actor (cartCanisterId) : CartActorModules.CartActor;
+
         switch (product) {
             case null {
                 return #err("Product not found");
@@ -57,6 +60,7 @@ actor {
                     return #err("Unauthorized");
                 };
                 products.delete(productId);
+                cartActor.removeNoProductCart(caller, productId);
                 return #ok();
             };
         };
