@@ -149,7 +149,11 @@ const UpdateProduct: React.FC = () => {
             <div className="flex">
                 <div className="w-[40%] mr-10">
                     <div className="mb-5 h-full">
-                        <img src={imageUrl} className="h-full object-cover"/>
+                        {imageUrl === "" ?
+                            <div className="flex justify-center items-center h-full border border-black">No Image</div>
+                        :
+                            <img src={imageUrl} className="h-full object-cover"/>
+                        }
                     </div>
                     <button onClick={handleImage} className="w-full border-black border p-5">Edit Image</button>
                 </div>
