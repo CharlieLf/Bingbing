@@ -19,7 +19,7 @@ export function getAllProductsQuery() {
 export function getProductQuery() {
     const { useQueryCall: productQuery } = useServiceContext().productService;
     const [product, setProduct] = useState<Product | undefined | null>(null);
-    const { call: getProduct } = productQuery({
+    const { call: getProduct, loading: getProductLoading } = productQuery({
         functionName: "getProduct",
         onSuccess: (productData) => {
             if (productData && productData.length === 1) {
@@ -29,13 +29,13 @@ export function getProductQuery() {
         refetchOnMount: false
     });
 
-    return { product, getProduct };
+    return { product, getProduct, getProductLoading };
 }
 
 export function getProductsByOwnerQuery() {
     const { useQueryCall: productQuery } = useServiceContext().productService;
     const [products, setProducts] = useState<Product[]>([]);
-    const { call: getProductsByOwner } = productQuery({
+    const { call: getProductsByOwner, loading: getProductsByOwnerLoading } = productQuery({
         functionName: "getProductsByOwner",
         onSuccess: (productData) => {
             setProducts(productData?.map(Product.fromProductData) ?? [])
@@ -43,34 +43,34 @@ export function getProductsByOwnerQuery() {
         refetchOnMount: false
     });
 
-    return { products, getProductsByOwner };
+    return { products, getProductsByOwner, getProductsByOwnerLoading };
 }
 
 export function createProductUpdate() {
     const { useUpdateCall: productUpdate } = useServiceContext().productService;
-    const { call: createProduct } = productUpdate({
+    const { call: createProduct, loading: createProductLoading } = productUpdate({
         functionName: "createProduct",
     })
 
-    return { createProduct };
+    return { createProduct, createProductLoading };
 }
 
 export function editProductUpdate() {
     const { useUpdateCall: productUpdate } = useServiceContext().productService;
-    const { call: editProduct } = productUpdate({
+    const { call: editProduct, loading: editProductLoading } = productUpdate({
         functionName: "updateProduct",
     })
 
-    return { editProduct };
+    return { editProduct, editProductLoading };
 }
 
 export function deleteProductUpdate() {
     const { useUpdateCall: productUpdate } = useServiceContext().productService;
-    const { call: deleteProduct } = productUpdate({
+    const { call: deleteProduct, loading: deleteProductLoading } = productUpdate({
         functionName: "deleteProduct",
     })
 
-    return { deleteProduct };
+    return { deleteProduct, deleteProductLoading };
 }
 
 export function getProductImageQuery() {

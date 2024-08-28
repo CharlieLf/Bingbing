@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import IconHeart from "@assets/icons/IconHeart";
 import NavbarLayout from "@layouts/NavbarLayout";
 import { getProductImageQuery, getProductQuery } from "@/services/productService";
@@ -11,7 +11,7 @@ import TypeUtils from "@utils/TypeUtils";
 const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
     let { id } = useParams();
-    const { product, getProduct } = getProductQuery();
+    const { product, getProduct, getProductLoading } = getProductQuery();
     const [productImageUrl, setProductImageUrl] = useState<string | undefined | null>(null);
     const { getProductImage } = getProductImageQuery();
     const { addOrUpdateCart } = addOrUpdateCartUpdate()
@@ -47,6 +47,14 @@ const ProductDetail: React.FC = () => {
         fetchProductData();
     }, []);
 
+    if (getProductLoading) {
+        return (
+            <NavbarLayout>
+                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+            </NavbarLayout>
+        )
+    }
+
     return (
         <NavbarLayout>
             {product ? (
@@ -78,12 +86,12 @@ const ProductDetail: React.FC = () => {
                     </div>
                 </div>
             ) :
-            product === undefined ? (
-                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
-            ) :
-            (
-                <p>Product not found</p>
-            )}
+                product === undefined ? (
+                    <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+                ) :
+                    (
+                        <p>Product not found</p>
+                    )}
         </NavbarLayout>
     )
 }

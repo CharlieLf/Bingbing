@@ -1,4 +1,3 @@
-import TypeUtils from "@utils/TypeUtils";
 import { ClothingType, Gender, Season } from "./category";
 
 interface ProductProps {
@@ -6,7 +5,6 @@ interface ProductProps {
     name: string;
     price: number;
     stock: number;
-    image?: string;
     owner: string;
     gender: Gender;
     season: Season;
@@ -17,7 +15,6 @@ interface ProductProps {
 export interface ProductData {
     id: bigint;
     name: string;
-    image?: number[] | Uint8Array;
     stock: bigint;
     price: bigint;
     owner: string;
@@ -44,7 +41,6 @@ export default class Product {
         name,
         price,
         stock,
-        image,
         owner,
         gender,
         season,
@@ -55,7 +51,6 @@ export default class Product {
         this.name = name;
         this.price = price;
         this.stock = stock;
-        this.image = image;
         this.owner = owner;
         this.gender = gender;
         this.season = season;
@@ -71,7 +66,6 @@ export default class Product {
         return new Product({
             id: Number(p.id),
             name: p.name,
-            image: p.image ? TypeUtils.byteArrayToImageURL(p.image) : undefined,
             stock: Number(p.stock),
             price: Number(p.price),
             owner: p.owner,

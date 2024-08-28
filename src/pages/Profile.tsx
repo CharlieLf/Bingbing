@@ -15,6 +15,7 @@ import User from "@models/user";
 import TypeUtils from "@utils/TypeUtils";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Profile: React.FC = () => {
     const { principal } = useParams();
@@ -51,20 +52,20 @@ const Profile: React.FC = () => {
 
     async function handleDeleteProduct() {
         const result = await deleteProduct([BigInt(selectedProduct?.id ?? 0)]);
-        if (!result) {
-            console.log("Failed to delete product");
-            return
+        if (!result || 'err' in result) {
+            Swal.fire({
+                title: "Failed to delete product",
+                icon: "error"
+            })
+            return;
         }
-        if ('err' in result) {
-            console.log(result.err);
-            return
-        }
-        if (result) {
-            await fetchProductsByOwner();
-            setSelectedProduct(undefined);
-        } else {
-            console.error("Failed to delete product");
-        }
+        await fetchProductsByOwner();
+        Swal.fire({
+            title: "Success!",
+            text: "Successfully delete product",
+            icon: "success"
+        });
+        setSelectedProduct(undefined);
     }
 
     async function handleTopUp() {
@@ -76,15 +77,20 @@ const Profile: React.FC = () => {
             return;
         }
         const result = await mint([principal, BigInt(topUpAmount)]);
-        if (!result) {
-            console.log("Failed to top up");
-            return;
-        }
-        if ('err' in result) {
-            console.log(result.err);
+        if (!result || 'err' in result) {
+            Swal.fire({
+                title: "Failed to top up",
+                icon: "error"
+            })
             return;
         }
         await fetchUser();
+
+        Swal.fire({
+            title: "Success!",
+            text: `Successfully top up ${topUpAmount} !`,
+            icon: "success"
+        })
         setIsTopUpModalOpen(false);
         setTopUpAmount(0);
     }
@@ -94,11 +100,18 @@ const Profile: React.FC = () => {
         if (currPrincipal && principal !== currPrincipal.toText()) {
             const result = await getUser([[currPrincipal]])
             if (!result) {
-                console.log("Failed to fetch user");
+                Swal.fire({
+                    title: "Failed to fetch user",
+                    icon: "error"
+                })
                 return;
             }
             if ('err' in result) {
-                console.log(result.err);
+                Swal.fire({
+                    title: "Failed to fetch user",
+                    text: result.err,
+                    icon: "error"
+                })
                 return;
             }
             setProfileUser(User.castToUser(result.ok));

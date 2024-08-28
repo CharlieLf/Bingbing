@@ -3,18 +3,20 @@ import Input from "@components/Input";
 import { useEffect, useRef, useState } from "react";
 import CategoryField from "@components/CategoryField";
 import { Gender, genderSelection, Season, seasonSelection, ClothingType, typeSelection } from "@models/category";
-import { editProductUpdate, getProductQuery } from "@/services/productService";
+import { editProductUpdate, getProductImageQuery, getProductQuery } from "@/services/productService";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@ic-reactor/react";
 import defaultImage from "@assets/product/testing.jpg";
 import Product from "@models/product";
 import Swal from "sweetalert2";
+import ImagePlaceholder from "@components/ImagePlaceholder";
 import TypeUtils from "@utils/TypeUtils";
 
 const UpdateProduct: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { product, getProduct } = getProductQuery();
+    const { product, getProduct, getProductLoading } = getProductQuery();
+    const { getProductImage } = getProductImageQuery();
     const { identity } = useAuth();
 
     const [productName, setProductName] = useState<string>('');
@@ -27,12 +29,11 @@ const UpdateProduct: React.FC = () => {
     const [selectedClothing, setSelectedClothing] = useState<string | undefined>();
 
     const [image, setImage] = useState<Uint8Array | undefined>();
-    const [imageUrl, setImageUrl] = useState<string>('');
+    const [productImageUrl, setProductImageUrl] = useState<string | undefined | null>();
     const imageInput = useRef<HTMLInputElement>(null);
 
-    const { editProduct } = editProductUpdate();
+    const { editProduct, editProductLoading } = editProductUpdate();
     const [error, setError] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
 
     const handleImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -51,7 +52,7 @@ const UpdateProduct: React.FC = () => {
                     const arrayBuffer = reader.result as ArrayBuffer;
                     const uint8Array = new Uint8Array(arrayBuffer);
                     setImage(uint8Array);
-                    setImageUrl(URL.createObjectURL(file));
+                    setProductImageUrl(URL.createObjectURL(file));
                 }
             };
 
@@ -60,12 +61,12 @@ const UpdateProduct: React.FC = () => {
     };
 
     const handleSubmit = async () => {
+        if(editProductLoading) return;
+
         if (!productName || !price || !stock || !image || image.length === 0 || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
             setError('Please fill all fields');
             return;
         }
-
-        setLoading(true);
 
         try {
             setError('');
@@ -87,7 +88,6 @@ const UpdateProduct: React.FC = () => {
                     text: "The product has been successfully updated!",
                     icon: "success"
                 })
-
                 setProductName('');
                 setPrice(0);
                 setStock(0);
@@ -96,21 +96,28 @@ const UpdateProduct: React.FC = () => {
                 setSelectedGender(genderSelection[0]);
                 setSelectedSeason(seasonSelection[0]);
                 setSelectedType(typeSelection[0]);
-                setImageUrl(defaultImage);
+                setProductImageUrl(defaultImage);
                 setError('');
                 navigate(-1);
             }
         } catch (_) {
             setError('Failed to add product');
-        } finally {
-            setLoading(false);
         }
     }
 
     async function fetchProductData() {
         const principal = identity?.getPrincipal();
         if (!principal) return;
-        await getProduct([BigInt(Number(id ?? '0')), [principal]]);
+        const product = await getProduct([BigInt(Number(id ?? '0')), [principal]]);
+        if (!product || 'err' in product) {
+            return
+        }
+        const image = await getProductImage([BigInt(Number(id ?? '0'))]);
+        if (!image || image.length === 0) {
+            return
+        };
+        setImage(new Uint8Array(image[0]));
+        setProductImageUrl(TypeUtils.byteArrayToImageURL(image[0]));
     }
 
     async function updateFormData(product: Product) {
@@ -121,8 +128,6 @@ const UpdateProduct: React.FC = () => {
         setSelectedGender(product.gender);
         setSelectedSeason(product.season);
         setSelectedType(product.clothingType);
-        setImageUrl(product.image ?? "");
-        setImage(product.image ? await TypeUtils.fetchUint8ArrayFromUrl(product.image) : undefined);
     }
 
     useEffect(() => {
@@ -137,7 +142,7 @@ const UpdateProduct: React.FC = () => {
         updateFormData(product);
     }, [product])
 
-    if (product === undefined) {
+    if (getProductLoading) {
         return <div className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</div>
     }
 
@@ -160,10 +165,10 @@ const UpdateProduct: React.FC = () => {
             <div className="flex">
                 <div className="w-[40%] mr-10">
                     <div className="mb-5 h-full">
-                        {imageUrl === "" ?
+                        {productImageUrl === "" ?
                             <div className="flex justify-center items-center h-full border border-black">No Image</div>
-                        :
-                            <img src={imageUrl} className="h-full object-cover"/>
+                            :
+                            <ImagePlaceholder imageUrl={productImageUrl} />
                         }
                     </div>
                     <button onClick={handleImage} className="w-full border-black border p-5">Edit Image</button>
@@ -184,7 +189,7 @@ const UpdateProduct: React.FC = () => {
 
                     <p className="text-sm text-red-500 mt-3">{error}</p>
 
-                    { loading ? 
+                    {editProductLoading ?
                         <button className="w-full mt-3 p-4 bg-gray-400 text-white font-bold">Loading...</button>
                         :
                         <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Update Product</button>

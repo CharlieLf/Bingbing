@@ -34,7 +34,11 @@ const Home: React.FC = () => {
     }, [category]);
 
     if (getAllProductsLoading) {
-        return <div className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</div>
+        return (
+            <NavbarLayout>
+                <div className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</div>
+            </NavbarLayout>
+        )
     }
 
     return (

@@ -37,8 +37,6 @@ const ServiceContextProvider: React.FC<Props> = ({ children }) => {
     const agentManager = useAgentManager();
     const [authenticating, setAuthenticating] = useState(true);
 
-    console.log(userCanisterId)
-
     useEffect(() => {
         const unsubscribe = agentManager.subscribeAuthState((authState) => {
             if (authState.authenticating) {

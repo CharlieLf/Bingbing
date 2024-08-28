@@ -7,7 +7,6 @@ export function getBalanceQuery() {
 
     const { call: getBalance } = balanceQuery({
         functionName: "balance",
-        args: [],
         refetchOnMount: false,
         onSuccess: (result) => {
             if (!result || 'err' in result) {

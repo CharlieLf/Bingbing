@@ -55,7 +55,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     }
 
     useEffect(() => {
-        if (user === undefined && !getUserLoading && !authenticating) {
+        if (user === undefined && !authenticating && !getUserLoading) {
             fetchUser();
         }
     }, [authenticating]);
