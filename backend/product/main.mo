@@ -7,110 +7,131 @@ import Types "types";
 import Utils "utils";
 
 actor {
-  type Result<Ok, Error> = Types.Result<Ok, Error>;
-  type Product = Types.Product;
+    type Result<Ok, Error> = Types.Result<Ok, Error>;
+    type Product = Types.Product;
+    type ProductWithoutImage = Types.ProductWithoutImage;
 
-  let products = TrieMap.TrieMap<Nat64, Product>(Nat64.equal, Nat64.toNat32);
-  private var size : Nat64 = 0;
+    let products = TrieMap.TrieMap<Nat64, Product>(Nat64.equal, Nat64.toNat32);
+    private var size : Nat64 = 0;
 
-  public shared ({ caller }) func createProduct(
-    _name : Text,
-    _price : Nat64,
-    _stock : Nat64,
-    _image : Blob,
-    _gender : Text,
-    _season : Text,
-    _clothingType : Text,
-    _clothing : Text,
-  ) : async Result<(), Text> {
-    let product = Utils._createProduct(size, _name, _price, _stock, _image, Principal.toText(caller), _gender, _season, _clothingType, _clothing);
-    products.put(size, product);
-    size += 1;
-    return #ok();
-  };
-
-  public shared ({ caller }) func updateProduct(
-    _id : Nat64,
-    _name : Text,
-    _price : Nat64,
-    _stock : Nat64,
-    _image : Blob,
-    _gender : Text,
-    _season : Text,
-    _clothingType : Text,
-    _clothing : Text,
-  ) : async Result<(), Text> {
-    let oldProduct : ?Product = products.get(_id);
-    switch (oldProduct) {
-      case (?value) {
-        if (value.owner != Principal.toText(caller)) {
-          return #err("Unauthorized");
-        };
-        products.put(_id, Utils._createProduct(_id, _name, _price, _stock, _image, Principal.toText(caller), _gender, _season, _clothingType, _clothing));
+    public shared ({ caller }) func createProduct(
+        _name : Text,
+        _price : Nat64,
+        _stock : Nat64,
+        _image : Blob,
+        _gender : Text,
+        _season : Text,
+        _clothingType : Text,
+        _clothing : Text,
+    ) : async Result<(), Text> {
+        let product = Utils._createProduct(size, _name, _price, _stock, _image, Principal.toText(caller), _gender, _season, _clothingType, _clothing);
+        products.put(size, product);
+        size += 1;
         return #ok();
-      };
-      case null {
-        return #err("Product not found");
-      };
     };
-  };
 
-  public shared ({ caller }) func deleteProduct(
-    key : Nat64
-  ) : async Result<(), Text> {
-    switch (products.get(key)) {
-      case null {
-        return #err("Product not found");
-      };
-      case (?product) {
-        if (product.owner != Principal.toText(caller)) {
-          return #err("Unauthorized");
-        };
-        size -= 1;
-        products.delete(key);
-        return #ok();
-      };
-    };
-  };
-
-  public shared query func getProduct(
-    key : Nat64,
-    owner : ?Principal,
-  ) : async ?Product {
-    switch (owner) {
-      case (?owner) {
-        let product = products.get(key);
-        switch (product) {
-          case (?value) {
-            if (value.owner == Principal.toText(owner)) {
-              return product;
+    public shared ({ caller }) func updateProduct(p : Product) : async Result<(), Text> {
+        let oldProduct : ?Product = products.get(p.id);
+        switch (oldProduct) {
+            case (?value) {
+                if (value.owner != Principal.toText(caller)) {
+                    return #err("Unauthorized");
+                };
+                products.put(p.id, p);
+                return #ok();
             };
-            return null;
-          };
-          case (null) {
-            return null;
-          };
+            case null {
+                return #err("Product not found");
+            };
         };
-      };
-      case (null) {
-        return products.get(key);
-      };
     };
-  };
 
-  public shared query func getAllProducts() : async [Product] {
-    return Iter.toArray(products.vals());
-  };
+    public shared ({ caller }) func deleteProduct(productId : Nat64) : async Result<(), Text> {
+        let product = products.get(productId);
+        switch (product) {
+            case null {
+                return #err("Product not found");
+            };
+            case (?product) {
+                if (product.owner != Principal.toText(caller)) {
+                    return #err("Unauthorized");
+                };
+                products.delete(productId);
+                return #ok();
+            };
+        };
+    };
 
-  public shared query func getProductsByOwner(
-    owner : Text
-  ) : async [Product] {
-    return Iter.toArray(
-      Iter.filter(
-        products.vals(),
-        func(p : Product) : Bool { p.owner == owner },
-      )
-    );
-  };
+    public shared query func getProduct(productId : Nat64, owner : ?Principal) : async ?ProductWithoutImage {
+        let product = switch (products.get(productId)) {
+            case (null) {
+                return null;
+            };
+            case (?product) {
+                product;
+            };
+        };
+        switch (owner) {
+            case (null) {
+                ?product;
+            };
+            case (?owner) {
+                if (product.owner == Principal.toText(owner)) {
+                    ?product;
+                } else {
+                    return null;
+                };
+            };
+        };
+
+    };
+
+    public shared query func getAllProducts() : async [ProductWithoutImage] {
+        let productWithoutImageIter = Iter.map(
+            products.vals(),
+            _omitImage,
+        );
+        return Iter.toArray(productWithoutImageIter);
+    };
+
+    public shared query func getProductsByOwner(owner : Text) : async [ProductWithoutImage] {
+        let filtered = Iter.toArray(
+            Iter.filter(
+                products.vals(),
+                func(p : Product) : Bool { p.owner == owner },
+            )
+        );
+        let productWithoutImageIter = Iter.map(
+            filtered.vals(),
+            _omitImage,
+        );
+        return Iter.toArray(productWithoutImageIter);
+    };
+
+    public shared query func getProductImage(productId : Nat64) : async ?Blob {
+        let product = products.get(productId);
+        switch (product) {
+            case (null) {
+                return null;
+            };
+            case (?product) {
+                return product.image;
+            };
+        };
+    };
+
+    func _omitImage(p : Product) : ProductWithoutImage {
+        return {
+            id = p.id;
+            name = p.name;
+            price = p.price;
+            stock = p.stock;
+            owner = p.owner;
+            gender = p.gender;
+            season = p.season;
+            clothingType = p.clothingType;
+            clothing = p.clothing;
+        };
+    };
 
 };

@@ -8,7 +8,9 @@ export function getAllProductsQuery() {
     const [products, setProducts] = useState<Product[]>([]);
     const { call: getAllProducts, loading: getAllProductsLoading } = productQuery({
         functionName: "getAllProducts",
-        onSuccess: (productData) => setProducts(productData?.map(Product.castToProduct) ?? []),
+        onSuccess: (productData) => {
+            setProducts(productData?.map(Product.fromProductData) ?? []);
+        },
         refetchOnMount: false
     });
     return { products, getAllProducts, getAllProductsLoading };
@@ -21,7 +23,7 @@ export function getProductQuery() {
         functionName: "getProduct",
         onSuccess: (productData) => {
             if (productData && productData.length === 1) {
-                setProduct(Product.castToProduct(productData[0]));
+                setProduct(Product.fromProductData(productData[0]));
             }
         },
         refetchOnMount: false
@@ -35,7 +37,9 @@ export function getProductsByOwnerQuery() {
     const [products, setProducts] = useState<Product[]>([]);
     const { call: getProductsByOwner } = productQuery({
         functionName: "getProductsByOwner",
-        onSuccess: (productData) => setProducts(productData?.map(Product.castToProduct) ?? []),
+        onSuccess: (productData) => {
+            setProducts(productData?.map(Product.fromProductData) ?? [])
+        },
         refetchOnMount: false
     });
 
@@ -67,4 +71,12 @@ export function deleteProductUpdate() {
     })
 
     return { deleteProduct };
+}
+
+export function getProductImageQuery() {
+    const { useQueryCall: productQuery } = useServiceContext().productService;
+    const { call: getProductImage } = productQuery({
+        functionName: 'getProductImage'
+    })
+    return { getProductImage }
 }

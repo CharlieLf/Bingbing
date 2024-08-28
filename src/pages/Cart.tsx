@@ -1,59 +1,62 @@
 import { getSelfCartQuery } from "@/services/cartService";
 import ShopCard from "@components/ShopCard";
+import useServiceContext from "@hooks/useServiceContext";
 import NavbarLayout from "@layouts/NavbarLayout";
 import { useEffect, useState } from "react";
 
+interface CartCount {
+    [key: number]: number;
+}
+
+interface SelectedCartItem {
+    [key: number]: boolean;
+}
+
 const Carts: React.FC = () => {
+    const { productCanisterId } = useServiceContext();
     const { carts, getSelfCart } = getSelfCartQuery();
-    const [cartCount, setCartCount] = useState<Map<number, number>>(new Map());
-    const [selectedCart, setSelectedCart] = useState<Map<number, boolean>>(new Map());
+    const [cartCount, setCartCount] = useState<CartCount>({});
+    const [selectedCartItem, setSelectedCartItem] = useState<SelectedCartItem>({});
 
     async function fetchCartData() {
-        await getSelfCart();
+        await getSelfCart([productCanisterId]);
     }
 
     function updateCartCount(productId: number, quantity: number) {
         setCartCount(prev => {
-            const newCartCount = new Map(prev);
-            newCartCount.set(productId, quantity);
+            const newCartCount = { ...prev, [productId]: quantity };
             return newCartCount;
         });
     }
 
-    function updateSelectedCart(productId: number, selected: boolean) {
-        setSelectedCart(prev => {
-            const newSelectedCart = new Map(prev);
-            newSelectedCart.set(productId, selected);
-            return newSelectedCart;
+    function updateSelectedCartItem(productId: number, selected: boolean) {
+        setSelectedCartItem(prev => {
+            const newSelectedCartItem = { ...prev, [productId]: selected };
+            return newSelectedCartItem
         });
     }
 
     useEffect(() => {
-        const cartCount = new Map<number, number>();
-        carts?.forEach(cart => {
-            cart.cartDetails.forEach(cartDetail => {
-                cartCount.set(cartDetail.productId, cartDetail.quantity);
-            })
-        })
+        const cartCount: CartCount = {};
+        // carts?.forEach(cart => {
+        //     cart.cartDetails.forEach(cd => {
+        //         cartCount[cd.productId] = cd.quantity;
+        //     })
+        // })
         setCartCount(cartCount);
 
-        const selectedCart = new Map<number, boolean>();
-        carts?.forEach(cart => {
-            cart.cartDetails.forEach(cartDetail => {
-                selectedCart.set(cartDetail.productId, false);
-            })
-        })
-        setSelectedCart(selectedCart);
+        const selectedCart: SelectedCartItem = {};
+        // carts?.forEach(cart => {
+        //     cart.cartDetails.forEach(cd => {
+        //         selectedCart[cd.productId] = false;
+        //     })
+        // })
+        setSelectedCartItem(selectedCart);
     }, [carts])
 
     useEffect(() => {
         fetchCartData();
     }, [])
-
-    useEffect(() => {
-        console.log(selectedCart);
-        
-    }, [selectedCart])
 
     return (
         <NavbarLayout>
@@ -66,8 +69,8 @@ const Carts: React.FC = () => {
                             cart={cart} key={idx}
                             cartCount={cartCount}
                             updateCartCount={updateCartCount}
-                            selectedCart={selectedCart}
-                            updateSelectedCart={updateSelectedCart}
+                            selectedCart={selectedCartItem}
+                            updateSelectedCartItem={updateSelectedCartItem}
                         />
                     })}
                 </div>

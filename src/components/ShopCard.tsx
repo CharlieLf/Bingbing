@@ -3,34 +3,42 @@ import image from "../assets/product/register.jpg";
 import InputNumber from "./InputNumber";
 import { useEffect, useState } from "react";
 
+interface CartCount {
+    [key: number]: number;
+}
+
+interface SelectedCartItem {
+    [key: number]: boolean;
+}
+
 interface Props {
     checkbox?: boolean;
     cart: Cart;
-    cartCount: Map<number, number>;
+    cartCount: CartCount;
     updateCartCount: (productId: number, quantity: number) => void;
-    selectedCart: Map<number, boolean>;
-    updateSelectedCart: (productId: number, selected: boolean) => void;
+    selectedCart: SelectedCartItem;
+    updateSelectedCartItem: (productId: number, selected: boolean) => void;
 }
 
-const ShopCard: React.FC<Props> = ({ checkbox = false, cart, updateCartCount, cartCount, selectedCart, updateSelectedCart }) => {
+const ShopCard: React.FC<Props> = ({ checkbox = false, cart, updateCartCount, cartCount, selectedCart, updateSelectedCartItem }) => {
     const totalPrice = cart.cartDetails.reduce((acc, curr) => {
         return acc + curr.quantity * 100;
     }, 0);
 
     const [isSelectedAll, setIsSelectedAll] = useState(
-        cart.cartDetails.every(cd => selectedCart.get(cd.productId))
+        cart.cartDetails.every(cd => selectedCart[cd.product.id])
     );
 
     function handleToggleAllCart(e: React.ChangeEvent<HTMLInputElement>) {
-        cart.cartDetails.forEach(cartDetail => {
-            updateSelectedCart(cartDetail.productId, e.target.checked);
+        cart.cartDetails.forEach(cd => {
+            updateSelectedCartItem(cd.product.id, e.target.checked);
         });
         setIsSelectedAll(e.target.checked);
     }
 
     useEffect(() => {
         const allSelected = cart.cartDetails.every(
-            (cd) => selectedCart.get(cd.productId) === true
+            (cd) => selectedCart[cd.product.id] === true
         );
         setIsSelectedAll(allSelected);
     }, [selectedCart, cart.cartDetails]);
@@ -48,15 +56,15 @@ const ShopCard: React.FC<Props> = ({ checkbox = false, cart, updateCartCount, ca
             </div>
 
             {cart.cartDetails.map((cd, idx) => {
-                const isCurrSelected = selectedCart.get(cd.productId) || false;
+                const isCurrSelected = selectedCart[cd.product.id] || false;
 
                 function handleToggleCart(e: React.ChangeEvent<HTMLInputElement>) {
-                    updateSelectedCart(cd.productId, e.target.checked)
+                    updateSelectedCartItem(cd.product.id, e.target.checked)
                 };
 
                 function updateCartQuantity(value: number) {
                     if (value <= 0) return;
-                    updateCartCount(cd.productId, value);
+                    updateCartCount(cd.product.id, value);
                 }
 
                 return (
@@ -74,12 +82,12 @@ const ShopCard: React.FC<Props> = ({ checkbox = false, cart, updateCartCount, ca
                             <img src={image} width={200} className="mr-10" />
 
                             <div className="flex flex-col justify-between w-full">
-                                <p>{cd.productId}</p>
+                                <p>{cd.product.id}</p>
 
                                 <div className="flex flex-row justify-between">
                                     <p className="font-bold">IDR. 200,000</p>
                                     <InputNumber
-                                        quantity={cartCount.get(cd.productId) || 0}
+                                        quantity={cartCount[cd.product.id] || 0}
                                         updateCartQuantity={updateCartQuantity}
                                     />
                                 </div>

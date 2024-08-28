@@ -595,6 +595,10 @@ body{
   top: 3rem;
 }
 
+.top-24{
+  top: 6rem;
+}
+
 .top-32{
   top: 8rem;
 }
@@ -674,10 +678,6 @@ body{
   margin-right: 1.25rem;
 }
 
-.mt-10{
-  margin-top: 2.5rem;
-}
-
 .mt-2{
   margin-top: 0.5rem;
 }
@@ -688,6 +688,10 @@ body{
 
 .mt-5{
   margin-top: 1.25rem;
+}
+
+.mt-10{
+  margin-top: 2.5rem;
 }
 
 .flex{
@@ -1253,11 +1257,6 @@ body{
   color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
-.text-gray-700{
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-
 .text-red-500{
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
@@ -1266,6 +1265,11 @@ body{
 .text-white{
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-gray-700{
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 
 .opacity-0{

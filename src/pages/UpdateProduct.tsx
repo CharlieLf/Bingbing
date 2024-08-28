@@ -26,7 +26,7 @@ const UpdateProduct: React.FC = () => {
     const [selectedType, setSelectedType] = useState<ClothingType>(typeSelection[0]);
     const [selectedClothing, setSelectedClothing] = useState<string | undefined>();
 
-    const [image, setImage] = useState<Uint8Array>(new Uint8Array());
+    const [image, setImage] = useState<Uint8Array | undefined>();
     const [imageUrl, setImageUrl] = useState<string>('');
     const imageInput = useRef<HTMLInputElement>(null);
 
@@ -60,7 +60,7 @@ const UpdateProduct: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        if (!productName || !price || !stock || image.length === 0 || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
+        if (!productName || !price || !stock || !image || image.length === 0 || !selectedClothing || !selectedGender || !selectedSeason || !selectedType) {
             setError('Please fill all fields');
             return;
         }
@@ -69,7 +69,18 @@ const UpdateProduct: React.FC = () => {
 
         try {
             setError('');
-            const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType!, selectedClothing]);
+            const result = await editProduct([{
+                id: BigInt(Number(id)),
+                name: productName,
+                price: BigInt(price),
+                stock: BigInt(stock),
+                image: [image],
+                gender: selectedGender,
+                season: selectedSeason,
+                clothingType: selectedType,
+                clothing: selectedClothing,
+                owner: product?.owner!
+            }]);
             if (result) {
                 Swal.fire({
                     title: "Success!",
@@ -110,8 +121,8 @@ const UpdateProduct: React.FC = () => {
         setSelectedGender(product.gender);
         setSelectedSeason(product.season);
         setSelectedType(product.clothingType);
-        setImageUrl(product.image);
-        setImage(await TypeUtils.fetchUint8ArrayFromUrl(product.image) ?? new Uint8Array());
+        setImageUrl(product.image ?? "");
+        setImage(product.image ? await TypeUtils.fetchUint8ArrayFromUrl(product.image) : undefined);
     }
 
     useEffect(() => {

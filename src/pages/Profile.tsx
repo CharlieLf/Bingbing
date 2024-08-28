@@ -1,4 +1,4 @@
-import { deleteProductUpdate, getProductsByOwnerQuery } from "@/services/productService";
+import { deleteProductUpdate, getProductImageQuery, getProductsByOwnerQuery } from "@/services/productService";
 import { mintUpdate } from "@/services/tokenService";
 import { getUserQuery } from "@/services/userService";
 import IconPerson from "@assets/icons/IconPerson";
@@ -12,6 +12,7 @@ import { useAuth } from "@ic-reactor/react";
 import NavbarLayout from "@layouts/NavbarLayout"
 import Product from "@models/product";
 import User from "@models/user";
+import TypeUtils from "@utils/TypeUtils";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -23,14 +24,29 @@ const Profile: React.FC = () => {
     const [profileUser, setProfileUser] = useState<User | null | undefined>(undefined);
 
     const { products, getProductsByOwner } = getProductsByOwnerQuery();
+    const [productImageUrls, setProductImageUrls] = useState<Map<number, string>>(new Map());
+
+    const { getProductImage } = getProductImageQuery();
     const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
     const { deleteProduct } = deleteProductUpdate();
 
     const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
     const [topUpAmount, setTopUpAmount] = useState(0);
     const { mint } = mintUpdate();
+
     async function fetchProductsByOwner() {
-        await getProductsByOwner([principal ?? '']);
+        const productWithoutImages = await getProductsByOwner([principal ?? '']);
+        productWithoutImages?.forEach(async (product) => {
+            const image = await getProductImage([product.id]);
+            if (!image || image.length === 0) {
+                return;
+            }
+            setProductImageUrls(prev => {
+                const newMap = new Map(prev);
+                newMap.set(Number(product.id), TypeUtils.byteArrayToImageURL(image[0]));
+                return newMap;
+            })
+        })
     }
 
     async function handleDeleteProduct() {
@@ -142,7 +158,13 @@ const Profile: React.FC = () => {
                         <div className="w-full flex flex-col flex-1">
                             {products.length > 0 ? (
                                 products.map((product, index) => (
-                                    <ProfileProductCard key={index} product={product} handleDelete={setSelectedProduct} isOwner={true} />
+                                    <ProfileProductCard
+                                        key={index}
+                                        product={product}
+                                        productImageUrl={productImageUrls.get(product.id)}
+                                        handleDelete={setSelectedProduct}
+                                        isOwner={true}
+                                    />
                                 ))
                             ) : (
                                 <p className="text-white">No products available.</p>
@@ -187,7 +209,12 @@ const Profile: React.FC = () => {
                     <div className="w-full flex flex-col flex-1">
                         {products.length > 0 ? (
                             products.map((product, index) => (
-                                <ProfileProductCard key={index} product={product} handleDelete={setSelectedProduct} isOwner={false} />
+                                <ProfileProductCard key={index}
+                                    product={product}
+                                    productImageUrl={productImageUrls.get(product.id)}
+                                    handleDelete={setSelectedProduct}
+                                    isOwner={false}
+                                />
                             ))
                         ) : (
                             <p className="text-white">No products available.</p>

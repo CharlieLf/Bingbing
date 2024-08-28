@@ -6,7 +6,7 @@ interface ProductProps {
     name: string;
     price: number;
     stock: number;
-    image: string;
+    image?: string;
     owner: string;
     gender: Gender;
     season: Season;
@@ -17,7 +17,7 @@ interface ProductProps {
 export interface ProductData {
     id: bigint;
     name: string;
-    image: number[] | Uint8Array;
+    image?: number[] | Uint8Array;
     stock: bigint;
     price: bigint;
     owner: string;
@@ -32,14 +32,25 @@ export default class Product {
     name: string;
     price: number;
     stock: number;
-    image: string;
+    image?: string;
     owner: string;
     gender: Gender;
     season: Season;
     clothingType: ClothingType;
     clothing: string;
 
-    constructor({ id, name, price, stock, image, owner, gender, season, clothingType, clothing }: ProductProps) {
+    constructor({
+        id,
+        name,
+        price,
+        stock,
+        image,
+        owner,
+        gender,
+        season,
+        clothingType,
+        clothing
+    }: ProductProps) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -56,11 +67,11 @@ export default class Product {
         return this.price.toLocaleString();
     }
 
-    static castToProduct(p: ProductData): Product {
+    static fromProductData(p: ProductData): Product {
         return new Product({
             id: Number(p.id),
             name: p.name,
-            image: TypeUtils.byteArrayToImageURL(p.image),
+            image: p.image ? TypeUtils.byteArrayToImageURL(p.image) : undefined,
             stock: Number(p.stock),
             price: Number(p.price),
             owner: p.owner,
