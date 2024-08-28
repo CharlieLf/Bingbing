@@ -6,6 +6,7 @@ import Nat64 "mo:base/Nat64";
 import Products "../product/types";
 import Types "./types";
 import ProductActorModules "../product/interface";
+import UserActorModules "../user/interface";
 
 actor {
 
@@ -82,8 +83,9 @@ actor {
         }
     };
 
-    public shared ({ caller }) func getSelfCart(productCanisterId : Text) : async Result<[ShownCart], Text> {
+    public shared ({ caller }) func getSelfCart(productCanisterId : Text, userCanisterId: Text) : async Result<[ShownCart], Text> {
         let productActor = actor (productCanisterId) : ProductActorModules.ProductActor;
+        let userActor = actor (userCanisterId) : UserActorModules.UserActor;
         switch (carts.get(caller)) {
             case (null) {
                 return #err("Empty Cart");
@@ -100,8 +102,12 @@ actor {
                         };
                         itemList.add(detail);
                     };
+                    let user = switch(await userActor.getUser(?ownerId)){
+                        case (#ok(user)) { user };
+                        case (#err(_)) { return #err("User not found") };
+                    };
                     shownCart.add({
-                        owner = Principal.toText(ownerId);
+                        ownerName = user.name;
                         products = Buffer.toArray(itemList);
                     });
 
