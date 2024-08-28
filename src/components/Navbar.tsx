@@ -9,7 +9,7 @@ import { useAuth } from '@ic-reactor/react';
 const Navbar: React.FC = () => {
   const { identity } = useAuth()
   return (
-    <nav className="sticky top-0 flex w-screen items-center justify-between p-10 mb-5 bg-white h-[125px] shadow-md">
+    <nav className="sticky top-0 flex w-screen items-center justify-between p-10 mb-5 bg-white h-[125px] shadow-md z-40">
       <p className="text-[36px] font-marcellus cursor-pointer">
         <Link to="/">
           BINGBING

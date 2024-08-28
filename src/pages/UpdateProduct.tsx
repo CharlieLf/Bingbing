@@ -6,8 +6,9 @@ import { Gender, genderSelection, Season, seasonSelection, ClothingType, typeSel
 import { editProductUpdate, getProductQuery } from "@/services/productService";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@ic-reactor/react";
-import defaultImage from "@assets/product/register.jpg";
+import defaultImage from "@assets/product/testing.jpg";
 import Product from "@models/product";
+import Swal from "sweetalert2";
 import TypeUtils from "@utils/TypeUtils";
 
 const UpdateProduct: React.FC = () => {
@@ -31,6 +32,7 @@ const UpdateProduct: React.FC = () => {
 
     const { editProduct } = editProductUpdate();
     const [error, setError] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -62,10 +64,19 @@ const UpdateProduct: React.FC = () => {
             setError('Please fill all fields');
             return;
         }
+
+        setLoading(true);
+
         try {
             setError('');
             const result = await editProduct([BigInt(Number(id)), productName, BigInt(price), BigInt(stock), image, selectedGender, selectedSeason, selectedType!, selectedClothing]);
             if (result) {
+                Swal.fire({
+                    title: "Success!",
+                    text: "The product has been successfully updated!",
+                    icon: "success"
+                })
+
                 setProductName('');
                 setPrice(0);
                 setStock(0);
@@ -80,6 +91,8 @@ const UpdateProduct: React.FC = () => {
             }
         } catch (_) {
             setError('Failed to add product');
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -114,11 +127,11 @@ const UpdateProduct: React.FC = () => {
     }, [product])
 
     if (product === undefined) {
-        return <div>Loading...</div>
+        return <div className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</div>
     }
 
     if (product === null) {
-        return <div>Product not found</div>
+        return <div className="flex justify-center text-2xl font-semibold text-gray-700 mt-10">Product not found</div>
     }
 
     return (
@@ -135,8 +148,12 @@ const UpdateProduct: React.FC = () => {
 
             <div className="flex">
                 <div className="w-[40%] mr-10">
-                    <div className="mb-5">
-                        <img src={imageUrl} />
+                    <div className="mb-5 h-full">
+                        {imageUrl === "" ?
+                            <div className="flex justify-center items-center h-full border border-black">No Image</div>
+                        :
+                            <img src={imageUrl} className="h-full object-cover"/>
+                        }
                     </div>
                     <button onClick={handleImage} className="w-full border-black border p-5">Edit Image</button>
                 </div>
@@ -156,7 +173,11 @@ const UpdateProduct: React.FC = () => {
 
                     <p className="text-sm text-red-500 mt-3">{error}</p>
 
-                    <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Update Product</button>
+                    { loading ? 
+                        <button className="w-full mt-3 p-4 bg-gray-400 text-white font-bold">Loading...</button>
+                        :
+                        <button onClick={handleSubmit} className="w-full mt-3 p-4 bg-black border-black border text-white">Update Product</button>
+                    }
                 </div>
             </div>
             <input

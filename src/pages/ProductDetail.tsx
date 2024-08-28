@@ -39,8 +39,8 @@ const ProductDetail: React.FC = () => {
         <NavbarLayout>
             {product ? (
                 <div className="flex w-full px-20 py-10">
-                    <div className="w-[40%] h-full">
-                        <img src={product?.image} />
+                    <div className="w-[40%]">
+                        <img src={product?.image} className="h-full object-cover"/>
                     </div>
 
                     <div className="flex flex-col justify-between w-full mx-10">
@@ -66,13 +66,12 @@ const ProductDetail: React.FC = () => {
                     </div>
                 </div>
             ) :
-                product === undefined ? (
-                    <p>Loading...</p>
-                ) :
-                    (
-                        <p>Product not found</p>
-                    )}
-
+            product === undefined ? (
+                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+            ) :
+            (
+                <p>Product not found</p>
+            )}
         </NavbarLayout>
     )
 }
