@@ -26,6 +26,46 @@ const Checkout: React.FC = () => {
     const { transfer, transferLoading } = transferUpdate();
     const { burn, burnLoading } = burnUpdate();
 
+    async function handleCreateTransaction() {
+        const transaction = transactionInput.map(t => {
+            return {
+                sellerPrincipal: t.items[0].product.owner,
+                items: t.items.map(i => {
+                    return {
+                        productId: BigInt(i.product.id),
+                        quantity: BigInt(i.quantity)
+                    }
+                })
+            }
+        });
+
+        if(balance < totalPrice + shippingFee) {
+            Swal.fire('Error', 'BingPay balance is not enough', 'error');
+            return;
+        }
+
+        await Promise.all(transactionInput.map(t => {
+            const to = t.items[0].product.owner;
+            const amount = t.items.reduce((acc, curr) => {
+                return acc + curr.product.price * Number(curr.quantity);
+            }, 0)
+            return transfer([to, BigInt(amount)]);
+        }))
+
+        await burn([BigInt(shippingFee)]);
+
+        const res = await createTransaction([cartCanisterId, productCanisterId, transaction]);
+
+        if (!res || 'err' in res) {
+            Swal.fire('Error', 'Failed to create transaction', 'error');
+            return;
+        }
+        Swal.fire('Success', 'Transaction has been created', 'success');
+        setTransactionInput([]);
+        setImageUrls(new Map());
+        navigate('/');
+    };
+
     useEffect(() => {
         setTransactionInput(location.state.transactionInput as TransactionInput[]);
         setImageUrls(location.state.imageUrls as Map<number, string>);
@@ -54,41 +94,6 @@ const Checkout: React.FC = () => {
             </div>
         </NavbarLayout>
     }
-
-    async function handleCreateTransaction() {
-        const transaction = transactionInput.map(t => {
-            return {
-                sellerPrincipal: t.items[0].product.owner,
-                items: t.items.map(i => {
-                    return {
-                        productId: BigInt(i.product.id),
-                        quantity: BigInt(i.quantity)
-                    }
-                })
-            }
-        });
-
-        await Promise.all(transactionInput.map(t => {
-            const to = t.items[0].product.owner;
-            const amount = t.items.reduce((acc, curr) => {
-                return acc + curr.product.price * Number(curr.quantity);
-            }, 0)
-            return transfer([to, BigInt(amount)]);
-        }))
-
-        // await burn([ BigInt(totalPrice + shippingFee)]);
-
-        const res = await createTransaction([cartCanisterId, productCanisterId, transaction]);
-
-        if (!res || 'err' in res) {
-            Swal.fire('Error', 'Failed to create transaction', 'error');
-            return;
-        }
-        Swal.fire('Success', 'Transaction has been created', 'success');
-        setTransactionInput([]);
-        setImageUrls(new Map());
-        navigate('/');
-    };
 
     return (
         <NavbarLayout>
@@ -151,7 +156,7 @@ const Checkout: React.FC = () => {
                         {balance < totalPrice + shippingFee && "*BingPay balance is not enough"}
                     </p>
 
-                    {createTransactionLoading || transferLoading ?
+                    {createTransactionLoading || transferLoading || burnLoading ?
                         <button className="w-full p-3 bg-gray-500 text-white font-bold rounded">
                             Loading...
                         </button> :

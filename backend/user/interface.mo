@@ -1,5 +1,4 @@
 import Result "mo:base/Result";
-import Principal "mo:base/Principal";
 import Types "./types";
 
 module {
@@ -8,6 +7,6 @@ module {
     type User = Types.User;
 
     public type UserActor = actor {
-        getUser: (principal : ?Principal) -> async Result<User, Text>;
+        getUser: (principal : ?Text) -> async Result<User, Text>;
     };
 };

@@ -1,6 +1,7 @@
 import { getSelfCartQuery, removeCartItemUpdate } from "@/services/cartService";
 import { deleteProductUpdate, getProductImageQuery } from "@/services/productService";
 import ShopCard from "@components/ShopCard";
+import useAuthContext from "@hooks/useAuthContext";
 import useServiceContext from "@hooks/useServiceContext";
 import NavbarLayout from "@layouts/NavbarLayout";
 import { TransactionInput } from "@models/transaction";
@@ -19,6 +20,7 @@ interface SelectedCartItem {
 
 const Carts: React.FC = () => {
     const navigate = useNavigate();
+    const { getIdentity } = useAuthContext();
     const { productCanisterId, userCanisterId } = useServiceContext();
 
     const [cartCount, setCartCount] = useState<CartCount>({});
