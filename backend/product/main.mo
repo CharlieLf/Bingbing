@@ -106,15 +106,6 @@ actor {
         return Iter.toArray(Array.slice<ProductWithoutImage>(productArray, startIndex, endIndex));
     };
 
-    public shared query func countTotalPage() : async Nat {
-        if(products.size() / 10 < 1) {
-            return 1;
-        } else {
-            return products.size() / 10;
-        };
-    };
-
-
     public shared query func getProductsByOwner(owner : Text) : async [ProductWithoutImage] {
         let filtered = Iter.toArray(
             Iter.filter(
