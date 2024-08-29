@@ -19,7 +19,7 @@ const Register: React.FC = () => {
 
     const { createUser } = createUserUpdate();
     const { login, fetchUser, getIdentity } = useAuthContext();
-    const { tokenCanisterId, cartCanisterId } = useServiceContext();
+    const { tokenCanisterId, cartCanisterId, favoriteCanisterId } = useServiceContext();
 
     async function handleRegister(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
@@ -49,9 +49,9 @@ const Register: React.FC = () => {
                     const principal = getIdentity()?.getPrincipal();
                     let result = null;
                     if (principal) {
-                        result = await createUser([tokenCanisterId, cartCanisterId, { name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, [principal]]);
+                        result = await createUser([tokenCanisterId, cartCanisterId, favoriteCanisterId, { name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, [principal]]);
                     } else {
-                        result = await createUser([tokenCanisterId, cartCanisterId, { name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, []]);
+                        result = await createUser([tokenCanisterId, cartCanisterId, favoriteCanisterId, { name, email, phoneNumber, dateOfBirth: BigInt(dob?.getTime()), address, image: new Uint8Array() }, []]);
                     }
                     if (result && 'err' in result) {
                         setError('User already exists');
