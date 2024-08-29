@@ -28,6 +28,13 @@
         "node_compatibility": true
       }
     },
+    "favorite": {
+      "type": "motoko",
+      "main": "backend/favorite/main.mo",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
     "internet-identity": {
       "type": "pull",
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
@@ -40,7 +47,7 @@
       }
     },
     "frontend": {
-      "dependencies": ["user", "token", "product", "cart", "transaction"],
+      "dependencies": ["user", "token", "product", "cart", "transaction", "favorite"],
       "type": "assets",
       "source": ["dist/"]
     }

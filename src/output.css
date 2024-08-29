@@ -571,6 +571,10 @@ body{
   position: fixed;
 }
 
+.absolute{
+  position: absolute;
+}
+
 .relative{
   position: relative;
 }
@@ -579,8 +583,16 @@ body{
   position: sticky;
 }
 
+.right-0{
+  right: 0px;
+}
+
 .top-0{
   top: 0px;
+}
+
+.top-10{
+  top: 2.5rem;
 }
 
 .top-12{
@@ -686,6 +698,10 @@ body{
   margin-top: 1.25rem;
 }
 
+.mt-4{
+  margin-top: 1rem;
+}
+
 .flex{
   display: flex;
 }
@@ -703,19 +719,24 @@ body{
   height: 8rem;
 }
 
-.size-6{
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
 .size-5{
   width: 1.25rem;
   height: 1.25rem;
 }
 
+.size-6{
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .size-7{
   width: 1.75rem;
   height: 1.75rem;
+}
+
+.size-full{
+  width: 100%;
+  height: 100%;
 }
 
 .h-10{
@@ -783,8 +804,16 @@ body{
   width: 3.5rem;
 }
 
+.w-24{
+  width: 6rem;
+}
+
 .w-36{
   width: 9rem;
+}
+
+.w-\[100vw\]{
+  width: 100vw;
 }
 
 .w-\[15\%\]{
@@ -833,10 +862,6 @@ body{
 }
 
 .w-screen{
-  width: 100vw;
-}
-
-.w-\[100vw\]{
   width: 100vw;
 }
 
@@ -1075,14 +1100,19 @@ body{
   background-color: rgb(156 163 175 / var(--tw-bg-opacity));
 }
 
-.bg-white{
+.bg-gray-500{
   --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
 .bg-red-50{
   --tw-bg-opacity: 1;
   background-color: rgb(254 242 242 / var(--tw-bg-opacity));
+}
+
+.bg-white{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-50{
@@ -1184,10 +1214,6 @@ body{
 
 .pb-2{
   padding-bottom: 0.5rem;
-}
-
-.pb-4{
-  padding-bottom: 1rem;
 }
 
 .text-center{
@@ -1301,6 +1327,10 @@ body{
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.filter{
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 .hover\:bg-gray-100:hover{

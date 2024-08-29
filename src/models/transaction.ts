@@ -56,3 +56,12 @@ export default class TransactionHeader {
         });
     }
 }
+
+type TransactionItem = {
+    product: Product;
+    quantity: bigint;
+};
+export type TransactionInput = {
+    ownerName: string;
+    items: TransactionItem[];
+}

@@ -29,7 +29,7 @@ actor {
         var TransactionDetails = HashMap.HashMap<Principal, [ItemDetail]>(0, Principal.equal, Principal.hash);
 
         for (data in transactionData.vals()) {
-            let detail = await _createTransactionDetail(cartCanisterId, productCanisterId, data);
+            let detail = await _createTransactionDetail(cartCanisterId, productCanisterId, data, caller);
             TransactionDetails.put(detail.seller, detail.details);
         };
 
@@ -106,7 +106,7 @@ actor {
         };
     };
 
-    private func _createTransactionDetail(cartCanisterId : Text, productCanisterId : Text, input : TransactionInput) : async {
+    private func _createTransactionDetail(cartCanisterId : Text, productCanisterId : Text, input : TransactionInput, caller: Principal) : async {
         seller : Principal;
         details : [ItemDetail];
     } {
@@ -121,10 +121,10 @@ actor {
             };
 
             itemDetails.add(detail);
-            switch(await cartActor.removeCartItem(input.sellerPrincipal, item.productId)){
-                case (#ok()){};
-                case (#err(_)){};
-            }
+            switch (await cartActor.removeCartItem(input.sellerPrincipal, item.productId, caller)) {
+                case (#ok()) {};
+                case (#err(_)) {};
+            };
         };
 
         return {
