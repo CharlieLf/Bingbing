@@ -6,7 +6,7 @@ interface CartDetails {
 }
 
 interface CartProps {
-    owner: string;
+    ownerName: string;
     products: CartDetails[];
 }
 
@@ -16,22 +16,22 @@ interface CartDetailData {
 }
 
 interface CartData {
-    owner: string;
+    ownerName: string;
     products: CartDetailData[];
 }
 
 export default class Cart {
-    owner: string;
+    ownerName: string;
     cartDetails: CartDetails[];
 
-    constructor({ owner, products }: CartProps) {
-        this.owner = owner;
+    constructor({ ownerName, products }: CartProps) {
+        this.ownerName = ownerName;
         this.cartDetails = products;
     };
 
     static fromCartData(u: CartData): Cart {
         return new Cart({
-            owner: u.owner,
+            ownerName: u.ownerName,
             products: u.products.map(p => {
                 if (p.product) {
                     return {

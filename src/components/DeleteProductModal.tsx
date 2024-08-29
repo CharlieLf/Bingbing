@@ -6,9 +6,10 @@ interface Props {
     product: Product;
     onClose: () => void;
     handleDeleteProduct: () => void;
+    isLoading: boolean;
 }
 
-const DeleteProductModal: React.FC<Props> = ({ product, onClose, handleDeleteProduct }) => {
+const DeleteProductModal: React.FC<Props> = ({ product, onClose, handleDeleteProduct, isLoading }) => {
     return (
         <Modal onClose={onClose}>
             <div className="flex flex-col h-[25vh] w-[25vw]">
@@ -20,7 +21,10 @@ const DeleteProductModal: React.FC<Props> = ({ product, onClose, handleDeletePro
                     </div>
                     <div className="flex gap-4 w-full justify-end">
                         <ButtonSmall onclick={onClose} text="No" />
-                        <ButtonSmall onclick={handleDeleteProduct} text="Yes" variant="secondary" />
+                        {isLoading ?
+                            <ButtonSmall text="Loading..." variant="secondary" /> :
+                            <ButtonSmall onclick={handleDeleteProduct} text="Yes" variant="secondary" />
+                        }
                     </div>
                 </div>
             </div>
