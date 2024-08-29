@@ -29,13 +29,13 @@ const History:React.FC = () => {
                     <button onClick={() => {setActiveTab("sold")}} className={`w-full p-5 ${activeTab === "sold" ? "bg-gray-100 font-bold border-b border-black" : ""}`}>Sold</button>
                 </div>
 
-                { activeTab === "bought" && 
+                {/* { activeTab === "bought" && 
                     <Card/>
-                }
+                } */}
 
-                { activeTab === "sold" && 
+                {/* { activeTab === "sold" && 
                     <Card/>
-                }
+                } */}
             </div>
         </NavbarLayout>
     )

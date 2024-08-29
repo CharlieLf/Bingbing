@@ -7,13 +7,18 @@ import { addOrUpdateCartUpdate } from "@/services/cartService";
 import ImagePlaceholder from "@components/ImagePlaceholder";
 import TypeUtils from "@utils/TypeUtils";
 import Swal from "sweetalert2";
+import useAuthContext from "@hooks/useAuthContext";
+import { getUserQuery } from "@/services/userService";
 
 const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
     let { id } = useParams();
-    const { product, getProduct, getProductLoading } = getProductQuery();
+    const { getIdentity } = useAuthContext();
     const [productImageUrl, setProductImageUrl] = useState<string | undefined | null>(null);
+
+    const { getUser, getUserLoading } = getUserQuery();
     const { getProductImage } = getProductImageQuery();
+    const { product, getProduct, getProductLoading } = getProductQuery();
     const { addOrUpdateCart, addOrUpdateCartLoading } = addOrUpdateCartUpdate()
 
     async function fetchProductData() {
@@ -59,9 +64,21 @@ const ProductDetail: React.FC = () => {
         navigate(-1);
     }
 
+    async function fetchUserData() {
+        if (!product) return;
+        const user = await getUser([[product.owner!]]);
+        if (!user || 'err' in user) {
+            return;
+        }
+    }
+
     useEffect(() => {
         fetchProductData();
     }, []);
+
+    useEffect(() => {
+        fetchUserData();
+    }, [product])
 
     if (getProductLoading) {
         return (
@@ -73,7 +90,7 @@ const ProductDetail: React.FC = () => {
         )
     }
 
-    return (
+    if (getIdentity()?.getPrincipal().toText() !== product?.name) {
         <NavbarLayout>
             {product ? (
                 <div className="flex w-full px-20 py-10">
@@ -101,6 +118,56 @@ const ProductDetail: React.FC = () => {
                                 <button onClick={handleAddOrUpdateCart}
                                     className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">
                                     ADD TO CART
+                                </button>
+                            }
+                            <button onClick={() => navigate(`/tryon/${id}`)}
+                                className="w-full bg-white border-black border-2 p-3 text-lg font-bold">
+                                TRY ON
+                            </button>
+                        </div>
+
+                        <p className="italic text-sm">
+                            *Colors may appear different due to variations in screen lighting.
+                        </p>
+                    </div>
+                </div>
+            ) :
+                product === undefined ? (
+                    <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+                ) :
+                    (
+                        <p>Product not found</p>
+                    )}
+        </NavbarLayout>
+    }
+
+    return (
+        <NavbarLayout>
+            {product ? (
+                <div className="flex w-full px-20 py-10">
+                    <div className="w-[40%]">
+                        <ImagePlaceholder imageUrl={productImageUrl} />
+                    </div>
+
+                    <div className="flex flex-col justify-between w-full mx-10">
+                        <div className="flex flex-col">
+                            <div className="mb-32">
+                                <p className="text-4xl font-bold">{product?.name}</p>
+                                <p className="text-2xl">Rp. {product.formatPrice()}</p>
+                                <div className="flex">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-5">
+                            {addOrUpdateCartLoading ?
+                                <button className="w-full bg-gray-400 text-white font-bold border-black border-2 p-3 text-lg">
+                                    Loading...
+                                </button> :
+                                <button onClick={() => navigate(`/editProduct/${id}`)}
+                                    className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">
+                                    EDIT PRODUCT DETAILS
                                 </button>
                             }
                             <button onClick={() => navigate(`/tryon/${id}`)}

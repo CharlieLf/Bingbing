@@ -10,13 +10,13 @@ actor {
 
     let favorites = HashMap.HashMap<Principal, Buffer.Buffer<Text>>(0, Principal.equal, Principal.hash);
 
-    public shared ({caller}) func createFavoriteList() : async Result<(), Text> {
+    public shared func createFavoriteList(user: Principal) : async Result<(), Text> {
 
-        if(Principal.toText(caller) == "2vxsx-fae"){
+        if(Principal.toText(user) == "2vxsx-fae"){
             return #err("Anonymous user cannot create a favorite list");
         };
 
-        favorites.put(caller, Buffer.Buffer<Text>(0));
+        favorites.put(user, Buffer.Buffer<Text>(0));
         return #ok();
 
     };

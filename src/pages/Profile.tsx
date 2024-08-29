@@ -106,7 +106,7 @@ const Profile: React.FC = () => {
     async function fetchProfileUser() {
         const currPrincipal = identity?.getPrincipal();
         if (currPrincipal && principal !== currPrincipal.toText()) {
-            const result = await getUser([[currPrincipal]])
+            const result = await getUser([[principal!]])
             if (!result) {
                 Swal.fire({
                     title: "Failed to fetch user",
