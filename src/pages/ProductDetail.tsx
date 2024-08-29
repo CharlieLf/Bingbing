@@ -6,7 +6,7 @@ import { getProductImageQuery, getProductQuery } from "@/services/productService
 import { addOrUpdateCartUpdate } from "@/services/cartService";
 import ImagePlaceholder from "@components/ImagePlaceholder";
 import TypeUtils from "@utils/TypeUtils";
-
+import Swal from "sweetalert2";
 
 const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const ProductDetail: React.FC = () => {
     const { product, getProduct, getProductLoading } = getProductQuery();
     const [productImageUrl, setProductImageUrl] = useState<string | undefined | null>(null);
     const { getProductImage } = getProductImageQuery();
-    const { addOrUpdateCart } = addOrUpdateCartUpdate()
+    const { addOrUpdateCart, addOrUpdateCartLoading } = addOrUpdateCartUpdate()
 
     async function fetchProductData() {
         if (!id) return;
@@ -33,13 +33,29 @@ const ProductDetail: React.FC = () => {
         if (!product) return;
         const result = await addOrUpdateCart([product.owner, BigInt(product.id), BigInt(1)]);
         if (!result) {
-            console.log("Failed to add to cart");
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to add product to cart',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            })
             return;
         }
         if ('err' in result) {
-            console.log(result.err);
+            Swal.fire({
+                title: 'Error',
+                text: result.err,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            })
             return;
         }
+        Swal.fire({
+            title: 'Success',
+            text: 'Product has been added to cart',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        })
         navigate(-1);
     }
 
@@ -50,7 +66,9 @@ const ProductDetail: React.FC = () => {
     if (getProductLoading) {
         return (
             <NavbarLayout>
-                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">
+                    Loading...
+                </p>
             </NavbarLayout>
         )
     }
@@ -76,13 +94,24 @@ const ProductDetail: React.FC = () => {
                         </div>
 
                         <div className="space-y-5">
-                            <button onClick={handleAddOrUpdateCart}
-                                className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">ADD TO CART</button>
+                            {addOrUpdateCartLoading ?
+                                <button className="w-full bg-gray-400 text-white font-bold border-black border-2 p-3 text-lg">
+                                    Loading...
+                                </button> :
+                                <button onClick={handleAddOrUpdateCart}
+                                    className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">
+                                    ADD TO CART
+                                </button>
+                            }
                             <button onClick={() => navigate(`/tryon/${id}`)}
-                                className="w-full bg-white border-black border-2 p-3 text-lg font-bold">TRY ON</button>
+                                className="w-full bg-white border-black border-2 p-3 text-lg font-bold">
+                                TRY ON
+                            </button>
                         </div>
 
-                        <p className="italic text-sm">*Colors may appear different due to variations in screen lighting.</p>
+                        <p className="italic text-sm">
+                            *Colors may appear different due to variations in screen lighting.
+                        </p>
                     </div>
                 </div>
             ) :

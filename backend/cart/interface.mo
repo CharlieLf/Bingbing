@@ -13,7 +13,7 @@ module {
     public type CartActor = actor {
         createCart : (user : Principal) -> ();
         addOrUpdateCart : (sellerId : Text, product : Product, quantity : Nat) -> async Result<(), Text>;
-        removeCartItem : (sellerId : Text, productId : Nat64) -> async Result<(), Text>;
+        removeCartItem : (sellerId : Text, productId : Nat64, caller: Principal) -> async Result<(), Text>;
         getSelfCart : () -> async Result<[ShownCart], Text>;
         removeNoProductCart: (sellerId : Principal, productId : Nat64) -> ();
     };

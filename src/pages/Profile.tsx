@@ -8,6 +8,7 @@ import DeleteProductModal from "@components/DeleteProductModal";
 import ProfileProductCard from "@components/ProfileProductCard";
 import TopUpModal from "@components/TopUpModal";
 import useAuthContext from "@hooks/useAuthContext";
+import useServiceContext from "@hooks/useServiceContext";
 import { useAuth } from "@ic-reactor/react";
 import NavbarLayout from "@layouts/NavbarLayout"
 import Product from "@models/product";
@@ -18,10 +19,11 @@ import { Link, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const Profile: React.FC = () => {
+    const { cartCanisterId } = useServiceContext();
     const { principal } = useParams();
     const { identity } = useAuth();
     const { getUser } = getUserQuery()
-    const { user, balance, logout, fetchUser } = useAuthContext();
+    const { user, balance, fetchUser } = useAuthContext();
     const [profileUser, setProfileUser] = useState<User | null | undefined>(undefined);
 
     const { products, getProductsByOwner } = getProductsByOwnerQuery();
@@ -29,11 +31,11 @@ const Profile: React.FC = () => {
 
     const { getProductImage } = getProductImageQuery();
     const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
-    const { deleteProduct } = deleteProductUpdate();
+    const { deleteProduct, deleteProductLoading } = deleteProductUpdate();
 
     const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
     const [topUpAmount, setTopUpAmount] = useState(0);
-    const { mint } = mintUpdate();
+    const { mint, mintLoading } = mintUpdate();
 
     async function fetchProductsByOwner() {
         const productWithoutImages = await getProductsByOwner([principal ?? '']);
@@ -51,7 +53,7 @@ const Profile: React.FC = () => {
     }
 
     async function handleDeleteProduct() {
-        const result = await deleteProduct([BigInt(selectedProduct?.id ?? 0)]);
+        const result = await deleteProduct([BigInt(selectedProduct?.id ?? 0), cartCanisterId]);
         if (!result || 'err' in result) {
             Swal.fire({
                 title: "Failed to delete product",
@@ -69,11 +71,16 @@ const Profile: React.FC = () => {
     }
 
     async function handleTopUp() {
-        if (topUpAmount <= 0) {
-            return;
-        }
         const principal = identity?.getPrincipal();
         if (!principal) {
+            return;
+        }
+        if (topUpAmount <= 0) {
+            Swal.fire({
+                title: "Invalid top up amount",
+                text: "Top up amount must be greater than 0",
+                icon: "error"
+            });
             return;
         }
         const result = await mint([principal, BigInt(topUpAmount)]);
@@ -81,9 +88,10 @@ const Profile: React.FC = () => {
             Swal.fire({
                 title: "Failed to top up",
                 icon: "error"
-            })
+            });
             return;
         }
+
         await fetchUser();
 
         Swal.fire({
@@ -118,6 +126,16 @@ const Profile: React.FC = () => {
         }
     }
 
+    function closeTopUpModal() {
+        if (mintLoading) return;
+        setIsTopUpModalOpen(false);
+    }
+
+    function closeDeleteProductModal() {
+        if (deleteProductLoading) return;
+        setSelectedProduct(undefined);
+    }
+
     useEffect(() => {
         if (principal) {
             fetchProductsByOwner();
@@ -129,29 +147,34 @@ const Profile: React.FC = () => {
         return (
             <NavbarLayout>
                 {selectedProduct &&
-                    <DeleteProductModal onClose={() => setSelectedProduct(undefined)}
+                    <DeleteProductModal onClose={closeDeleteProductModal}
                         product={selectedProduct}
                         handleDeleteProduct={handleDeleteProduct}
+                        isLoading={deleteProductLoading}
                     />
                 }
                 {isTopUpModalOpen &&
-                    <TopUpModal onClose={() => setIsTopUpModalOpen(false)}
+                    <TopUpModal onClose={closeTopUpModal}
                         handleTopUp={handleTopUp}
                         onChange={(e) => setTopUpAmount(Number(e.target.value))}
                         value={topUpAmount}
+                        isLoading={mintLoading}
                     />
                 }
                 <div className="w-screen px-[2.5%] py-2">
                     <div className="flex justify-between items-center gap-5">
                         <div className="flex gap-10">
                             <div className="size-32 rounded-full border border-gray-400 overflow-hidden flex items-end justify-center">
-                                {user?.image ? <img className="w-full h-full object-cover" src={user?.image} /> : <IconPerson width="80%" height="80%" />}
+                                {user?.image ?
+                                    <img className="w-full h-full object-cover" src={user?.image} /> :
+                                    <IconPerson width="80%" height="80%" />
+                                }
                             </div>
                             <div>
                                 <p className="text-[32px] font-semibold">{user?.name}</p>
                                 <div className="flex gap-5 items-center">
                                     <div className="h-8"><IconWallet /></div>
-                                    <p>BingPay: {balance}</p>
+                                    <p>BingPay: {balance.toLocaleString()}</p>
                                     <ButtonSmall onclick={() => setIsTopUpModalOpen(true)} variant="secondary" text="Top up" />
                                 </div>
                             </div>
@@ -163,7 +186,6 @@ const Profile: React.FC = () => {
                             <Link to="/addProduct">
                                 <ButtonSmall text="Add Product" />
                             </Link>
-                            <ButtonSmall onclick={logout} text="Logout" variant="secondary" />
                         </div>
                     </div>
                     <div className="w-full mt-5 flex flex-col">
@@ -208,10 +230,15 @@ const Profile: React.FC = () => {
                 <div className="flex justify-between items-center gap-5">
                     <div className="flex gap-10">
                         <div className="size-32 rounded-full border border-gray-400 overflow-hidden flex items-end justify-center">
-                            {profileUser?.image ? <img className="w-full h-full object-cover" src={profileUser?.image} /> : <IconPerson width="80%" height="80%" />}
+                            {profileUser?.image ?
+                                <img className="w-full h-full object-cover" src={profileUser?.image} /> :
+                                <IconPerson width="80%" height="80%"
+                                />}
                         </div>
                         <div>
-                            <p className="text-[32px] font-semibold">{profileUser?.name}</p>
+                            <p className="text-[32px] font-semibold">
+                                {profileUser?.name}
+                            </p>
                         </div>
                     </div>
                     <div className="flex h-full gap-10">

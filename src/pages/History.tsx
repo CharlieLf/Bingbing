@@ -1,10 +1,23 @@
+import { getBuyerTransactionQuery } from "@/services/transactionService";
 import Card from "@components/Card";
-import ShopCard from "@components/ShopCard";
 import NavbarLayout from "@layouts/NavbarLayout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const History:React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>("bought");
+    const { getBuyerTransaction } = getBuyerTransactionQuery();
+
+    async function handleGetTransaction() {
+        const result = await getBuyerTransaction([]);
+        if (!result || 'err' in result) {
+            throw new Error("Failed to get transaction");
+        }
+        console.log(result);
+    }
+
+    useEffect(() => {
+        handleGetTransaction();
+    }, []);
 
     return(
         <NavbarLayout>

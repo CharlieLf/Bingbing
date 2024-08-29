@@ -58,11 +58,11 @@ actor {
 
     };
 
-    public func burn(owner : Principal, amount : Nat) : async Result<(), Text> {
-        switch (ledger.get(owner)) {
+    public shared({caller}) func burn(amount : Nat) : async Result<(), Text> {
+        switch (ledger.get(caller)) {
             case (?balance) {
                 if (balance >= amount) {
-                    ledger.put(owner, balance - amount);
+                    ledger.put(caller, balance - amount);
                     #ok(());
                 } else {
                     #err("Insufficient balance");
@@ -74,19 +74,20 @@ actor {
         };
     };
 
-    public shared ({ caller }) func transfer(to : Principal, amount : Nat) : async Result<(), Text> {
+    public shared ({ caller }) func transfer(to : Text, amount : Nat) : async Result<(), Text> {
+        let toPrincipal = Principal.fromText(to);
         switch (ledger.get(caller)) {
             case (?balance) {
                 if (balance >= amount) {
-                    switch (ledger.get(to)) {
+                    switch (ledger.get(toPrincipal)) {
                         case (?toBalance) {
                             ledger.put(caller, balance - amount);
-                            ledger.put(to, toBalance + amount);
+                            ledger.put(toPrincipal, toBalance + amount);
                             #ok(());
                         };
                         case (null) {
                             ledger.put(caller, balance - amount);
-                            ledger.put(to, amount);
+                            ledger.put(toPrincipal, amount);
                             #ok(());
                         };
                     };

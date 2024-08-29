@@ -1,6 +1,5 @@
 import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
-import Iter "mo:base/Iter";
 import Types "types";
 import TokenActorModules "../token/interface";
 import CartActorModules "../cart/interface";
@@ -11,7 +10,7 @@ actor {
     type HashMap<K, V> = Types.HashMap<K, V>;
     type User = Types.User;
 
-    var users = HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
+    let users = HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
 
     public shared ({ caller }) func createUser(tokenCanisterId : Text, cartCanisterId : Text, user : User, owner : ?Principal) : async Result<(), Text> {
 
@@ -85,14 +84,6 @@ actor {
                 return #err("User not found");
             };
         };
-    };
-
-    public shared func clear() {
-        users := HashMap.HashMap<Principal, User>(0, Principal.equal, Principal.hash);
-    };
-
-    public shared query func getUsers() : async ([User], [Principal]) {
-        (Iter.toArray(users.vals()), Iter.toArray(users.keys()));
     };
 
 };

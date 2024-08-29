@@ -45,15 +45,23 @@ actor {
                 return #ok(());
             };
             case (?cartItem) {
-                cartItem.put(productId, quantity);
+                switch (cartItem.get(productId)) {
+                    case (null) {
+                        cartItem.put(productId, quantity);
+                        return #ok(());
+                    };
+                    case (?existingQuantity) {
+                        cartItem.put(productId, existingQuantity + quantity);
+                        return #ok(());
+                    };
+                };
                 return #ok(());
             };
         };
 
     };
 
-    public shared ({ caller }) func removeCartItem(sellerId : Text, productId : Nat64) : async Result<(), Text> {
-
+    public shared func removeCartItem(sellerId : Text, productId : Nat64, caller: Principal) : async Result<(), Text> {
         let ownerCart = switch (carts.get(caller)) {
             case (null) { return #err("Cart not found") };
             case (?cart) { cart };

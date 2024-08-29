@@ -1,15 +1,13 @@
-import { Link } from 'react-router-dom';
-
 interface Props {
   icon: React.ReactNode;
-  to: string;
+  onclick?: (event: React.MouseEvent) => void;
 }
 
-const NavbarIcon: React.FC<Props> = ({ icon, to }) => {
+const NavbarIcon: React.FC<Props> = ({ icon, onclick }) => {
   return (
-    <div className="flex size-6 cursor-pointer items-center justify-center">
-      <Link to={to}>{icon}</Link>
-    </div>
+    <button onClick={onclick} className="flex size-6 cursor-pointer items-center justify-center">
+      {icon}
+    </button>
   );
 };
 

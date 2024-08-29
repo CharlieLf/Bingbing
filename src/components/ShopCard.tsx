@@ -19,10 +19,10 @@ interface Props {
     selectedCart: SelectedCartItem;
     updateSelectedCartItem: (productId: number, selected: boolean) => void;
     imageUrls: Map<number, string>;
-    handleDeleteProduct: (productId: number) => Promise<void>;
+    handleDeleteProduct: (sellerId: string, productId: number) => Promise<void>;
 }
 
-const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedCart, updateSelectedCartItem, imageUrls }) => {
+const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedCart, updateSelectedCartItem, imageUrls, handleDeleteProduct }) => {
     const totalPrice = cart.cartDetails.reduce((acc, curr) => {
         return !curr.product || !selectedCart[curr.product.id] ? acc :
             acc + cartCount[curr.product.id] * curr.product?.price;
@@ -48,16 +48,20 @@ const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedC
     return (
         <div className="">
             <div className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2">
-                <input onChange={handleToggleAllCart} checked={isSelectedAll} type="checkbox" className="mr-3" />
+                <input className="mr-3 cursor-pointer"
+                    onChange={handleToggleAllCart}
+                    checked={isSelectedAll}
+                    type="checkbox"
+                />
                 <div className="flex justify-between w-full">
-                    <p className="font-medium">{cart.owner}</p>
-                    <p className="font-bold">IDR. {totalPrice}</p>
+                    <p className="font-medium">{cart.ownerName}</p>
+                    <p className="font-bold">IDR. {totalPrice.toLocaleString()}</p>
                 </div>
             </div>
 
             {cart.cartDetails.map((cd, idx) => {
                 if (!cd.product) {
-                    return <p className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2">Product not found</p>
+                    return <p className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2" key={idx}>Product not found</p>
                 }
 
                 const isCurrSelected = selectedCart[cd.product.id] || false
@@ -74,11 +78,10 @@ const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedC
 
                 return (
                     <div className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2" key={idx}>
-                        <input
+                        <input className="mr-3 cursor-pointer"
                             checked={isCurrSelected}
                             onChange={handleToggleCart}
                             type="checkbox"
-                            className="mr-3"
                         />
 
                         <div className="flex w-full py-3">
@@ -89,7 +92,8 @@ const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedC
                             <div className="flex flex-col justify-between w-full">
                                 <div className="flex w-full justify-between">
                                     <p>{cd.product.name}</p>
-                                    <button className="size-7"><IconTrash3 /></button>
+                                    <button onClick={() => handleDeleteProduct(cd.product!.owner, cd.product!.id)}
+                                        className="size-7"><IconTrash3 /></button>
                                 </div>
 
                                 <div className="flex flex-row justify-between">
