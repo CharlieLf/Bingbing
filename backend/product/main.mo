@@ -3,6 +3,7 @@ import Text "mo:base/Text";
 import Nat64 "mo:base/Nat64";
 import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
+import Array "mo:base/Array";
 import Types "types";
 import Utils "utils";
 import CartActorModules "../cart/interface"
@@ -90,12 +91,19 @@ actor {
 
     };
 
-    public shared query func getAllProducts() : async [ProductWithoutImage] {
+    public shared query func getAllProducts(pageNumber : Nat) : async [ProductWithoutImage] {
+        let productsPerPage = 10; 
+
+        let startIndex = (pageNumber - 1) * productsPerPage;
+        let endIndex = startIndex + productsPerPage;
+
         let productWithoutImageIter = Iter.map(
             products.vals(),
             _omitImage,
         );
-        return Iter.toArray(productWithoutImageIter);
+        let productArray = Iter.toArray(productWithoutImageIter);
+
+        return Iter.toArray(Array.slice<ProductWithoutImage>(productArray, startIndex, endIndex));
     };
 
     public shared query func getProductsByOwner(owner : Text) : async [ProductWithoutImage] {
