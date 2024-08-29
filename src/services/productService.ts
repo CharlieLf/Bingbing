@@ -79,5 +79,5 @@ export function getProductImageQuery() {
         functionName: 'getProductImage',
         refetchOnMount: false
     })
-    return { getProductImage }
+    return { getProductImage };
 }

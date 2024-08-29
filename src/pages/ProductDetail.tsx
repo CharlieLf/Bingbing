@@ -42,20 +42,12 @@ const ProductDetail: React.FC = () => {
 
     async function handleAddOrUpdateCart() {
         if (!product) return;
+        console.log(product.owner);
         const result = await addOrUpdateCart([product.owner, BigInt(product.id), BigInt(1)]);
-        if (!result) {
+        if (!result || 'err' in result) {
             Swal.fire({
                 title: 'Error',
                 text: 'Failed to add product to cart',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            })
-            return;
-        }
-        if ('err' in result) {
-            Swal.fire({
-                title: 'Error',
-                text: result.err,
                 icon: 'error',
                 confirmButtonText: 'OK'
             })

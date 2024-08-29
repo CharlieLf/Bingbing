@@ -113,7 +113,7 @@ actor {
                         };
                         itemList.add(detail);
                     };
-                    let user = switch(await userActor.getUser(?ownerId)){
+                    let user = switch(await userActor.getUser(?Principal.toText(ownerId))){
                         case (#ok(user)) { user };
                         case (#err(_)) { return #err("User not found") };
                     };
