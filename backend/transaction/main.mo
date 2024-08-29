@@ -6,6 +6,7 @@ import Buffer "mo:base/Buffer";
 import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
 import ProductActorModules "../product/interface";
+import CartActorModules "../cart/interface";
 
 actor {
 
@@ -20,17 +21,15 @@ actor {
     public type BuyerHistory = Types.BuyerHistory;
     public type TransactionInput = Types.TransactionInput;
 
-    let productActor = actor "" : ProductActorModules.ProductActor;
-
     stable var transactionSize : Nat64 = 0;
     let transactions = TrieMap.TrieMap<Nat64, TransactionHeader>(Nat64.equal, Nat64.toNat32);
 
-    public shared ({caller}) func createTransaction(transactionData : [TransactionInput]) : async Result<(), Text>{
+    public shared ({ caller }) func createTransaction(cartCanisterId : Text, productCanisterId : Text, transactionData : [TransactionInput]) : async Result<(), Text> {
 
         var TransactionDetails = HashMap.HashMap<Principal, [ItemDetail]>(0, Principal.equal, Principal.hash);
 
-        for(data in transactionData.vals()){
-            let detail = await _createTransactionDetail(data);
+        for (data in transactionData.vals()) {
+            let detail = await _createTransactionDetail(cartCanisterId, productCanisterId, data, caller);
             TransactionDetails.put(detail.seller, detail.details);
         };
 
@@ -47,11 +46,11 @@ actor {
 
     };
 
-    public shared query ({caller}) func getSellerTransaction() : async [SellerHistory]{
+    public shared query ({ caller }) func getSellerTransaction() : async [SellerHistory] {
 
         let SLTlist = Buffer.Buffer<SellerHistory>(0);
-        for(transaction in transactions.vals()){
-            if(transaction.details.get(caller) != null){
+        for (transaction in transactions.vals()) {
+            if (transaction.details.get(caller) != null) {
                 SLTlist.add(_createSellerHistory(transaction, caller));
             };
         };
@@ -60,11 +59,11 @@ actor {
 
     };
 
-    public shared query ({caller}) func getBuyerTransaction() : async [BuyerHistory] {
+    public shared query ({ caller }) func getBuyerTransaction() : async [BuyerHistory] {
         let histories = Buffer.Buffer<BuyerHistory>(0);
 
-        for((key, data) in transactions.entries()){
-            if(data.buyer == caller){
+        for ((key, data) in transactions.entries()) {
+            if (data.buyer == caller) {
 
                 histories.add(_createBuyerHistory(data, caller));
             };
@@ -73,14 +72,14 @@ actor {
         return Buffer.toArray(histories);
     };
 
-    private func _createSellerHistory(transaction: TransactionHeader, sellerPrincipal : Principal): SellerHistory{
+    private func _createSellerHistory(transaction : TransactionHeader, sellerPrincipal : Principal) : SellerHistory {
         let arrItemData = Buffer.Buffer<ItemDetail>(0);
-        for((seller, details) in transaction.details.entries()){
-            if(seller == sellerPrincipal){
-                for(detail in details.vals()){
+        for ((seller, details) in transaction.details.entries()) {
+            if (seller == sellerPrincipal) {
+                for (detail in details.vals()) {
                     arrItemData.add(detail);
                 };
-            }
+            };
         };
 
         return {
@@ -90,10 +89,10 @@ actor {
         };
     };
 
-    private func _createBuyerHistory(input: TransactionHeader, buyerPrincipal : Principal) : BuyerHistory{
+    private func _createBuyerHistory(input : TransactionHeader, buyerPrincipal : Principal) : BuyerHistory {
         let arrDetails = Buffer.Buffer<SellerData>(0);
-        for((seller, details) in input.details.entries()){
-            let data: SellerData = {
+        for ((seller, details) in input.details.entries()) {
+            let data : SellerData = {
                 seller = seller;
                 items = details;
             };
@@ -107,22 +106,31 @@ actor {
         };
     };
 
-    private func _createTransactionDetail(input: TransactionInput) : async {seller : Principal; details : [ItemDetail]}{
+    private func _createTransactionDetail(cartCanisterId : Text, productCanisterId : Text, input : TransactionInput, caller: Principal) : async {
+        seller : Principal;
+        details : [ItemDetail];
+    } {
         let itemDetails = Buffer.Buffer<ItemDetail>(0);
+        let productActor = actor (productCanisterId) : ProductActorModules.ProductActor;
+        let cartActor = actor (cartCanisterId) : CartActorModules.CartActor;
 
-        for(item in input.items.vals()){
+        for (item in input.items.vals()) {
             let detail : ItemDetail = {
                 product = await productActor.getProduct(item.productId, ?Principal.fromText(input.sellerPrincipal));
                 quantity = item.quantity;
             };
 
             itemDetails.add(detail);
+            switch (await cartActor.removeCartItem(input.sellerPrincipal, item.productId, caller)) {
+                case (#ok()) {};
+                case (#err(_)) {};
+            };
         };
 
         return {
             seller = Principal.fromText(input.sellerPrincipal);
             details = Buffer.toArray(itemDetails);
         };
-    }
+    };
 
-}
+};

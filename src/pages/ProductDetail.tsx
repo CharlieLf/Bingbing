@@ -1,46 +1,101 @@
-import { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import IconHeart from "@assets/icons/IconHeart";
 import NavbarLayout from "@layouts/NavbarLayout";
-import { getProductQuery } from "@/services/productService";
+import { getProductImageQuery, getProductQuery } from "@/services/productService";
 import { addOrUpdateCartUpdate } from "@/services/cartService";
-
+import ImagePlaceholder from "@components/ImagePlaceholder";
+import TypeUtils from "@utils/TypeUtils";
+import Swal from "sweetalert2";
+import useAuthContext from "@hooks/useAuthContext";
+import { getUserQuery } from "@/services/userService";
 
 const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
     let { id } = useParams();
-    const { product, getProduct } = getProductQuery();
-    const { addOrUpdateCart } = addOrUpdateCartUpdate()
+    const { getIdentity } = useAuthContext();
+    const [productImageUrl, setProductImageUrl] = useState<string | undefined | null>(null);
+
+    const { getUser, getUserLoading } = getUserQuery();
+    const { getProductImage } = getProductImageQuery();
+    const { product, getProduct, getProductLoading } = getProductQuery();
+    const { addOrUpdateCart, addOrUpdateCartLoading } = addOrUpdateCartUpdate()
 
     async function fetchProductData() {
         if (!id) return;
-        await getProduct([BigInt(Number.parseInt(id)), []]);
+        const product = await getProduct([BigInt(Number.parseInt(id)), []]);
+        if (!product || 'err' in product) {
+            return;
+        }
+        const image = await getProductImage([BigInt(Number.parseInt(id))]);
+        if (!image || image.length === 0) {
+            return;
+        }
+        setProductImageUrl(TypeUtils.byteArrayToImageURL(image[0]));
     }
 
     async function handleAddOrUpdateCart() {
         if (!product) return;
         const result = await addOrUpdateCart([product.owner, BigInt(product.id), BigInt(1)]);
         if (!result) {
-            console.log("Failed to add to cart");
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to add product to cart',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            })
             return;
         }
         if ('err' in result) {
-            console.log(result.err);
+            Swal.fire({
+                title: 'Error',
+                text: result.err,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            })
             return;
         }
+        Swal.fire({
+            title: 'Success',
+            text: 'Product has been added to cart',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        })
         navigate(-1);
+    }
+
+    async function fetchUserData() {
+        if (!product) return;
+        const user = await getUser([[product.owner!]]);
+        if (!user || 'err' in user) {
+            return;
+        }
     }
 
     useEffect(() => {
         fetchProductData();
     }, []);
 
-    return (
+    useEffect(() => {
+        fetchUserData();
+    }, [product])
+
+    if (getProductLoading) {
+        return (
+            <NavbarLayout>
+                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">
+                    Loading...
+                </p>
+            </NavbarLayout>
+        )
+    }
+
+    if (getIdentity()?.getPrincipal().toText() !== product?.name) {
         <NavbarLayout>
             {product ? (
                 <div className="flex w-full px-20 py-10">
                     <div className="w-[40%]">
-                        <img src={product?.image} className="h-full object-cover"/>
+                        <ImagePlaceholder imageUrl={productImageUrl} />
                     </div>
 
                     <div className="flex flex-col justify-between w-full mx-10">
@@ -56,22 +111,83 @@ const ProductDetail: React.FC = () => {
                         </div>
 
                         <div className="space-y-5">
-                            <button onClick={handleAddOrUpdateCart}
-                                className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">ADD TO CART</button>
+                            {addOrUpdateCartLoading ?
+                                <button className="w-full bg-gray-400 text-white font-bold border-black border-2 p-3 text-lg">
+                                    Loading...
+                                </button> :
+                                <button onClick={handleAddOrUpdateCart}
+                                    className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">
+                                    ADD TO CART
+                                </button>
+                            }
                             <button onClick={() => navigate(`/tryon/${id}`)}
-                                className="w-full bg-white border-black border-2 p-3 text-lg font-bold">TRY ON</button>
+                                className="w-full bg-white border-black border-2 p-3 text-lg font-bold">
+                                TRY ON
+                            </button>
                         </div>
 
-                        <p className="italic text-sm">*Colors may appear different due to variations in screen lighting.</p>
+                        <p className="italic text-sm">
+                            *Colors may appear different due to variations in screen lighting.
+                        </p>
                     </div>
                 </div>
             ) :
-            product === undefined ? (
-                <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+                product === undefined ? (
+                    <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+                ) :
+                    (
+                        <p>Product not found</p>
+                    )}
+        </NavbarLayout>
+    }
+
+    return (
+        <NavbarLayout>
+            {product ? (
+                <div className="flex w-full px-20 py-10">
+                    <div className="w-[40%]">
+                        <ImagePlaceholder imageUrl={productImageUrl} />
+                    </div>
+
+                    <div className="flex flex-col justify-between w-full mx-10">
+                        <div className="flex flex-col">
+                            <div className="mb-32">
+                                <p className="text-4xl font-bold">{product?.name}</p>
+                                <p className="text-2xl">Rp. {product.formatPrice()}</p>
+                                <div className="flex">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-5">
+                            {addOrUpdateCartLoading ?
+                                <button className="w-full bg-gray-400 text-white font-bold border-black border-2 p-3 text-lg">
+                                    Loading...
+                                </button> :
+                                <button onClick={() => navigate(`/editProduct/${id}`)}
+                                    className="w-full bg-black border-black border-2 p-3 text-white text-lg font-bold">
+                                    EDIT PRODUCT DETAILS
+                                </button>
+                            }
+                            <button onClick={() => navigate(`/tryon/${id}`)}
+                                className="w-full bg-white border-black border-2 p-3 text-lg font-bold">
+                                TRY ON
+                            </button>
+                        </div>
+
+                        <p className="italic text-sm">
+                            *Colors may appear different due to variations in screen lighting.
+                        </p>
+                    </div>
+                </div>
             ) :
-            (
-                <p>Product not found</p>
-            )}
+                product === undefined ? (
+                    <p className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">Loading...</p>
+                ) :
+                    (
+                        <p>Product not found</p>
+                    )}
         </NavbarLayout>
     )
 }

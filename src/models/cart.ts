@@ -1,40 +1,48 @@
+import Product, { ProductData } from "./product";
+
 interface CartDetails {
-    productId: number;
+    product: Product | null;
     quantity: number;
 }
 
 interface CartProps {
-    owner: string;
-    cartDetails: CartDetails[];
+    ownerName: string;
+    products: CartDetails[];
 }
 
 interface CartDetailData {
-    productId: bigint;
+    product: [ProductData] | [];
     quantity: bigint;
 }
 
 interface CartData {
-    owner: string;
-    products: CartDetailData[]
+    ownerName: string;
+    products: CartDetailData[];
 }
 
 export default class Cart {
-    owner: string;
+    ownerName: string;
     cartDetails: CartDetails[];
 
-    constructor({ owner, cartDetails }: CartProps) {
-        this.owner = owner;
-        this.cartDetails = cartDetails;
+    constructor({ ownerName, products }: CartProps) {
+        this.ownerName = ownerName;
+        this.cartDetails = products;
     };
 
-    static castToCart(u: CartData): Cart {
+    static fromCartData(u: CartData): Cart {
         return new Cart({
-            owner: u.owner,
-            cartDetails: u.products.map((p) => {
+            ownerName: u.ownerName,
+            products: u.products.map(p => {
+                if (p.product) {
+                    return {
+                        product: p.product.length === 0 ? null : Product.fromProductData(p.product[0]),
+                        quantity: Number(p.quantity)
+                    } as CartDetails;
+                }
                 return {
-                    productId: Number(p.productId),
+                    product: null,
                     quantity: Number(p.quantity)
-                };
+                } as CartDetails;
             })
         });
     };

@@ -6,9 +6,10 @@ interface Props {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onClose: () => void;
     handleTopUp: () => Promise<void>;
+    isLoading: boolean;
 }
 
-const TopUpModal: React.FC<Props> = ({ value, onChange, onClose, handleTopUp }) => {
+const TopUpModal: React.FC<Props> = ({ value, onChange, onClose, handleTopUp, isLoading }) => {
     return (
         <Modal onClose={onClose}>
             <div className="flex flex-col h-[35vh] w-[25vw]">
@@ -22,7 +23,10 @@ const TopUpModal: React.FC<Props> = ({ value, onChange, onClose, handleTopUp }) 
                     </div>
                     <div className="flex gap-4 w-full justify-end">
                         <ButtonSmall onclick={onClose} text="No" />
-                        <ButtonSmall onclick={handleTopUp} text="Yes" variant="secondary" />
+                        {isLoading ?
+                            <ButtonSmall text="Loading..." variant="secondary" /> :
+                            <ButtonSmall onclick={handleTopUp} text="Yes" variant="secondary" />
+                        }
                     </div>
                 </div>
             </div>

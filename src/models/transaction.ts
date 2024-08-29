@@ -46,7 +46,7 @@ export default class TransactionHeader {
             id: Number(t.id),
             details: t.details.map((d) => {
                 return {
-                    product: Product.castToProduct(d.product),
+                    product: Product.fromProductData(d.product),
                     quantity: Number(d.quantity)
                 };
             }),
@@ -55,4 +55,13 @@ export default class TransactionHeader {
             buyer: t.buyer
         });
     }
+}
+
+type TransactionItem = {
+    product: Product;
+    quantity: bigint;
+};
+export type TransactionInput = {
+    ownerName: string;
+    items: TransactionItem[];
 }
