@@ -61,6 +61,26 @@ actor {
 
     };
 
+    public shared ({caller}) func removeSelfCartItem(sellerId : Text, productId : Nat64) : async Result<(), Text> {
+        let ownerCart = switch (carts.get(caller)) {
+            case (null) { return #err("Cart not found") };
+            case (?cart) { cart };
+        };
+
+        switch (ownerCart.get(Principal.fromText(sellerId))) {
+            case (null) {
+                return #err("Cart Item not found");
+            };
+            case (?cartItem) {
+                cartItem.delete(productId);
+                if(cartItem.size() == 0){
+                    ownerCart.delete(Principal.fromText(sellerId));
+                };
+                return #ok(());
+            };
+        };
+    };
+
     public shared func removeCartItem(sellerId : Text, productId : Nat64, caller: Principal) : async Result<(), Text> {
         let ownerCart = switch (carts.get(caller)) {
             case (null) { return #err("Cart not found") };
