@@ -106,7 +106,6 @@ actor {
         return productArray;
     };
 
-
     public shared query func getProductsByOwner(owner : Text) : async [ProductWithoutImage] {
         let filtered = Iter.toArray(
             Iter.filter(
