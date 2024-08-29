@@ -61,7 +61,7 @@ const Home: React.FC = () => {
     return (
         <NavbarLayout>
             <CategoryBar category={category} setCategory={setCategory} />
-            <div className="sticky top-32 w-screen mb-8 mt-3 flex items-center justify-end gap-4 px-[2.5%] py-2 bg-white">
+            <div className="sticky top-32 w-screen mt-3 flex items-center justify-end gap-4 px-[2.5%] py-2 bg-white">
                 <p>Sort: </p>
                 <select
                     className="border border-black p-2 text-xs cursor-pointer"
@@ -74,6 +74,9 @@ const Home: React.FC = () => {
                         </option>
                     ))}
                 </select>
+            </div>
+            <div className='flex self-end mx-[2.5%] my-2 p-2 border border-gray-500 mb-8'>
+                <input placeholder='Search' className='focus:outline-none'/>
             </div>
             <div className="grid grid-cols-5 gap-x-[3.5%] gap-y-8 px-[2.5%] w-full">
                 {category === "All" ?
