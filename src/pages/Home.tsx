@@ -126,25 +126,26 @@ const Home: React.FC = () => {
                         <ProductCard key={product.id} product={product} imageUrl={productImageUrls.get(product.id)}/>
                     ))
                 }
-
             </div>
-            <div className="flex justify-center mt-20 mx-20 items-center">
-                <button
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page <= 1}
-                    className={`w-6 h-6 ${page <= 1 ? 'opacity-50' : ''}`}
-                >
-                    <IconPrev />
-                </button>
-                <p className="mx-2 text-xl">{page}</p>
-                <button
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page == totalPages}
-                    className={`w-6 h-6 ${page >= totalPages ? 'opacity-50' : ''}`}
-                >
-                    <IconNext />
-                </button>
-            </div>
+            {totalPages >= 1 && 
+                <div className="flex justify-center mt-20 mx-20 items-center">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page <= 1}
+                        className={`w-6 h-6 ${page <= 1 ? 'opacity-50' : ''}`}
+                    >
+                        <IconPrev />
+                    </button>
+                    <p className="mx-2 text-xl">{page}</p>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page == totalPages}
+                        className={`w-6 h-6 ${page >= totalPages ? 'opacity-50' : ''}`}
+                    >
+                        <IconNext />
+                    </button>
+                </div>
+            }
         </NavbarLayout>
     );
 };

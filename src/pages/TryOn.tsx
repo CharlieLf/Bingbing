@@ -3,14 +3,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import NavbarLayout from "@layouts/NavbarLayout";
 import { getProductImageQuery, getProductQuery } from "@/services/productService";
 import ButtonSmall from "@components/ButtonSmall";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import TypeUtils from "@utils/TypeUtils";
 import ImagePlaceholder from "@components/ImagePlaceholder";
 import axios from "axios"; 
+import IconBxArrowBack from "@assets/icons/IconArrowBack";
 
 const TryOn: React.FC = () => {
     const { id } = useParams();
+
+    const navigate = useNavigate();
 
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [isWebcamOn, setIsWebcamOn] = useState<boolean>(false);
@@ -27,7 +30,7 @@ const TryOn: React.FC = () => {
         const imageSrc = webCamRef.current?.getScreenshot() || null;
         setImageUrl(imageSrc);
         setIsWebcamOn(false);
-    }, [webCamRef]);
+    }, [webCamRef, imageUrl]);
 
     const openImageInput = () => {
         if (imageInput.current) {
@@ -163,36 +166,49 @@ const TryOn: React.FC = () => {
 
     return (
         <NavbarLayout>
-            <div className="flex mx-20">
-                <div className="mr-10 w-[40vw] h-[60vh] flex flex-col items-center justify-evenly">
-                    {
-                        resultImage ? <img className="w-full h-full" src={resultImage} /> :
-                        isWebcamOn ? <Webcam className="w-full h-full" ref={webCamRef} /> :
-                            imageUrl ? <img className="w-full h-full" src={imageUrl} /> :
-                                <ImagePlaceholder imageUrl={productImageUrl} />
+            <div className="flex items-center my-5 px-20 w-full">
+                <div className="mr-5">
+                    <button className="flex size-6 cursor-pointer items-center justify-center"
+                        onClick={() => navigate(-1)}>
+                        <IconBxArrowBack />
+                    </button>
+                </div>
+                <p className="text-xl">Back</p>
+            </div>
+
+            <div className="flex justify-center w-full px-20">
+                <div className={isWebcamOn ? "w-full mr-10 flex flex-col items-center justify-evenly" : "w-fit mr-10 flex flex-col items-center justify-evenly"}>
+                    { isWebcamOn ? <Webcam className="w-full" ref={webCamRef} /> :
+                        imageUrl ? <img src={imageUrl} className="h-[70vh] object-cover"/> :
+                        <ImagePlaceholder imageUrl={productImageUrl} />
                     }
                 </div>
 
-                <div className="flex flex-col justify-between w-[50%] p-3">
+                <div className="flex flex-col justify-between w-[60%] p-3">
                     <div>
                         <p className="text-2xl font-bold">{product?.name}</p>
                         <p>IDR. {product?.formatPrice()}</p>
                     </div>
 
                     <div className="flex flex-col space-y-3">
-                        {isWebcamOn && <button onClick={capture}
-                            className="p-5 bg-black border-black border text-white font-bold">
-                            CAPTURE
-                        </button>}
-                        <div className="flex w-full justify-between">
-                            <ButtonSmall onclick={openImageInput} text="Upload Image" />
-                            <ButtonSmall onclick={() => setIsWebcamOn(true)}
-                                text="Take Photo"
-                                variant="secondary" />
-                        </div>
-                        <button className="p-5 bg-white border-black border">
-                            BACK TO PRODUCT DETAIL
+                        <button onClick={openImageInput} className="w-full p-5 bg-white border-black border">
+                            UPLOAD IMAGE
                         </button>
+
+                        {isWebcamOn ? 
+                            <button onClick={capture}
+                                className="p-5 bg-black border-black border text-white font-bold">
+                                CAPTURE
+                            </button>
+                        :
+                            <button onClick={() => setIsWebcamOn(true)} className="w-full p-5 bg-black text-white font-bold">
+                                TAKE PHOTO
+                            </button>
+                        }
+
+                        {/* <button onClick={() => {navigate(-1)}} className="p-5 bg-white border-black border">
+                            BACK TO PRODUCT DETAIL
+                        </button> */}
                     </div>
                 </div>
                 <input className="hidden" onChange={handleImageChange} type="file" ref={imageInput} accept="image/*" />
