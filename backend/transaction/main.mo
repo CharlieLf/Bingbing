@@ -8,6 +8,7 @@ import HashMap "mo:base/HashMap";
 import Nat "mo:base/Nat";
 import ProductActorModules "../product/interface";
 import CartActorModules "../cart/interface";
+import UserActorModules "../user/interface";
 
 actor {
 
@@ -54,12 +55,12 @@ actor {
 
     };
 
-    public shared query ({ caller }) func getSellerHistory() : async [SellerHistory] {
+    public shared ({ caller }) func getSellerHistory(userCanisterId : Text) : async [SellerHistory] {
 
         let SLTlist = Buffer.Buffer<SellerHistory>(0);
         for (transaction in transactions.vals()) {
             if (transaction.details.get(caller) != null) {
-                SLTlist.add(_createSellerHistory(transaction, caller));
+                SLTlist.add(await _createSellerHistory(userCanisterId, transaction, caller));
             };
         };
 
@@ -67,20 +68,22 @@ actor {
 
     };
 
-    public shared query ({ caller }) func getBuyerHistory() : async [BuyerHistory] {
+    public shared ({ caller }) func getBuyerHistory(userCanisterId : Text) : async [BuyerHistory] {
         let histories = Buffer.Buffer<BuyerHistory>(0);
 
         for ((key, data) in transactions.entries()) {
             if (data.buyer == caller) {
 
-                histories.add(_createBuyerHistory(data, caller));
+                histories.add(await _createBuyerHistory(userCanisterId, data, caller));
             };
         };
 
         return Buffer.toArray(histories);
     };
 
-    private func _createSellerHistory(transaction : TransactionHeader, sellerPrincipal : Principal) : SellerHistory {
+    private func _createSellerHistory(userCanisterId : Text, transaction : TransactionHeader, sellerPrincipal : Principal) : async SellerHistory {
+        
+        let userActor = actor (userCanisterId) : UserActorModules.UserActor;
         let arrItemData = Buffer.Buffer<ItemDetail>(0);
         for ((seller, details) in transaction.details.entries()) {
             if (seller == sellerPrincipal) {
@@ -92,16 +95,32 @@ actor {
 
         return {
             date = transaction.date;
-            buyer = Principal.toText(transaction.buyer);
+            buyerName = switch(await userActor.getUser(?Principal.toText(transaction.buyer))) {
+                case (#ok(user)) {
+                    user.name;
+                };
+                case (#err(_)) {
+                    "Unknown";
+                };
+            };
             items = Buffer.toArray(arrItemData);
         };
     };
 
-    private func _createBuyerHistory(input : TransactionHeader, buyerPrincipal : Principal) : BuyerHistory {
+    private func _createBuyerHistory(userCanisterId : Text, input : TransactionHeader, buyerPrincipal : Principal) : async BuyerHistory {
+        
+        let userActor = actor (userCanisterId) : UserActorModules.UserActor;
         let arrDetails = Buffer.Buffer<SellerData>(0);
         for ((seller, details) in input.details.entries()) {
             let data : SellerData = {
-                seller = Principal.toText(seller);
+                sellerName = switch(await userActor.getUser(?Principal.toText(seller))) {
+                    case (#ok(user)) {
+                        user.name;
+                    };
+                    case (#err(_)) {
+                        "Unknown";
+                    };
+                };
                 items = details;
             };
             arrDetails.add(data);
