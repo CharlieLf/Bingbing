@@ -7,13 +7,25 @@ module {
         id : Nat64;
         name : Text;
         price : Nat64;
-        stock: Nat64;
-        image : Blob;
+        stock : Nat64;
+        image : ?Blob;
+        owner : Text;
+        gender : Text;
+        season : Text;
+        clothingType : Text;
+        clothing : Text;
+    };
+
+    public type ProductWithoutImage = {
+        id : Nat64;
+        name : Text;
+        price : Nat64;
+        stock : Nat64;
         owner : Text;
 
         gender : Text;
-        season: Text;
-        clothingType: Text;
-        clothing: Text;
+        season : Text;
+        clothingType : Text;
+        clothing : Text;
     };
-}
+};

@@ -4,17 +4,17 @@ import { useState } from "react";
 
 export function addOrUpdateCartUpdate() {
     const { useUpdateCall: cartUpdate } = useServiceContext().cartService;
-    const { call: addOrUpdateCart } = cartUpdate({
+    const { call: addOrUpdateCart, loading: addOrUpdateCartLoading } = cartUpdate({
         functionName: "addOrUpdateCart",
     })
-    return { addOrUpdateCart };
+    return { addOrUpdateCart, addOrUpdateCartLoading };
 }
 
 export function getSelfCartQuery() {
     const { useQueryCall: cartQuery } = useServiceContext().cartService;
 
-    const [carts, setCart] = useState<Cart[] | null | undefined>()
-    const { call: getSelfCart } = cartQuery({
+    const [carts, setCart] = useState<Cart[] | undefined | null>()
+    const { call: getSelfCart, loading: getSelfCartLoading } = cartQuery({
         functionName: "getSelfCart",
         refetchOnMount: false,
         onSuccess: (data) => {
@@ -22,8 +22,19 @@ export function getSelfCartQuery() {
                 setCart(null);
                 return;
             }
-            setCart(data.ok.map((d) => Cart.castToCart(d)));
+            const cart = data.ok.map(c => {
+                return Cart.fromCartData(c);
+            });
+            setCart(cart);
         }
     })
-    return { carts, getSelfCart };
+    return { carts, getSelfCart, getSelfCartLoading };
+}
+
+export function removeSelfCartItemUpdate() {
+    const { useQueryCall: cartUpdate } = useServiceContext().cartService;
+    const { call: removeSelfCartItem, loading: removeSelfCartItemLoading } = cartUpdate({
+        functionName: "removeSelfCartItem",
+    });
+    return { removeSelfCartItem, removeSelfCartItemLoading };
 }

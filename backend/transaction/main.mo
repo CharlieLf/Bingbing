@@ -2,69 +2,166 @@ import Types "./types";
 import TrieMap "mo:base/TrieMap";
 import Nat64 "mo:base/Nat64";
 import Time "mo:base/Time";
-import Iter "mo:base/Iter";
+import Buffer "mo:base/Buffer";
 import Principal "mo:base/Principal";
+import HashMap "mo:base/HashMap";
+import Nat "mo:base/Nat";
+import ProductActorModules "../product/interface";
+import CartActorModules "../cart/interface";
 
 actor {
 
-  public type Result<Ok, Err> = Types.Result<Ok, Err>;
-  public type Product = Types.Product;
-  public type TransactionHeader = Types.TransactionHeader;
-  public type TransactionDetail = Types.TransactionDetail;
+    public type Result<Ok, Err> = Types.Result<Ok, Err>;
+    public type HashMap<K, V> = Types.HashMap<K, V>;
 
-  stable var transactionSize : Nat64 = 0;
-  let transactions = TrieMap.TrieMap<Nat64, TransactionHeader>(Nat64.equal, Nat64.toNat32);
+    public type Product = Types.Product;
+    public type TransactionHeader = Types.TransactionHeader;
+    public type ItemDetail = Types.ItemDetail;
+    public type SellerHistory = Types.SellerHistory;
+    public type SellerData = Types.SellerData;
+    public type BuyerHistory = Types.BuyerHistory;
+    public type TransactionInput = Types.TransactionInput;
 
-  public shared ({ caller }) func createTransaction(sellerPrincipal : Text, details : [TransactionDetail]) : async Result<(), Text> {
+    stable var transactionSize : Nat64 = 0;
+    let transactions = TrieMap.TrieMap<Nat64, TransactionHeader>(Nat64.equal, Nat64.toNat32);
 
-    let header : TransactionHeader = {
-      id = transactionSize;
-      details = details;
-      date = Time.now();
-      seller = sellerPrincipal;
-      buyer = Principal.toText(caller);
+    public shared ({ caller }) func createTransaction(cartCanisterId : Text, productCanisterId : Text, transactionData : [TransactionInput]) : async Result<(), Text> {
+
+        var TransactionDetails = HashMap.HashMap<Principal, [ItemDetail]>(0, Principal.equal, Principal.hash);
+
+        for (data in transactionData.vals()) {
+            let result = await _createTransactionDetail(cartCanisterId, productCanisterId, data, caller);
+            switch (result) {
+                case (#ok(res)) {
+                    TransactionDetails.put(res.seller, res.details);
+                };
+                case (#err(err)) {
+                    return #err(err);
+                };
+            };
+        };
+
+        let header : TransactionHeader = {
+            id = transactionSize;
+            details = TransactionDetails;
+            date = Time.now();
+            buyer = caller;
+        };
+
+        transactions.put(transactionSize, header);
+        transactionSize += 1;
+        return #ok(());
+
     };
 
-    transactions.put(transactionSize, header);
-    transactionSize += 1;
-    return #ok(());
+    public shared query ({ caller }) func getSellerHistory() : async [SellerHistory] {
 
-  };
+        let SLTlist = Buffer.Buffer<SellerHistory>(0);
+        for (transaction in transactions.vals()) {
+            if (transaction.details.get(caller) != null) {
+                SLTlist.add(_createSellerHistory(transaction, caller));
+            };
+        };
 
-  public shared query func getSellerTransaction(sellerPrincipal : Text) : async Result<[TransactionHeader], Text> {
+        return Buffer.toArray(SLTlist);
 
-    let result = TrieMap.mapFilter<Nat64, TransactionHeader, TransactionHeader>(
-      transactions,
-      Nat64.equal,
-      Nat64.toNat32,
-      func(key, value) = if (value.seller == sellerPrincipal) {
-        return ?value;
-      } else {
-        return null;
-      },
+    };
 
-    );
+    public shared query ({ caller }) func getBuyerHistory() : async [BuyerHistory] {
+        let histories = Buffer.Buffer<BuyerHistory>(0);
 
-    return #ok(Iter.toArray(result.vals()));
+        for ((key, data) in transactions.entries()) {
+            if (data.buyer == caller) {
 
-  };
+                histories.add(_createBuyerHistory(data, caller));
+            };
+        };
 
-  public shared query (msg) func getBuyerTransaction() : async Result<[TransactionHeader], Text> {
+        return Buffer.toArray(histories);
+    };
 
-    let result = TrieMap.mapFilter<Nat64, TransactionHeader, TransactionHeader>(
-      transactions,
-      Nat64.equal,
-      Nat64.toNat32,
-      func(key, value) = if (value.buyer == Principal.toText(msg.caller)) {
-        return ?value;
-      } else {
-        return null;
-      },
+    private func _createSellerHistory(transaction : TransactionHeader, sellerPrincipal : Principal) : SellerHistory {
+        let arrItemData = Buffer.Buffer<ItemDetail>(0);
+        for ((seller, details) in transaction.details.entries()) {
+            if (seller == sellerPrincipal) {
+                for (detail in details.vals()) {
+                    arrItemData.add(detail);
+                };
+            };
+        };
 
-    );
+        return {
+            date = transaction.date;
+            buyer = Principal.toText(transaction.buyer);
+            items = Buffer.toArray(arrItemData);
+        };
+    };
 
-    return #ok(Iter.toArray(result.vals()));
+    private func _createBuyerHistory(input : TransactionHeader, buyerPrincipal : Principal) : BuyerHistory {
+        let arrDetails = Buffer.Buffer<SellerData>(0);
+        for ((seller, details) in input.details.entries()) {
+            let data : SellerData = {
+                seller = Principal.toText(seller);
+                items = details;
+            };
+            arrDetails.add(data);
+        };
+        return {
+            id = input.id;
+            date = input.date;
+            buyer = Principal.toText(buyerPrincipal);
+            details = Buffer.toArray(arrDetails);
+        };
+    };
 
-  };
+    private func _createTransactionDetail(cartCanisterId : Text, productCanisterId : Text, input : TransactionInput, caller : Principal) : async Result<{ seller : Principal; details : [ItemDetail] }, Text> {
+        let itemDetails = Buffer.Buffer<ItemDetail>(0);
+        let productActor = actor (productCanisterId) : ProductActorModules.ProductActor;
+        let cartActor = actor (cartCanisterId) : CartActorModules.CartActor;
 
+        for (item in input.items.vals()) {
+            let detail : ItemDetail = {
+                product = await productActor.getProduct(item.productId, ?Principal.fromText(input.sellerPrincipal));
+                quantity = item.quantity;
+            };
+
+            switch (detail.product) {
+                case (?p) {
+                    if (p.stock < Nat64.fromNat(detail.quantity)) {
+                        return #err("Not enough stock");
+                    };
+                    let updatedProductStock : Product = _createUpdatedProductStock(p, Nat64.fromNat(detail.quantity));
+                    let _ = await productActor.updateProductAfterTransaction(updatedProductStock);
+                };
+                case (null) {};
+            };
+
+            itemDetails.add(detail);
+            switch (await cartActor.removeCartItem(input.sellerPrincipal, item.productId, caller)) {
+                case (#ok()) {};
+                case (#err(_)) {};
+            };
+
+        };
+
+        return #ok({
+            seller = Principal.fromText(input.sellerPrincipal);
+            details = Buffer.toArray(itemDetails);
+        });
+    };
+
+    private func _createUpdatedProductStock(p : Product, quantity : Nat64) : Product {
+        return {
+            id = p.id;
+            name = p.name;
+            price = p.price;
+            stock = p.stock - quantity;
+            image = p.image;
+            owner = p.owner;
+            gender = p.gender;
+            season = p.season;
+            clothingType = p.clothingType;
+            clothing = p.clothing;
+        };
+    };
 };

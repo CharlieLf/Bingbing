@@ -14,5 +14,5 @@ module {
         address : Text;
         image : Blob;
     };
-    
-}   
+
+};

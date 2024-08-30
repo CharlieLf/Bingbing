@@ -1,4 +1,4 @@
-import { deleteProductUpdate, getProductsByOwnerQuery } from "@/services/productService";
+import { deleteProductUpdate, getProductImageQuery, getProductsByOwnerQuery } from "@/services/productService";
 import { mintUpdate } from "@/services/tokenService";
 import { getUserQuery } from "@/services/userService";
 import IconPerson from "@assets/icons/IconPerson";
@@ -8,67 +8,97 @@ import DeleteProductModal from "@components/DeleteProductModal";
 import ProfileProductCard from "@components/ProfileProductCard";
 import TopUpModal from "@components/TopUpModal";
 import useAuthContext from "@hooks/useAuthContext";
+import useServiceContext from "@hooks/useServiceContext";
 import { useAuth } from "@ic-reactor/react";
 import NavbarLayout from "@layouts/NavbarLayout"
 import Product from "@models/product";
 import User from "@models/user";
+import TypeUtils from "@utils/TypeUtils";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Profile: React.FC = () => {
+    const { cartCanisterId } = useServiceContext();
     const { principal } = useParams();
     const { identity } = useAuth();
     const { getUser } = getUserQuery()
-    const { user, balance, logout, fetchUser } = useAuthContext();
+    const { user, balance, fetchUser } = useAuthContext();
     const [profileUser, setProfileUser] = useState<User | null | undefined>(undefined);
 
     const { products, getProductsByOwner } = getProductsByOwnerQuery();
+    const [productImageUrls, setProductImageUrls] = useState<Map<number, string>>(new Map());
+
+    const { getProductImage } = getProductImageQuery();
     const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
-    const { deleteProduct } = deleteProductUpdate();
+    const { deleteProduct, deleteProductLoading } = deleteProductUpdate();
 
     const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
     const [topUpAmount, setTopUpAmount] = useState(0);
-    const { mint } = mintUpdate();
+    const { mint, mintLoading } = mintUpdate();
+
     async function fetchProductsByOwner() {
-        await getProductsByOwner([principal ?? '']);
+        const productWithoutImages = await getProductsByOwner([principal ?? '']);
+        productWithoutImages?.forEach(async (product) => {
+            const image = await getProductImage([product.id]);
+            if (!image || image.length === 0) {
+                return;
+            }
+            setProductImageUrls(prev => {
+                const newMap = new Map(prev);
+                newMap.set(Number(product.id), TypeUtils.byteArrayToImageURL(image[0]));
+                return newMap;
+            })
+        })
     }
 
     async function handleDeleteProduct() {
-        const result = await deleteProduct([BigInt(selectedProduct?.id ?? 0)]);
-        if (!result) {
-            console.log("Failed to delete product");
-            return
+        const result = await deleteProduct([BigInt(selectedProduct?.id ?? 0), cartCanisterId]);
+        if (!result || 'err' in result) {
+            Swal.fire({
+                title: "Failed to delete product",
+                icon: "error"
+            })
+            return;
         }
-        if ('err' in result) {
-            console.log(result.err);
-            return
-        }
-        if (result) {
-            await fetchProductsByOwner();
-            setSelectedProduct(undefined);
-        } else {
-            console.error("Failed to delete product");
-        }
+        await fetchProductsByOwner();
+        Swal.fire({
+            title: "Success!",
+            text: "Successfully delete product",
+            icon: "success"
+        });
+        setSelectedProduct(undefined);
     }
 
     async function handleTopUp() {
-        if (topUpAmount <= 0) {
-            return;
-        }
         const principal = identity?.getPrincipal();
         if (!principal) {
             return;
         }
+        if (topUpAmount <= 0) {
+            Swal.fire({
+                title: "Invalid top up amount",
+                text: "Top up amount must be greater than 0",
+                icon: "error"
+            });
+            return;
+        }
         const result = await mint([principal, BigInt(topUpAmount)]);
-        if (!result) {
-            console.log("Failed to top up");
+        if (!result || 'err' in result) {
+            Swal.fire({
+                title: "Failed to top up",
+                icon: "error"
+            });
             return;
         }
-        if ('err' in result) {
-            console.log(result.err);
-            return;
-        }
+
         await fetchUser();
+
+        Swal.fire({
+            title: "Success!",
+            text: `Successfully top up ${topUpAmount} !`,
+            icon: "success"
+        })
         setIsTopUpModalOpen(false);
         setTopUpAmount(0);
     }
@@ -76,17 +106,34 @@ const Profile: React.FC = () => {
     async function fetchProfileUser() {
         const currPrincipal = identity?.getPrincipal();
         if (currPrincipal && principal !== currPrincipal.toText()) {
-            const result = await getUser([[currPrincipal]])
+            const result = await getUser([[principal!]])
             if (!result) {
-                console.log("Failed to fetch user");
+                Swal.fire({
+                    title: "Failed to fetch user",
+                    icon: "error"
+                })
                 return;
             }
             if ('err' in result) {
-                console.log(result.err);
+                Swal.fire({
+                    title: "Failed to fetch user",
+                    text: result.err,
+                    icon: "error"
+                })
                 return;
             }
             setProfileUser(User.castToUser(result.ok));
         }
+    }
+
+    function closeTopUpModal() {
+        if (mintLoading) return;
+        setIsTopUpModalOpen(false);
+    }
+
+    function closeDeleteProductModal() {
+        if (deleteProductLoading) return;
+        setSelectedProduct(undefined);
     }
 
     useEffect(() => {
@@ -100,29 +147,34 @@ const Profile: React.FC = () => {
         return (
             <NavbarLayout>
                 {selectedProduct &&
-                    <DeleteProductModal onClose={() => setSelectedProduct(undefined)}
+                    <DeleteProductModal onClose={closeDeleteProductModal}
                         product={selectedProduct}
                         handleDeleteProduct={handleDeleteProduct}
+                        isLoading={deleteProductLoading}
                     />
                 }
                 {isTopUpModalOpen &&
-                    <TopUpModal onClose={() => setIsTopUpModalOpen(false)}
+                    <TopUpModal onClose={closeTopUpModal}
                         handleTopUp={handleTopUp}
                         onChange={(e) => setTopUpAmount(Number(e.target.value))}
                         value={topUpAmount}
+                        isLoading={mintLoading}
                     />
                 }
                 <div className="w-screen px-[2.5%] py-2">
                     <div className="flex justify-between items-center gap-5">
                         <div className="flex gap-10">
                             <div className="size-32 rounded-full border border-gray-400 overflow-hidden flex items-end justify-center">
-                                {user?.image ? <img className="w-full h-full object-cover" src={user?.image} /> : <IconPerson width="80%" height="80%" />}
+                                {user?.image ?
+                                    <img className="w-full h-full object-cover" src={user?.image} /> :
+                                    <IconPerson width="80%" height="80%" />
+                                }
                             </div>
                             <div>
                                 <p className="text-[32px] font-semibold">{user?.name}</p>
                                 <div className="flex gap-5 items-center">
                                     <div className="h-8"><IconWallet /></div>
-                                    <p>BingPay: {balance}</p>
+                                    <p>BingPay: {balance.toLocaleString()}</p>
                                     <ButtonSmall onclick={() => setIsTopUpModalOpen(true)} variant="secondary" text="Top up" />
                                 </div>
                             </div>
@@ -134,7 +186,6 @@ const Profile: React.FC = () => {
                             <Link to="/addProduct">
                                 <ButtonSmall text="Add Product" />
                             </Link>
-                            <ButtonSmall onclick={logout} text="Logout" variant="secondary" />
                         </div>
                     </div>
                     <div className="w-full mt-5 flex flex-col">
@@ -142,7 +193,13 @@ const Profile: React.FC = () => {
                         <div className="w-full flex flex-col flex-1">
                             {products.length > 0 ? (
                                 products.map((product, index) => (
-                                    <ProfileProductCard key={index} product={product} handleDelete={setSelectedProduct} isOwner={true} />
+                                    <ProfileProductCard
+                                        key={index}
+                                        product={product}
+                                        productImageUrl={productImageUrls.get(product.id)}
+                                        handleDelete={setSelectedProduct}
+                                        isOwner={true}
+                                    />
                                 ))
                             ) : (
                                 <p className="text-white">No products available.</p>
@@ -173,10 +230,15 @@ const Profile: React.FC = () => {
                 <div className="flex justify-between items-center gap-5">
                     <div className="flex gap-10">
                         <div className="size-32 rounded-full border border-gray-400 overflow-hidden flex items-end justify-center">
-                            {profileUser?.image ? <img className="w-full h-full object-cover" src={profileUser?.image} /> : <IconPerson width="80%" height="80%" />}
+                            {profileUser?.image ?
+                                <img className="w-full h-full object-cover" src={profileUser?.image} /> :
+                                <IconPerson width="80%" height="80%"
+                                />}
                         </div>
                         <div>
-                            <p className="text-[32px] font-semibold">{profileUser?.name}</p>
+                            <p className="text-[32px] font-semibold">
+                                {profileUser?.name}
+                            </p>
                         </div>
                     </div>
                     <div className="flex h-full gap-10">
@@ -187,7 +249,12 @@ const Profile: React.FC = () => {
                     <div className="w-full flex flex-col flex-1">
                         {products.length > 0 ? (
                             products.map((product, index) => (
-                                <ProfileProductCard key={index} product={product} handleDelete={setSelectedProduct} isOwner={false} />
+                                <ProfileProductCard key={index}
+                                    product={product}
+                                    productImageUrl={productImageUrls.get(product.id)}
+                                    handleDelete={setSelectedProduct}
+                                    isOwner={false}
+                                />
                             ))
                         ) : (
                             <p className="text-white">No products available.</p>

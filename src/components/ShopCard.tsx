@@ -1,58 +1,112 @@
 import Cart from "@models/cart";
-import image from "../assets/product/register.jpg";
 import InputNumber from "./InputNumber";
+import { useEffect, useState } from "react";
+import ImagePlaceholder from "./ImagePlaceholder";
+import IconTrash3 from "@assets/icons/IconTrash3";
+import ProductInfoCard from "./ProductInfoCard";
 
-interface Props {
-    children?: React.ReactNode;
-    checkbox?: boolean;
-    cart: Cart;
-    cartCount: Map<number, number>;
-    updateCartCount: (productId: number, quantity: number) => void;
+interface CartCount {
+    [key: number]: number;
 }
 
-const ShopCard: React.FC<Props> = ({ children, checkbox = false, cart, updateCartCount, cartCount }) => {
+interface SelectedCartItem {
+    [key: number]: boolean;
+}
 
+interface Props {
+    cart: Cart;
+    cartCount: CartCount;
+    updateCartCount: (productId: number, quantity: number) => void;
+    selectedCart: SelectedCartItem;
+    updateSelectedCartItem: (productId: number, selected: boolean) => void;
+    imageUrls: Map<number, string>;
+    handleDeleteProduct: (sellerId: string, productId: number) => Promise<void>;
+}
+
+const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedCart, updateSelectedCartItem, imageUrls, handleDeleteProduct }) => {
     const totalPrice = cart.cartDetails.reduce((acc, curr) => {
-        return acc + curr.quantity * 100;
+        return !curr.product || !selectedCart[curr.product.id] ? acc :
+            acc + cartCount[curr.product.id] * curr.product?.price;
     }, 0);
+
+    const [isSelectedAll, setIsSelectedAll] = useState(
+        cart.cartDetails.every(cd => !cd.product || selectedCart[cd.product.id])
+    );
+
+    function handleToggleAllCart(e: React.ChangeEvent<HTMLInputElement>) {
+        cart.cartDetails.forEach(cd => {
+            if (!cd.product) return;
+            updateSelectedCartItem(cd.product.id, e.target.checked);
+        });
+        setIsSelectedAll(e.target.checked);
+    }
+
+    useEffect(() => {
+        const allSelected = cart.cartDetails.every(cd => !cd.product || selectedCart[cd.product.id]);
+        setIsSelectedAll(allSelected);
+    }, [selectedCart, cart.cartDetails]);
 
     return (
         <div className="">
             <div className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2">
-                {checkbox &&
-                    <input type="checkbox" className="mr-3" />
-                }
+                <input className="mr-3 cursor-pointer"
+                    onChange={handleToggleAllCart}
+                    checked={isSelectedAll}
+                    type="checkbox"
+                />
                 <div className="flex justify-between w-full">
-                    <p className="font-medium">{cart.owner}</p>
-                    <p className="font-bold">IDR. {totalPrice}</p>
+                    <p className="font-medium">{cart.ownerName}</p>
+                    <p className="font-bold">IDR. {totalPrice.toLocaleString()}</p>
                 </div>
             </div>
 
-            {cart.cartDetails.map((cartDetail, idx) => {
-                function updateValue(value: number) {
-                    updateCartCount(cartDetail.productId, value);
+            {cart.cartDetails.map((cd, idx) => {
+                if (!cd.product) {
+                    return <p className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2" key={idx}>Product not found</p>
                 }
-                return <div className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2" key={idx}>
-                    {checkbox &&
-                        <input type="checkbox" className="mr-3" />
-                    }
 
-                    <div className="flex w-full py-3">
-                        <img src={image} width={200} className="mr-10" />
+                const isCurrSelected = selectedCart[cd.product.id] || false
 
-                        <div className="flex flex-col justify-between w-full">
-                            <p>{cartDetail.productId}</p>
+                function handleToggleCart(e: React.ChangeEvent<HTMLInputElement>) {
+                    if (!cd.product) return;
+                    updateSelectedCartItem(cd.product.id, e.target.checked)
+                };
 
-                            <div className="flex flex-row justify-between">
-                                <p className="font-bold">IDR. 200,000</p>
-                                <InputNumber value={cartCount.get(cartDetail.productId)!} updateValue={updateValue} />
+                function updateCartQuantity(value: number) {
+                    if (value <= 0 || !cd.product) return;
+                    updateCartCount(cd.product.id, value);
+                }
+
+                return (
+                    <div className="flex bg-[#FFFDFD] border border-gray-200 px-5 py-2" key={idx}>
+                        <input className="mr-3 cursor-pointer"
+                            checked={isCurrSelected}
+                            onChange={handleToggleCart}
+                            type="checkbox"
+                        />
+
+                        <ProductInfoCard imageUrl={imageUrls.get(cd.product.id)}>
+                            <div className="flex flex-col justify-between w-full">
+                                <div className="flex w-full justify-between">
+                                    <p>{cd.product.name}</p>
+                                    <button onClick={() => handleDeleteProduct(cd.product!.owner, cd.product!.id)}
+                                        className="size-7"><IconTrash3 /></button>
+                                </div>
+
+                                <div className="flex flex-row justify-between">
+                                    <p className="font-bold">IDR {cd.product.formatPrice()}</p>
+                                    <InputNumber
+                                        quantity={cartCount[cd.product.id] || 0}
+                                        updateCartQuantity={updateCartQuantity}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        </ProductInfoCard>
                     </div>
-                </div>
+                );
             })}
-        </div>
-    )
+        </div >
+    );
 }
 
 export default ShopCard;
