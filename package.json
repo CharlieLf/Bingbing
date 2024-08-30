@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@ic-reactor/react": "^1.7.8",
+    "axios": "^1.7.5",
     "react": "^18.2.0",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.2.0",

@@ -9,6 +9,8 @@ if %errorlevel% neq 0 (
     exit /b %errorlevel%
 )
 
+cd ../
+
 REM Activate the Conda environment
 echo Activating Conda environment...
 call conda activate deep_learning
@@ -60,4 +62,3 @@ if %errorlevel% neq 0 (
 )
 
 echo All tasks completed successfully.
-pause
