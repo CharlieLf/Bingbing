@@ -754,6 +754,11 @@ body{
   height: 2rem;
 }
 
+.size-10{
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 .h-10{
   height: 2.5rem;
 }

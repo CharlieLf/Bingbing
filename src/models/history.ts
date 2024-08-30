@@ -9,11 +9,11 @@ interface ItemDetailData {
 interface SellerHistoryData {
     items: ItemDetailData[];
     date: BigInt;
-    buyer: string;
+    buyerName: string;
 }
 
 interface SellerData {
-    seller: string;
+    sellerName: string;
     items: ItemDetailData[];
 }
 
@@ -27,17 +27,17 @@ interface BuyerHistoryData {
 export class SellerHistory {
     items: TransactionDetail[];
     date: Date;
-    buyer: string;
+    buyerName: string;
 
-    constructor({ items, date, buyer }: SellerHistoryData) {
+    constructor({ items, date, buyerName }: SellerHistoryData) {
         this.items = items.map((item) => {
             return {
                 product: Product.fromProductData(item.product[0]),
                 quantity: Number(item.quantity)
             };
         });
-        this.date = new Date(Number(date));
-        this.buyer = buyer;
+        this.date = new Date(Number(date) / 1_000_000);
+        this.buyerName = buyerName;
     }
 }
 
@@ -56,7 +56,7 @@ export class BuyerHistory {
         this.id = Number(id);
         this.details = details.map((detail) => {
             return {
-                seller: detail.seller,
+                seller: detail.sellerName,
                 items: detail.items.map((item) => {
                     return {
                         product: Product.fromProductData(item.product[0]),

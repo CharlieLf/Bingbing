@@ -15,7 +15,7 @@ const Checkout: React.FC = () => {
     const location = useLocation();
 
     const { productCanisterId, cartCanisterId } = useServiceContext();
-    const { user, balance } = useAuthContext();
+    const { user, balance, fetchUser } = useAuthContext();
 
     const [transaction, setTransaction] = useState<Transaction[]>([]);
     const [imageUrls, setImageUrls] = useState<Map<number, string>>(new Map());
@@ -64,6 +64,7 @@ const Checkout: React.FC = () => {
         }))
 
         await burn([BigInt(shippingFee)]);
+        await fetchUser();
 
         Swal.fire('Success', 'Transaction has been created', 'success');
         setTransaction([]);

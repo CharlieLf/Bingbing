@@ -17,3 +17,11 @@ export function getFavoriteListQuery() {
     })
     return { getFavoriteList, getFavoriteListLoading }
 }
+
+export function removeFavoriteUpdate() {
+    const { useUpdateCall: favoriteUpdate } = useServiceContext().favoriteService;
+    const { call: removeFavorite, loading: removeFavoriteLoading } = favoriteUpdate({
+        functionName: "removeFavorite",
+    })
+    return { removeFavorite, removeFavoriteLoading }
+}
