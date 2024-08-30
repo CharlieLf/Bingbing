@@ -37,11 +37,11 @@ module {
         id : Nat64;
         details : [SellerData];
         date : Time.Time;
-        buyer : Principal;
+        buyer : Text;
     };
 
     public type SellerData = {
-        seller : Principal;
+        seller : Text;
         items : [ItemDetail];
     };
 

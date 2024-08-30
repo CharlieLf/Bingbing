@@ -26,7 +26,7 @@ interface TransactionHeaderData {
     buyer: string;
 }
 
-export default class TransactionHeader {
+class TransactionHeader {
     id: number;
     details: TransactionDetail[];
     date: Date;
@@ -57,11 +57,15 @@ export default class TransactionHeader {
     }
 }
 
-type TransactionItem = {
+interface TransactionItem {
     product: Product;
     quantity: bigint;
 };
-export type TransactionInput = {
+
+interface Transaction {
     ownerName: string;
     items: TransactionItem[];
 }
+
+export default TransactionHeader;
+export type { TransactionItem, Transaction, TransactionDetail };

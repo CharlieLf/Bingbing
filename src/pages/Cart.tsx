@@ -1,10 +1,10 @@
-import { getSelfCartQuery, removeCartItemUpdate } from "@/services/cartService";
+import { getSelfCartQuery, removeSelfCartItemUpdate } from "@/services/cartService";
 import { deleteProductUpdate, getProductImageQuery } from "@/services/productService";
 import ShopCard from "@components/ShopCard";
 import useAuthContext from "@hooks/useAuthContext";
 import useServiceContext from "@hooks/useServiceContext";
 import NavbarLayout from "@layouts/NavbarLayout";
-import { TransactionInput } from "@models/transaction";
+import { Transaction } from "@models/transaction";
 import TypeUtils from "@utils/TypeUtils";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,7 @@ const Carts: React.FC = () => {
 
     const { carts, getSelfCart, getSelfCartLoading } = getSelfCartQuery();
     const { getProductImage } = getProductImageQuery();
-    const { removeCartItem, removeCartItemLoading } = removeCartItemUpdate();
+    const { removeSelfCartItem, removeSelfCartItemLoading } = removeSelfCartItemUpdate();
 
     const cartTotalPrice = carts?.reduce((acc, curr) => {
         return acc + curr.cartDetails.reduce((acc, curr) => {
@@ -99,14 +99,14 @@ const Carts: React.FC = () => {
     }
 
     async function handleDeleteProduct(sellerId: string, productId: number) {
-        // const res = await removeCartItem([sellerId, BigInt(productId)]);
-        // if (!res || 'err' in res) return;
-        // await fetchCartData();
-        // Swal.fire('Success', 'Product has been deleted', 'success');
+        const res = await removeSelfCartItem([sellerId, BigInt(productId)]);
+        if (!res || 'err' in res) return;
+        await fetchCartData();
+        Swal.fire('Success', 'Product has been deleted', 'success');
     }
 
     async function handleToCheckout() {
-        const transactionInput: TransactionInput[] = [];
+        const transaction: Transaction[] = [];
 
         carts?.forEach(cart => {
             const ownerName = cart.ownerName;
@@ -119,17 +119,17 @@ const Carts: React.FC = () => {
                     }
                 })
             if (items.length === 0) return;
-            transactionInput.push({ ownerName, items });
+            transaction.push({ ownerName, items });
         });
 
-        if (transactionInput.length === 0) {
+        if (transaction.length === 0) {
             Swal.fire('Error', 'Please select at least one product', 'error');
             return;
         }
 
         navigate('/checkout', {
             state: {
-                transactionInput,
+                transaction,
                 imageUrls,
             }
         });
@@ -144,7 +144,7 @@ const Carts: React.FC = () => {
         fetchCartData();
     }, [])
 
-    if (getSelfCartLoading || removeCartItemLoading) {
+    if (getSelfCartLoading || removeSelfCartItemLoading) {
         return (
             <NavbarLayout>
                 <div className="flex justify-center text-2xl font-semibold text-gray-700 animate-pulse mt-10">
