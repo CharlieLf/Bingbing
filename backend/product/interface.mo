@@ -8,5 +8,6 @@ module {
 
     public type ProductActor = actor {
         getProduct : (key : Nat64, owner : ?Principal) -> async ?Product;
+        updateProductAfterTransaction(product : Product) : async Result<(), Text>;
     };
 };

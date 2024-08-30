@@ -3,6 +3,7 @@ import InputNumber from "./InputNumber";
 import { useEffect, useState } from "react";
 import ImagePlaceholder from "./ImagePlaceholder";
 import IconTrash3 from "@assets/icons/IconTrash3";
+import ProductInfoCard from "./ProductInfoCard";
 
 interface CartCount {
     [key: number]: number;
@@ -84,11 +85,7 @@ const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedC
                             type="checkbox"
                         />
 
-                        <div className="flex w-full py-3">
-                            <div className="w-[25vw] h-[40vh] mr-8">
-                                <ImagePlaceholder imageUrl={imageUrls.get(cd.product.id)} />
-                            </div>
-
+                        <ProductInfoCard imageUrl={imageUrls.get(cd.product.id)}>
                             <div className="flex flex-col justify-between w-full">
                                 <div className="flex w-full justify-between">
                                     <p>{cd.product.name}</p>
@@ -104,11 +101,11 @@ const ShopCard: React.FC<Props> = ({ cart, updateCartCount, cartCount, selectedC
                                     />
                                 </div>
                             </div>
-                        </div>
+                        </ProductInfoCard>
                     </div>
                 );
             })}
-        </div>
+        </div >
     );
 }
 

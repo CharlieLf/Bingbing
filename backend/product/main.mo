@@ -26,20 +26,57 @@ actor {
         _clothingType : Text,
         _clothing : Text,
     ) : async Result<(), Text> {
-        let product = Utils._createProduct(size, _name, _price, _stock, _image, Principal.toText(caller), _gender, _season, _clothingType, _clothing);
+        let product = Utils._createProduct(
+            size,
+            _name,
+            _price,
+            _stock,
+            _image,
+            Principal.toText(caller),
+            _gender,
+            _season,
+            _clothingType,
+            _clothing,
+        );
         products.put(size, product);
         size += 1;
         return #ok();
     };
 
-    public shared ({ caller }) func updateProduct(p : Product) : async Result<(), Text> {
-        let oldProduct : ?Product = products.get(p.id);
+    public shared ({ caller }) func updateProduct(product : Product) : async Result<(), Text> {
+        let oldProduct : ?Product = products.get(product.id);
         switch (oldProduct) {
             case (?value) {
                 if (value.owner != Principal.toText(caller)) {
                     return #err("Unauthorized");
                 };
-                products.put(p.id, p);
+                products.put(product.id, product);
+                return #ok();
+            };
+            case null {
+                return #err("Product not found");
+            };
+        };
+    };
+
+    public shared func updateProductAfterTransaction(product : Product) : async Result<(), Text> {
+        let oldProduct : ?Product = products.get(product.id);
+        switch (oldProduct) {
+            case (?old) {
+                products.put(
+                    product.id, {
+                        id = product.id;
+                        name = product.name;
+                        price = product.price;
+                        stock = product.stock;
+                        owner = product.owner;
+                        gender = product.gender;
+                        season = product.season;
+                        clothingType = product.clothingType;
+                        clothing = product.clothing;
+                        image = old.image;
+                    },
+                );
                 return #ok();
             };
             case null {
@@ -91,11 +128,16 @@ actor {
 
     };
 
-    public shared query func getAllProducts(pageNumber : Nat) : async [ProductWithoutImage] {
-        let productsPerPage = 10; 
+    public shared query func getProducts(pageNumber : Nat) : async [ProductWithoutImage] {
+        let productsPerPage = 10;
+        let currSize = products.size();
 
         let startIndex = (pageNumber - 1) * productsPerPage;
-        let endIndex = startIndex + productsPerPage;
+        var endIndex = startIndex + productsPerPage;
+
+        if (endIndex > currSize) {
+            endIndex := currSize;
+        };
 
         let productWithoutImageIter = Iter.map(
             products.vals(),
@@ -104,6 +146,16 @@ actor {
         let productArray = Iter.toArray(productWithoutImageIter);
 
         return Iter.toArray(Array.slice<ProductWithoutImage>(productArray, startIndex, endIndex));
+    };
+
+    public shared query func getAllProduct() : async [ProductWithoutImage] {
+
+        let productWithoutImageIter = Iter.map(
+            products.vals(),
+            _omitImage,
+        );
+
+        return Iter.toArray(productWithoutImageIter);
     };
 
     public shared query func getProductsByOwner(owner : Text) : async [ProductWithoutImage] {
@@ -132,7 +184,7 @@ actor {
         };
     };
 
-    func _omitImage(p : Product) : ProductWithoutImage {
+    private func _omitImage(p : Product) : ProductWithoutImage {
         return {
             id = p.id;
             name = p.name;

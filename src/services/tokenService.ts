@@ -6,7 +6,7 @@ export function getBalanceQuery() {
     const { useQueryCall: balanceQuery } = useServiceContext().tokenService;
 
     const { call: getBalance } = balanceQuery({
-        functionName: "balance",
+        functionName: "getBalance",
         onSuccess: (result) => {
             if (!result || 'err' in result) {
                 throw new Error("Failed to get balance");
