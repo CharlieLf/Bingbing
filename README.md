@@ -165,6 +165,6 @@ This is needed for running some parts of the AI
  
 
 ## Additional Links
-- **Projuct Summary and Overview:**
+- **Project Summary and Overview:**
   - https://www.canva.com/design/DAGPVHGakhU/HoWbz7FAmP4QlXhJQleBXg/edit?utm_content=DAGPVHGakhU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton 
 
