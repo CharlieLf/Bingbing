@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import TypeUtils from "@utils/TypeUtils";
 import ImagePlaceholder from "@components/ImagePlaceholder";
+import axios from "axios"; 
 
 const TryOn: React.FC = () => {
     const { id } = useParams();
@@ -17,6 +18,7 @@ const TryOn: React.FC = () => {
 
     const { product, getProduct, getProductLoading } = getProductQuery();
     const { getProductImage, getProductImageLoading } = getProductImageQuery();
+    const [resultImage, setResultImage] = useState('')
     const [productImageUrl, setProductImageUrl] = useState<string | undefined | null>();
 
     const imageInput = useRef<HTMLInputElement>(null);
@@ -33,16 +35,98 @@ const TryOn: React.FC = () => {
         }
     };
 
+    const convertToBase64 = (imageUrl: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.src = imageUrl;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx?.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/jpeg').split(',')[1]);
+            };
+            img.onerror = (error) => reject(error);
+        });
+    };
+
+    const sendImagesToFlask = async (image1Url: string, image2Url: string) => {
+        try {
+            // Show a loading indicator
+            Swal.fire({
+                title: 'Processing images...',
+                text: 'Please wait while the images are being processed.',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+    
+            // Convert images to base64
+            const image1Base64 = await convertToBase64(image1Url);
+            const image2Base64 = await convertToBase64(image2Url);
+    
+            // Send a POST request to the Flask server
+            const response = await axios.post('http://localhost:5000/process', {
+                image1: image2Base64,
+                image2: image1Base64
+            });
+    
+            // Hide the loading indicator
+            Swal.close();
+    
+            const resultImage = response.data.result_image;
+    
+            if (!response || !resultImage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error processing images',
+                    text: 'Server error'
+                });
+                return;
+            }
+    
+            // Set the processed result image
+            setResultImage(`data:image/jpeg;base64,${resultImage}`);
+    
+            Swal.fire({
+                icon: 'success',
+                title: 'Images processed successfully!',
+                text: response.data.message,
+            });
+    
+        } catch (error) {
+            // Hide the loading indicator in case of an error
+            Swal.close();
+    
+            Swal.fire({
+                icon: 'error',
+                title: 'Error processing images',
+                text: 'An error occurred while processing images.',
+            });
+        }
+    };
+    
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
             const reader = new FileReader();
 
-            reader.onload = () => {
+            reader.onload = async () => {
                 if (reader.result) {
                     const arrayBuffer = reader.result as ArrayBuffer;
                     const uint8Array = new Uint8Array(arrayBuffer);
-                    setImageUrl(URL.createObjectURL(file));
+                    const uploadedImageUrl = URL.createObjectURL(file);
+
+                    setImageUrl(uploadedImageUrl);
+
+                    if (productImageUrl) {
+                        await sendImagesToFlask(uploadedImageUrl, productImageUrl);
+                    }
                 }
             };
 
@@ -82,6 +166,7 @@ const TryOn: React.FC = () => {
             <div className="flex mx-20">
                 <div className="mr-10 w-[40vw] h-[60vh] flex flex-col items-center justify-evenly">
                     {
+                        resultImage ? <img className="w-full h-full" src={resultImage} /> :
                         isWebcamOn ? <Webcam className="w-full h-full" ref={webCamRef} /> :
                             imageUrl ? <img className="w-full h-full" src={imageUrl} /> :
                                 <ImagePlaceholder imageUrl={productImageUrl} />
