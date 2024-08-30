@@ -26,7 +26,7 @@ To set up the AI environments, follow these steps:
 
 3. **Download Model For Cloth Masking**
 
-    Using the cloth mask environment make sure to download the model before using 
+    Using the cloth mask environment make sure to download the model before using it 
 
     ``` bash
     from carvekit.ml.files.models_loc import download_all
