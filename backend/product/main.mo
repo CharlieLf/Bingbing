@@ -91,6 +91,11 @@ actor {
 
     };
 
+    public shared query func fetchProducts() : async [ProductWithoutImage] { 
+        let productWithoutImageIter = Iter.map( products.vals(), _omitImage, ); 
+        return Iter.toArray(productWithoutImageIter); 
+    };
+
     public shared query func getAllProducts(pageNumber : Nat) : async [ProductWithoutImage] {
         let productsPerPage = 10; 
 
@@ -102,8 +107,7 @@ actor {
             _omitImage,
         );
         let productArray = Iter.toArray(productWithoutImageIter);
-        // Iter.toArray(Array.slice<ProductWithoutImage>(productArray, startIndex, endIndex));
-        return productArray;
+        return Iter.toArray(Array.slice<ProductWithoutImage>(productArray, startIndex, endIndex));
     };
 
     public shared query func getProductsByOwner(owner : Text) : async [ProductWithoutImage] {

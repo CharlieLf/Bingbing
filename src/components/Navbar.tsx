@@ -6,14 +6,20 @@ import IconPerson from '@assets/icons/IconPerson';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import UserPopUp from './UserPopup';
+import SearchModal from './SearchModal';
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
     const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
+    const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
     const togglePopup = (event: React.MouseEvent) => {
         event.stopPropagation();
         setIsUserPopupOpen(prev => !prev);
+    };
+
+    const toggleSearchModal = () => {
+        setIsSearchModalOpen(prev => !prev);
     };
 
     return (
@@ -22,7 +28,7 @@ const Navbar: React.FC = () => {
                 <Link to="/">BINGBING</Link>
             </p>
             <div className="flex w-[15%] flex-row items-center justify-between">
-                <NavbarIcon icon={<IconSearch />} />
+                <NavbarIcon onclick={toggleSearchModal} icon={<IconSearch />} />
                 <NavbarIcon onclick={() => navigate('/cart')} icon={<IconCart />} />
                 <NavbarIcon onclick={() => navigate('/favorite')} icon={<IconHeart />} />
                 <div className="relative size-6">
@@ -32,6 +38,8 @@ const Navbar: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            <SearchModal isOpen={isSearchModalOpen} onClose={toggleSearchModal}/>
         </nav>
     );
 };

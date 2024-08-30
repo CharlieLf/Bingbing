@@ -6,6 +6,8 @@ import ProductCard from '@components/ProductCard';
 import Product from '@models/product';
 import TypeUtils from '@utils/TypeUtils';
 import { genderSelection, seasonSelection, typeSelection } from '@models/category';
+import IconNext from '@assets/icons/IconNext';
+import IconPrev from '@assets/icons/IconPrev';
 
 const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
@@ -16,6 +18,7 @@ const Home: React.FC = () => {
     const [productImageUrls, setProductImageUrls] = useState<Map<number, string>>(new Map());
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const { getProductImage } = getProductImageQuery();
+    const [page, setPage] = useState<number>(1);
 
     const filterProducts = () => {
         if((genderSelection as unknown as string[]).includes(category)){
@@ -30,7 +33,7 @@ const Home: React.FC = () => {
     }
     
     async function fetchProducts() {
-        const products = await getAllProducts();
+        const products = await getAllProducts([BigInt(page)]);
         products?.forEach(async p => {
             const image = await getProductImage([p.id]);
             if (!image || image.length === 0) {
@@ -89,6 +92,15 @@ const Home: React.FC = () => {
                     ))
                 }
 
+            </div>
+            <div className='flex justify-center mt-20 mx-20 items-center'>
+                <div className='w-6 h-6'>
+                    <IconPrev/>
+                </div>
+                <p className='mx-2 text-xl'>1</p>
+                <div className='w-6 h-6'>
+                    <IconNext/>
+                </div>
             </div>
         </NavbarLayout>
     );
