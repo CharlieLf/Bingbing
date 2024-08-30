@@ -1,5 +1,6 @@
-import { getFavoriteListQuery } from "@/services/favoriteService";
+import { getFavoriteListQuery, removeFavoriteUpdate } from "@/services/favoriteService";
 import { getProductImageQuery } from "@/services/productService";
+import IconTrash3 from "@assets/icons/IconTrash3";
 import ButtonSmall from "@components/ButtonSmall";
 import ProductInfoCard from "@components/ProductInfoCard";
 import useServiceContext from "@hooks/useServiceContext";
@@ -8,6 +9,7 @@ import Product from "@models/product";
 import TypeUtils from "@utils/TypeUtils";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Favorite: React.FC = () => {
     const navigate = useNavigate();
@@ -17,6 +19,7 @@ const Favorite: React.FC = () => {
     const [imageUrls, setImageUrls] = useState<Map<number, string>>(new Map());
 
     const { getFavoriteList, getFavoriteListLoading } = getFavoriteListQuery();
+    const { removeFavorite, removeFavoriteLoading } = removeFavoriteUpdate();
     const { getProductImage } = getProductImageQuery();
 
     async function fetchFavoriteList() {
@@ -42,6 +45,25 @@ const Favorite: React.FC = () => {
         });
 
         setFavoriteList(favoriteList);
+    }
+
+    async function handleRemoveFavorite(productId: number) {
+        if (removeFavoriteLoading) return;
+        const result = await removeFavorite([BigInt(productId)]);
+        if (!result || 'err' in result) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to remove favorite product',
+            })
+            return;
+        }
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Product removed from favorite list',
+        })
+        setFavoriteList(prev => prev.filter(product => product.id !== productId));
     }
 
     useEffect(() => {
@@ -73,10 +95,17 @@ const Favorite: React.FC = () => {
                     return (
                         <ProductInfoCard className="h-full shadow-md p-4 rounded-xl"
                             key={index}
-                            imageUrl={imageUrls.get(Number(product.id))
-                            }>
+                            imageUrl={imageUrls.get(Number(product.id))}
+                        >
                             <div className="flex flex-col flex-1 justify-between">
-                                <p className="text-xl font-medium">{product.name}</p>
+                                <div className="flex justify-between">
+                                    <p className="text-xl font-medium">{product.name}</p>
+                                    <button className="size-6"
+                                        onClick={() => handleRemoveFavorite(product.id)}
+                                    >
+                                        <IconTrash3 />
+                                    </button>
+                                </div>
                                 <div className="flex justify-between">
                                     <p className="text-lg">IDR: {product.formatPrice()}</p>
                                     <ButtonSmall onclick={() => navigate(`/productDetail/${product.id}`)} text="View Detail" />
