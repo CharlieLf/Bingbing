@@ -95,6 +95,56 @@ To set up the AI environments, follow these steps:
 
     We provide pre-trained networks. Please download *.pkl from the https://drive.google.com/drive/folders/0B8kXrnobEVh9fnJHX3lCZzEtd20yUVAtTk5HdWk2OVV0RGl6YXc0NWhMOTlvb1FKX3Z1OUk?resourcekey=0-OIXHrDwCX8ChjypUbJo4fQ folder and unzip *.zip files. test.py assumes that the downloaded files are placed in ./checkpoints/ directories.
 
+## Environment Variable Configuration for Visual Studio
+
+This is needed for running some parts of the AI
+
+### Adding Paths to the Path Environment Variable
+
+1. **Open Environment Variables:**
+   - Search for "Environment Variables" in the Start menu and select "Edit the system environment variables".
+   - Click on the "Environment Variables" button.
+
+2. **Update the `Path` Variable:**
+   - Under "System variables", find and select the `Path` variable, then click "Edit".
+   - Add the following paths to the `Path` variable. Make sure to separate them with a semicolon (`;`):
+
+     ```
+     E:\VS2017\VC\Tools\MSVC\14.10.25017\bin\HostX64\x64;
+     E:\VS2017\Common7\IDE
+     ```
+   - If your system is 32-bit or if HostX64\x64 is not available, use HostX86\x86 instead.
+
+### Creating the `LIB` Variable
+
+1. **Add a New Variable:**
+   - In the "Environment Variables" window, under "System variables", click "New".
+
+2. **Set the Variable Name and Value:**
+   - **Variable name:** `LIB`
+   - **Variable value:** Add the following paths, separated by semicolons (`;`):
+
+     ```
+     C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\lib\x64;
+     C:\Program Files (x86)\Windows Kits\10\Lib\10.0.14393.0\ucrt\x86;
+     C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86;
+     ```
+
+   - If the `HostX64\x64` path is set in the `Path` variable, use the `x64` lib path. If not, adjust accordingly.
+
+### Creating the `INCLUDE` Variable
+
+1. **Add a New Variable:**
+   - In the "Environment Variables" window, under "System variables", click "New".
+
+2. **Set the Variable Name and Value:**
+   - **Variable name:** `INCLUDE`
+   - **Variable value:** Add the following paths, separated by semicolons (`;`):
+
+     ```
+     E:\VS2017\VC\Tools\MSVC\14.10.25017\include;
+     C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\ucrt;
+     ```
 
 ## Resources
 
