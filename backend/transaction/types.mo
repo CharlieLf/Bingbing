@@ -30,7 +30,7 @@ module {
     public type SellerHistory = {
         items : [ItemDetail];
         date : Time.Time;
-        buyer : Text;
+        buyerName : Text;
     };
 
     public type BuyerHistory = {
@@ -41,7 +41,7 @@ module {
     };
 
     public type SellerData = {
-        seller : Text;
+        sellerName : Text;
         items : [ItemDetail];
     };
 

@@ -89,9 +89,9 @@ export function deleteProductUpdate() {
 
 export function getProductImageQuery() {
     const { useQueryCall: productQuery } = useServiceContext().productService;
-    const { call: getProductImage } = productQuery({
+    const { call: getProductImage, loading: getProductImageLoading } = productQuery({
         functionName: 'getProductImage',
         refetchOnMount: false
     })
-    return { getProductImage };
+    return { getProductImage, getProductImageLoading };
 }

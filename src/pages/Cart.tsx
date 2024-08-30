@@ -154,13 +154,23 @@ const Carts: React.FC = () => {
         )
     }
 
+    if (isCartEmpty) {
+        return (
+            <NavbarLayout>
+                <div className="flex justify-center text-2xl font-semibold text-gray-700 mt-10">
+                    Your cart is empty
+                </div>
+            </NavbarLayout>
+        )
+    }
+
     return (
         <NavbarLayout>
             <p className="self-start px-20 text-3xl font-medium">Cart</p>
 
             <div className="flex w-full justify-between py-5 px-20">
                 <div className="flex flex-col w-[60%] mr-10 gap-8">
-                    {!isCartEmpty && carts && carts.length > 0 ? carts?.map((cart, idx) => {
+                    {carts?.map((cart, idx) => {
                         return <ShopCard key={idx}
                             cart={cart}
                             cartCount={cartCount}
@@ -170,12 +180,10 @@ const Carts: React.FC = () => {
                             imageUrls={imageUrls}
                             handleDeleteProduct={handleDeleteProduct}
                         />
-                    }) :
-                        <p>Your cart is empty</p>
-                    }
+                    })}
                 </div>
 
-                {!isCartEmpty && <div className="bg-[#FFFDFD] w-[50%] h-fit p-5 border-gray-200 border">
+                <div className="bg-[#FFFDFD] w-[50%] h-fit p-5 border-gray-200 border">
                     <p className="mb-5 font-bold text-2xl">Order Summary</p>
 
                     <div className="flex justify-between mb-3">
@@ -187,7 +195,7 @@ const Carts: React.FC = () => {
 
                     <button onClick={handleToCheckout}
                         className="w-full p-3 bg-black text-white font-bold rounded">Check Out</button>
-                </div>}
+                </div>
             </div>
         </NavbarLayout>
     )

@@ -1,4 +1,6 @@
 import { TransactionDetail } from "@models/transaction";
+import ImagePlaceholder from "./ImagePlaceholder";
+import { Link } from "react-router-dom";
 
 interface Props {
     transactionDetails: TransactionDetail[];
@@ -13,9 +15,9 @@ const HistoryCard: React.FC<Props> = ({ transactionDetails, imageUrls }) => {
                 return <div key={idx}>
                     <div className="flex w-full py-3 gap-8">
                         <div className="size-48">
-                            <img src={imageUrls.get(product.id)}
-                                className="w-full h-full object-cover"
-                            />
+                            <Link to={`/productDetail/${product.id}`}>
+                                <ImagePlaceholder imageUrl={imageUrls.get(product.id)} />
+                            </Link>
                         </div>
                         <div className="flex flex-col justify-between w-full">
                             <p>{product.name}</p>
