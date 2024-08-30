@@ -5,7 +5,7 @@ import Card from "@components/Card";
 import useAuthContext from "@hooks/useAuthContext";
 import useServiceContext from "@hooks/useServiceContext";
 import NavbarLayout from "@layouts/NavbarLayout";
-import { TransactionInput } from "@models/transaction";
+import { Transaction } from "@models/transaction";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -17,7 +17,7 @@ const Checkout: React.FC = () => {
     const { productCanisterId, cartCanisterId } = useServiceContext();
     const { user, balance } = useAuthContext();
 
-    const [transactionInput, setTransactionInput] = useState<TransactionInput[]>([]);
+    const [transaction, setTransaction] = useState<Transaction[]>([]);
     const [imageUrls, setImageUrls] = useState<Map<number, string>>(new Map());
     const [totalPrice, setTotalPrice] = useState(0);
     const shippingFee = 10000;
@@ -27,7 +27,7 @@ const Checkout: React.FC = () => {
     const { burn, burnLoading } = burnUpdate();
 
     async function handleCreateTransaction() {
-        const transaction = transactionInput.map(t => {
+        const tran = transaction.map(t => {
             return {
                 sellerPrincipal: t.items[0].product.owner,
                 items: t.items.map(i => {
@@ -39,12 +39,23 @@ const Checkout: React.FC = () => {
             }
         });
 
+        const res = await createTransaction([cartCanisterId, productCanisterId, tran]);
+
+        if (!res || 'err' in res) {
+            Swal.fire(
+                'Error', 
+                res && 'err' in res ? res.err : 'Failed to create transaction', 
+                'error'
+            );
+            return;
+        }
+
         if(balance < totalPrice + shippingFee) {
             Swal.fire('Error', 'BingPay balance is not enough', 'error');
             return;
         }
 
-        await Promise.all(transactionInput.map(t => {
+        await Promise.all(transaction.map(t => {
             const to = t.items[0].product.owner;
             const amount = t.items.reduce((acc, curr) => {
                 return acc + curr.product.price * Number(curr.quantity);
@@ -54,36 +65,30 @@ const Checkout: React.FC = () => {
 
         await burn([BigInt(shippingFee)]);
 
-        const res = await createTransaction([cartCanisterId, productCanisterId, transaction]);
-
-        if (!res || 'err' in res) {
-            Swal.fire('Error', 'Failed to create transaction', 'error');
-            return;
-        }
         Swal.fire('Success', 'Transaction has been created', 'success');
-        setTransactionInput([]);
+        setTransaction([]);
         setImageUrls(new Map());
         navigate('/');
     };
 
     useEffect(() => {
-        setTransactionInput(location.state.transactionInput as TransactionInput[]);
+        setTransaction(location.state.transaction as Transaction[]);
         setImageUrls(location.state.imageUrls as Map<number, string>);
     }, [])
 
     useEffect(() => {
-        if (!transactionInput) return;
+        if (!transaction) return;
 
-        const totalPrice = transactionInput.reduce((acc, curr) => {
+        const totalPrice = transaction.reduce((acc, curr) => {
             return acc + curr.items.reduce((acc, curr) => {
                 return acc + curr.product.price * Number(curr.quantity);
             }, 0);
         }, 0);
 
         setTotalPrice(totalPrice);
-    }, [transactionInput])
+    }, [transaction])
 
-    if (!transactionInput || transactionInput.length === 0) {
+    if (!transaction || transaction.length === 0) {
         return <NavbarLayout>
             <div className="flex flex-col justify-center items-center">
                 <p className="text-2xl font-semibold">No Items in Cart</p>
@@ -116,8 +121,8 @@ const Checkout: React.FC = () => {
                         </div>
                     </div>
 
-                    {transactionInput.map((transaction, index) => {
-                        return <Card imageUrls={imageUrls} transaction={transaction} key={index} />
+                    {transaction.map((t, index) => {
+                        return <Card imageUrls={imageUrls} transaction={t} key={index} />
                     })}
                 </div>
 

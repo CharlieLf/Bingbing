@@ -16,6 +16,7 @@
     "dfx:generate": "tsc && vite build && dfx generate",
     "dfx:deploy-deps": "dfx deps pull && dfx deps deploy",
     "dfx:deploy": "dfx deploy",
+    "dfx:install": "dfx canister install user --mode=reinstall && dfx canister install token --mode=reinstall && dfx canister install product --mode=reinstall && dfx canister install cart --mode=reinstall && dfx canister install transaction --mode=reinstall && dfx canister install favorite --mode=reinstall",
     "backend": "npm run dfx:create && npm run dfx:build && npm run dfx:generate && npm run dfx:deploy && npm run dfx:deploy-deps",
     "frontend": "vite --port 3000",
     "build": "",

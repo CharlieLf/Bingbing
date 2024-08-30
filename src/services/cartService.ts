@@ -31,10 +31,10 @@ export function getSelfCartQuery() {
     return { carts, getSelfCart, getSelfCartLoading };
 }
 
-export function removeCartItemUpdate() {
+export function removeSelfCartItemUpdate() {
     const { useQueryCall: cartUpdate } = useServiceContext().cartService;
-    const { call: removeCartItem, loading: removeCartItemLoading } = cartUpdate({
-        functionName: "removeCartItem",
+    const { call: removeSelfCartItem, loading: removeSelfCartItemLoading } = cartUpdate({
+        functionName: "removeSelfCartItem",
     });
-    return { removeCartItem, removeCartItemLoading };
+    return { removeSelfCartItem, removeSelfCartItemLoading };
 }

@@ -3,33 +3,13 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Error "mo:base/Error";
 import Nat "mo:base/Nat";
-import Iter "mo:base/Iter";
 
 actor {
 
     let ledger = HashMap.HashMap<Principal, Nat>(0, Principal.equal, Principal.hash);
     type Result<Ok, Error> = Result.Result<Ok, Error>;
 
-    public query func seeAllLedger() : async [{
-        owner : Principal;
-        balance : Nat;
-    }] {
-        type data = { owner : Principal; balance : Nat };
-
-        let listData : [data] = Iter.toArray(
-            Iter.map(
-                ledger.entries(),
-                func(entry : (Principal, Nat)) : data {
-                    let (owner, balance) = entry;
-                    return { owner; balance };
-                },
-            )
-        );
-
-        return listData;
-    };
-
-    public query ({ caller }) func balance() : async Result<Nat, Text> {
+    public query ({ caller }) func getBalance() : async Result<Nat, Text> {
         switch (ledger.get(caller)) {
             case (?balance) {
                 #ok(balance);
@@ -58,7 +38,7 @@ actor {
 
     };
 
-    public shared({caller}) func burn(amount : Nat) : async Result<(), Text> {
+    public shared ({ caller }) func burn(amount : Nat) : async Result<(), Text> {
         switch (ledger.get(caller)) {
             case (?balance) {
                 if (balance >= amount) {
@@ -99,12 +79,6 @@ actor {
                 #err("Unknown caller");
             };
         };
-    };
-
-    public query func showAll() : async ([Principal], [Nat]) {
-        let owners = ledger.keys();
-        let balances = ledger.vals();
-        (Iter.toArray(owners), Iter.toArray(balances));
     };
 
 };

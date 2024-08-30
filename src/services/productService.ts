@@ -7,7 +7,7 @@ export function getAllProductsQuery() {
 
     const [products, setProducts] = useState<Product[]>([]);
     const { call: getAllProducts, loading: getAllProductsLoading } = productQuery({
-        functionName: "getAllProducts",
+        functionName: "getProducts",
         onSuccess: (productData) => {
             setProducts(productData?.map(Product.fromProductData) ?? []);
         },

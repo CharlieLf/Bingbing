@@ -13,6 +13,7 @@ const sortOptions = ['From Lowest Price', 'From Highest Price'];
 
 const Home: React.FC = () => {
     const [sort, setSort] = useState<string>(sortOptions[0]);
+    const [page, setPage] = useState<number>(1);
     const [category, setCategory] = useState<string>('All');
     const { products, getAllProducts, getAllProductsLoading } = getAllProductsQuery();
     const [productImageUrls, setProductImageUrls] = useState<Map<number, string>>(new Map());

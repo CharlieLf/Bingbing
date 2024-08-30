@@ -12,6 +12,7 @@ import { getUserQuery } from "@/services/userService";
 import User from "@models/user";
 import IconPerson from "@assets/icons/IconPerson";
 import { addToFavoriteUpdate } from "@/services/favoriteService";
+import CategoryBubble from "@components/CategoryBubble";
 
 const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
@@ -126,10 +127,17 @@ const ProductDetail: React.FC = () => {
                         <div className="flex">
                             <div className="mb-32 w-full">
                                 <p className="text-4xl font-bold">{product?.name}</p>
-                                <p className="text-2xl">Rp. {product.formatPrice()}</p>
+                                <p className="text-2xl">IDR. {product.formatPrice()}</p>
+                                <div className="flex gap-1 py-2">
+                                    <CategoryBubble category={product.gender}/>
+                                    <CategoryBubble category={product.season}/>
+                                    <CategoryBubble category={product.clothingType}/>
+                                    <CategoryBubble category={product.clothing}/>
+                                </div>
+                                <p className={`italic ${product.stock <= 3 ? 'text-red-500': ''}`}>Stock: {product.stock}</p>
                                 <Link to={`/profile/${product.owner}`}>
                                     <div className="flex gap-2 mt-2 items-center">
-                                        <div className="size-5">
+                                        <div className="size-8 rounded-full border border-gray-500 p-1">
                                             {ownerProfile?.image ?
                                                 <img className="size-full object-cover" src={ownerProfile?.image} /> :
                                                 <IconPerson width="100%" height="100%" />
@@ -190,9 +198,24 @@ const ProductDetail: React.FC = () => {
                             <div className="mb-32">
                                 <p className="text-4xl font-bold">{product?.name}</p>
                                 <p className="text-2xl">Rp. {product.formatPrice()}</p>
-                                <div className="flex">
-
+                                <div className="flex gap-1 py-2">
+                                    <CategoryBubble category={product.gender}/>
+                                    <CategoryBubble category={product.season}/>
+                                    <CategoryBubble category={product.clothingType}/>
+                                    <CategoryBubble category={product.clothing}/>
                                 </div>
+                                <p className={`italic ${product.stock <= 3 ? 'text-red-500': ''}`}>Stock: {product.stock}</p>
+                                <Link to={`/profile/${product.owner}`}>
+                                    <div className="flex gap-2 mt-2 items-center">
+                                        <div className="size-8 rounded-full border border-gray-500 p-1">
+                                            {ownerProfile?.image ?
+                                                <img className="size-full object-cover" src={ownerProfile?.image} /> :
+                                                <IconPerson width="100%" height="100%" />
+                                            }
+                                        </div>
+                                        <p>{ownerProfile?.name}</p>
+                                    </div>
+                                </Link>
                             </div>
                         </div>
 

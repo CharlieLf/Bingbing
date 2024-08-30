@@ -10,7 +10,6 @@ module {
         stock : Nat64;
         image : ?Blob;
         owner : Text;
-
         gender : Text;
         season : Text;
         clothingType : Text;
