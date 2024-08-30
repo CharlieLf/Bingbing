@@ -2,7 +2,7 @@ import useServiceContext from "@hooks/useServiceContext";
 import Product from "@models/product";
 import { useState } from "react";
 
-export function getAllProductsQuery() {
+export function getAllProductsWithPaginationQuery() {
     const { useQueryCall: productQuery } = useServiceContext().productService;
 
     const [products, setProducts] = useState<Product[]>([]);
@@ -14,6 +14,20 @@ export function getAllProductsQuery() {
         refetchOnMount: false
     });
     return { products, getAllProducts, getAllProductsLoading };
+}
+
+export function getAllProductsQuery() {
+    const { useQueryCall: productQuery } = useServiceContext().productService;
+
+    const [products, setProducts] = useState<Product[]>([]);
+    const { call: getAllProduct, loading: getAllProductsLoading } = productQuery({
+        functionName: "getAllProduct",
+        onSuccess: (productData) => {
+            setProducts(productData?.map(Product.fromProductData) ?? []);
+        },
+        refetchOnMount: false
+    });
+    return { products, getAllProduct, getAllProductsLoading };
 }
 
 export function getProductQuery() {

@@ -144,7 +144,6 @@ actor {
             _omitImage,
         );
         let productArray = Iter.toArray(productWithoutImageIter);
-
         return Iter.toArray(Array.slice<ProductWithoutImage>(productArray, startIndex, endIndex));
     };
 

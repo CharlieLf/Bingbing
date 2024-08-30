@@ -1,6 +1,6 @@
 export const genderSelection = [
-    "Male",
-    "Female"
+    "Men",
+    "Women"
 ] as const;
 
 export const seasonSelection = [
@@ -11,8 +11,8 @@ export const seasonSelection = [
 ] as const;
 
 export const typeSelection = [
-    "Top",
-    "Bottom",
+    "Tops",
+    "Bottoms",
     "Outerwear",
     "Accessories"
 ] as const;
@@ -44,21 +44,21 @@ const accessoriesSelection = [
 export type Gender = typeof genderSelection[number];
 export type Season = typeof seasonSelection[number];
 export type ClothingType = typeof typeSelection[number];
-type Top = typeof topSelection[number];
-type Bottom = typeof bottomSelection[number];
+type Tops = typeof topSelection[number];
+type Bottoms = typeof bottomSelection[number];
 type Outerwear = typeof outerwearSelection[number];
 type Accessories = typeof accessoriesSelection[number];
 
 type ClothingSelections = {
-    Top: ReadonlyArray<Top>,
-    Bottom: ReadonlyArray<Bottom>,
+    Tops: ReadonlyArray<Tops>,
+    Bottoms: ReadonlyArray<Bottoms>,
     Outerwear: ReadonlyArray<Outerwear>,
     Accessories: ReadonlyArray<Accessories>
 };
 
 export const clothingSelections: ClothingSelections = {
-    "Top": topSelection,
-    "Bottom": bottomSelection,
+    "Tops": topSelection,
+    "Bottoms": bottomSelection,
     "Outerwear": outerwearSelection,
     "Accessories": accessoriesSelection
 }
