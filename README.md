@@ -159,4 +159,7 @@ This is needed for running some parts of the AI
 
 - **VITON-HD:**
   - [VITON-HD GitHub Repository](https://github.com/shadow2496/VITON-HD)
+ 
+- **Environment Variable Configuration Issue:**
+  - [Environment Variable Configuration for Visual Studio](https://github.com/HRNet/HRNet-Semantic-Segmentation/issues/39)
 
