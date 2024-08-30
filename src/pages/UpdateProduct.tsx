@@ -6,7 +6,6 @@ import { Gender, genderSelection, Season, seasonSelection, ClothingType, typeSel
 import { editProductUpdate, getProductImageQuery, getProductQuery } from "@/services/productService";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@ic-reactor/react";
-import defaultImage from "@assets/product/testing.jpg";
 import Product from "@models/product";
 import Swal from "sweetalert2";
 import ImagePlaceholder from "@components/ImagePlaceholder";
@@ -96,7 +95,7 @@ const UpdateProduct: React.FC = () => {
                 setSelectedGender(genderSelection[0]);
                 setSelectedSeason(seasonSelection[0]);
                 setSelectedType(typeSelection[0]);
-                setProductImageUrl(defaultImage);
+                setProductImageUrl('');
                 setError('');
                 navigate(-1);
             }

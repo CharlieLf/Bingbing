@@ -1,5 +1,4 @@
 import Input from "@components/Input";
-import defaultImage from "../assets/product/testing.jpg";
 import { useEffect, useRef, useState } from "react";
 import CategoryField from "@components/CategoryField";
 import IconArrowBack from "@assets/icons/IconArrowBack";
@@ -85,7 +84,7 @@ const AddProduct: React.FC = () => {
             setSelectedGender(genderSelection[0]);
             setSelectedSeason(seasonSelection[0]);
             setSelectedType(typeSelection[0]);
-            setImageUrl(defaultImage);
+            setImageUrl('');
             setError('');
             navigate(-1);
         } catch (_) {

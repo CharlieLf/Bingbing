@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import NavbarLayout from '@layouts/NavbarLayout';
 import CategoryBar from '@components/CategoryBar';
-import { getAllProductsQuery, getProductImageQuery } from '@/services/productService';
+import { getAllProductsWithPaginationQuery, getProductImageQuery } from '@/services/productService';
 import ProductCard from '@components/ProductCard';
 import Product from '@models/product';
 import TypeUtils from '@utils/TypeUtils';
@@ -15,11 +15,10 @@ const Home: React.FC = () => {
     const [sort, setSort] = useState<string>(sortOptions[0]);
     const [page, setPage] = useState<number>(1);
     const [category, setCategory] = useState<string>('All');
-    const { products, getAllProducts, getAllProductsLoading } = getAllProductsQuery();
+    const { products, getAllProducts, getAllProductsLoading } = getAllProductsWithPaginationQuery();
     const [productImageUrls, setProductImageUrls] = useState<Map<number, string>>(new Map());
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const { getProductImage } = getProductImageQuery();
-    const [page, setPage] = useState<number>(1);
 
     const filterProducts = () => {
         if((genderSelection as unknown as string[]).includes(category)){
