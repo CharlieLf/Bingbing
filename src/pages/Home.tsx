@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import NavbarLayout from '@layouts/NavbarLayout';
 import CategoryBar from '@components/CategoryBar';
-import { getAllProductsWithPaginationQuery, getProductImageQuery } from '@/services/productService';
+import { getAllProductsQuery, getAllProductsWithPaginationQuery, getProductImageQuery } from '@/services/productService';
 import ProductCard from '@components/ProductCard';
 import Product from '@models/product';
 import TypeUtils from '@utils/TypeUtils';
@@ -14,11 +14,15 @@ const sortOptions = ['From Lowest Price', 'From Highest Price'];
 const Home: React.FC = () => {
     const [sort, setSort] = useState<string>(sortOptions[0]);
     const [page, setPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(1);
     const [category, setCategory] = useState<string>('All');
     const { products, getAllProducts, getAllProductsLoading } = getAllProductsWithPaginationQuery();
+    const { products: allProduct, getAllProduct } = getAllProductsQuery();
     const [productImageUrls, setProductImageUrls] = useState<Map<number, string>>(new Map());
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const { getProductImage } = getProductImageQuery();
+
+    const itemsPerPage = 10;
 
     const filterProducts = () => {
         if((genderSelection as unknown as string[]).includes(category)){
@@ -32,25 +36,49 @@ const Home: React.FC = () => {
         }
     }
     
-    async function fetchProducts() {
-        const products = await getAllProducts([BigInt(page)]);
-        products?.forEach(async p => {
-            const image = await getProductImage([p.id]);
-            if (!image || image.length === 0) {
-                return;
-            };
-            setProductImageUrls(prev => {
-                const newMap = new Map(prev);
-                newMap.set(Number(p.id), TypeUtils.byteArrayToImageURL(image[0]));
-                return newMap;
+    async function fetchProducts(pageNumber: number) {
+        const products = await getAllProducts([BigInt(pageNumber)]);
+
+        if(products){
+            products?.forEach(async p => {
+                const image = await getProductImage([p.id]);
+                if (!image || image.length === 0) {
+                    return;
+                };
+                setProductImageUrls(prev => {
+                    const newMap = new Map(prev);
+                    newMap.set(Number(p.id), TypeUtils.byteArrayToImageURL(image[0]));
+                    return newMap;
+                })
             })
-        })
+        }
+    }
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
+            fetchProducts(newPage);
+        }
+    };
+
+    const fetchAllProducts = async () => {
+        await getAllProduct([]);
     }
 
     useEffect(() => {
         filterProducts();
-        fetchProducts();
-    }, [category]);
+        fetchProducts(page);
+    }, [category, page]);
+
+    useEffect(()=>{
+        fetchAllProducts();
+    }, [])
+
+    useEffect(() => {
+        const productLength = allProduct?.length
+
+        setTotalPages(Math.ceil(productLength / itemsPerPage));
+    }, [allProduct])
 
     if (getAllProductsLoading) {
         return (
@@ -64,7 +92,7 @@ const Home: React.FC = () => {
     return (
         <NavbarLayout>
             <CategoryBar category={category} setCategory={setCategory} />
-            <div className="sticky top-32 w-screen mt-3 flex items-center justify-end gap-4 px-[2.5%] py-2 bg-white">
+            <div className="sticky w-screen mt-3 mb-8 flex items-center justify-end gap-4 px-[2.5%] py-2 z-20 bg-white">
                 <p>Sort: </p>
                 <select
                     className="border border-black p-2 text-xs cursor-pointer"
@@ -78,29 +106,44 @@ const Home: React.FC = () => {
                     ))}
                 </select>
             </div>
-            <div className='flex self-end mx-[2.5%] my-2 p-2 border border-gray-500 mb-8'>
-                <input placeholder='Search' className='focus:outline-none'/>
-            </div>
             <div className="grid grid-cols-5 gap-x-[3.5%] gap-y-8 px-[2.5%] w-full">
                 {category === "All" ?
-                    products.map((product) => (
+                    products.sort((a, b) => {
+                        if (sort === sortOptions[0]) {
+                            return a.price - b.price;
+                        }
+                        return b.price - a.price
+                    }).map((product) => (
                         <ProductCard key={product.id} product={product} imageUrl={productImageUrls.get(product.id)}/>
                     ))
                     :
-                    filteredProducts.map((product) => (
+                    filteredProducts.sort((a, b) => {
+                        if (sort === sortOptions[0]) {
+                            return a.price - b.price;
+                        }
+                        return b.price - a.price
+                    }).map((product) => (
                         <ProductCard key={product.id} product={product} imageUrl={productImageUrls.get(product.id)}/>
                     ))
                 }
 
             </div>
-            <div className='flex justify-center mt-20 mx-20 items-center'>
-                <div className='w-6 h-6'>
-                    <IconPrev/>
-                </div>
-                <p className='mx-2 text-xl'>1</p>
-                <div className='w-6 h-6'>
-                    <IconNext/>
-                </div>
+            <div className="flex justify-center mt-20 mx-20 items-center">
+                <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page <= 1}
+                    className={`w-6 h-6 ${page <= 1 ? 'opacity-50' : ''}`}
+                >
+                    <IconPrev />
+                </button>
+                <p className="mx-2 text-xl">{page}</p>
+                <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page == totalPages}
+                    className={`w-6 h-6 ${page >= totalPages ? 'opacity-50' : ''}`}
+                >
+                    <IconNext />
+                </button>
             </div>
         </NavbarLayout>
     );
