@@ -21,6 +21,7 @@ const Checkout: React.FC = () => {
     const [imageUrls, setImageUrls] = useState<Map<number, string>>(new Map());
     const [totalPrice, setTotalPrice] = useState(0);
     const shippingFee = 10000;
+    const serviceFee = 1000;
 
     const { createTransaction, createTransactionLoading } = createTransactionUpdate();
     const { transfer, transferLoading } = transferUpdate();
@@ -140,11 +141,16 @@ const Checkout: React.FC = () => {
                         <p className="text-lg">{shippingFee.toLocaleString()}</p>
                     </div>
 
+                    <div className="flex justify-between mb-2">
+                        <p className="text-lg">Service Fee</p>
+                        <p className="text-lg">{serviceFee.toLocaleString()}</p>
+                    </div>
+
                     <hr className="border-black mb-2" />
 
                     <div className="flex justify-between mb-7">
                         <p className="text-lg">Total</p>
-                        <p className="text-xl font-bold">{(totalPrice + shippingFee).toLocaleString()}</p>
+                        <p className="text-xl font-bold">{(totalPrice + shippingFee + serviceFee).toLocaleString()}</p>
                     </div>
 
                     <div className="flex bg-white justify-between items-center border border-gray-200 rounded-md p-2 mb-2">
@@ -159,7 +165,7 @@ const Checkout: React.FC = () => {
                     </div>
 
                     <p className="mb-2 italic text-xs text-red-500 min-h-4">
-                        {balance < totalPrice + shippingFee && "*BingPay balance is not enough"}
+                        {balance < totalPrice + shippingFee + serviceFee && "*BingPay balance is not enough"}
                     </p>
 
                     {createTransactionLoading || transferLoading || burnLoading ?

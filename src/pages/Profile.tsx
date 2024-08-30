@@ -173,8 +173,10 @@ const Profile: React.FC = () => {
                             <div>
                                 <p className="text-[32px] font-semibold">{user?.name}</p>
                                 <div className="flex gap-5 items-center">
-                                    <div className="h-8"><IconWallet /></div>
-                                    <p>BingPay: {balance.toLocaleString()}</p>
+                                    <div className="flex gap-1 items-center">
+                                        <div className="h-8"><IconWallet /></div>
+                                        <p>BingPay: {balance.toLocaleString()}</p>
+                                    </div>
                                     <ButtonSmall onclick={() => setIsTopUpModalOpen(true)} variant="secondary" text="Top up" />
                                 </div>
                             </div>
